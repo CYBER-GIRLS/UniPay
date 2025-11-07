@@ -294,6 +294,17 @@ The catalog includes 15 popular services:
 - [x] Toast notifications
 - [x] Form validation
 
+## Bug Fixes & Improvements
+
+### Date Formatting Fix
+**Issue:** Frontend sent ISO timestamps (`YYYY-MM-DDTHH:mm:ss.sssZ`) but backend expected simple dates (`YYYY-MM-DD`).
+
+**Solution:**
+- Frontend: Updated to send `YYYY-MM-DD` format using `.split('T')[0]`
+- Backend: Enhanced parser to accept both ISO timestamps and simple dates for robustness
+
+**Status:** [FIXED] - Both catalog subscriptions and custom subscriptions now work correctly
+
 ## Technical Implementation
 
 ### Payment Processing (Simulated)

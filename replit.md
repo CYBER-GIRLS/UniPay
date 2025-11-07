@@ -59,6 +59,19 @@ The application features distinct layouts for authenticated (`DashboardLayout`) 
 *   **Animations:** Framer Motion
 ## Recent Changes
 
+**November 7, 2025 (Subscription Cards Feature):**
+- ✅ **Complete Subscription Cards management system** - Full backend and frontend
+- ✅ **SubscriptionCard model** - Status tracking (active/paused), billing dates, cost tracking
+- ✅ **7 API routes** - Catalog, CRUD, statistics, payment processing
+- ✅ **Predefined catalog** - 15+ popular services (Spotify, Netflix, YouTube Premium, etc.)
+- ✅ **5 frontend components** - CatalogView, CustomSubscriptionForm, SubscriptionsList, SummaryWidget, NotificationPlaceholder
+- ✅ **Subscription Dashboard** - Tab-based navigation (Catalog / My Subscriptions)
+- ✅ **Date formatting fix** - Frontend/backend date parsing compatibility
+- ✅ **Component documentation** - Each file has purpose, functions, and status markers
+- ✅ **Comprehensive feature docs** - docs/features/13-subscriptions.md with full API reference
+
+## Recent Changes
+
 **November 7, 2025 (UI Redesign):**
 - ✅ **Complete Revolut-inspired UI redesign** - Modern, clean, and interactive interface
 - ✅ **Top Navigation Bar** - Fixed header with profile dropdown and settings
@@ -112,6 +125,7 @@ The application features distinct layouts for authenticated (`DashboardLayout`) 
 10. ✅ Profile - User information display
 11. ✅ Settings - Account management UI
 12. 🚧 Notifications - UI complete (WebSocket integration planned)
+13. ✅ Subscriptions - Recurring payment management with catalog
 
 ## Documentation
 
