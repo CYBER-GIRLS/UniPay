@@ -22,6 +22,7 @@ def create_app(config_name='development'):
     from app.blueprints.savings import savings_bp
     from app.blueprints.marketplace import marketplace_bp
     from app.blueprints.loans import loans_bp
+    from app.blueprints.subscriptions import subscriptions_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(wallet_bp, url_prefix='/api/wallet')
@@ -30,6 +31,7 @@ def create_app(config_name='development'):
     app.register_blueprint(savings_bp, url_prefix='/api/savings')
     app.register_blueprint(marketplace_bp, url_prefix='/api/marketplace')
     app.register_blueprint(loans_bp, url_prefix='/api/loans')
+    app.register_blueprint(subscriptions_bp, url_prefix='/api/subscriptions')
     
     @app.route('/api/health')
     def health_check():
