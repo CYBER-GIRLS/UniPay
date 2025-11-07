@@ -59,7 +59,7 @@ export function CatalogView() {
         service_name: service.service_name,
         category: service.category,
         monthly_cost: service.monthly_cost,
-        next_billing_date: nextBillingDate.toISOString(),
+        next_billing_date: nextBillingDate.toISOString().split('T')[0],
         is_custom: false,
         icon_url: service.icon_url,
         description: service.description,

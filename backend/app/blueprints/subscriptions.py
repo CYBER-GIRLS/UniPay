@@ -247,13 +247,22 @@ def create_subscription():
     data = request.get_json()
     
     try:
+        # Parse next_billing_date - accept both ISO format and simple date
+        billing_date_str = data['next_billing_date']
+        if 'T' in billing_date_str:
+            # ISO format with time
+            next_billing_date = datetime.fromisoformat(billing_date_str.replace('Z', '+00:00')).date()
+        else:
+            # Simple YYYY-MM-DD format
+            next_billing_date = datetime.strptime(billing_date_str, '%Y-%m-%d').date()
+        
         # Create new subscription
         subscription = SubscriptionCard(
             user_id=current_user_id,
             service_name=data['service_name'],
             category=data['category'],
             monthly_cost=data['monthly_cost'],
-            next_billing_date=datetime.fromisoformat(data['next_billing_date']).date(),
+            next_billing_date=next_billing_date,
             status='active',
             is_custom=data.get('is_custom', False),
             icon_url=data.get('icon_url'),
