@@ -12,6 +12,9 @@ def create_app(config_name='development'):
     socketio.init_app(app)
     migrate.init_app(app, db)
     
+    with app.app_context():
+        from app import models
+    
     from app.blueprints.auth import auth_bp
     from app.blueprints.wallet import wallet_bp
     from app.blueprints.transactions import transactions_bp

@@ -15,7 +15,7 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     
-    CORS_ORIGINS = ['http://localhost:5000', 'http://0.0.0.0:5000']
+    CORS_ORIGINS = ['http://localhost:5000', 'http://0.0.0.0:5000', 'http://localhost:5001', 'http://0.0.0.0:5001']
     
     SOCKETIO_CORS_ALLOWED_ORIGINS = '*'
     

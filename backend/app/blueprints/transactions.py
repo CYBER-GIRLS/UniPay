@@ -8,7 +8,7 @@ transactions_bp = Blueprint('transactions', __name__)
 @transactions_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_transactions():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
@@ -36,7 +36,7 @@ def get_transactions():
 @transactions_bp.route('/<int:transaction_id>', methods=['GET'])
 @jwt_required()
 def get_transaction(transaction_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     transaction = Transaction.query.filter_by(id=transaction_id, user_id=user_id).first()
     
@@ -48,7 +48,7 @@ def get_transaction(transaction_id):
 @transactions_bp.route('/stats', methods=['GET'])
 @jwt_required()
 def get_transaction_stats():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     from sqlalchemy import func
     from app.extensions import db

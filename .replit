@@ -27,23 +27,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "backend"
+args = "frontend"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "frontend"
-
-[[workflows.workflow]]
-name = "backend"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd backend && python run.py"
-waitForPort = 8000
-
-[workflows.workflow.metadata]
-outputType = "console"
+args = "backend"
 
 [[workflows.workflow]]
 name = "frontend"
@@ -56,6 +44,18 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow]]
+name = "backend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && python run.py"
+waitForPort = 8000
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [[ports]]
 localPort = 5000

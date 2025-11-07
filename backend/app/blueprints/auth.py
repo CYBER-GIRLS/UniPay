@@ -37,8 +37,8 @@ def register():
     
     db.session.commit()
     
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
     
     return jsonify({
         'message': 'User registered successfully',
@@ -62,8 +62,8 @@ def login():
     if not user.is_active:
         return jsonify({'error': 'Account is deactivated'}), 403
     
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
     
     return jsonify({
         'message': 'Login successful',
@@ -75,7 +75,7 @@ def login():
 @auth_bp.route('/me', methods=['GET'])
 @jwt_required()
 def get_current_user():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if not user:
@@ -86,7 +86,7 @@ def get_current_user():
 @auth_bp.route('/set-pin', methods=['POST'])
 @jwt_required()
 def set_pin():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if not user:
@@ -106,7 +106,7 @@ def set_pin():
 @auth_bp.route('/verify-pin', methods=['POST'])
 @jwt_required()
 def verify_pin():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if not user:

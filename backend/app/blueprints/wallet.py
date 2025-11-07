@@ -10,7 +10,7 @@ wallet_bp = Blueprint('wallet', __name__)
 @wallet_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_wallet():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     wallet = Wallet.query.filter_by(user_id=user_id).first()
     
     if not wallet:
@@ -21,7 +21,7 @@ def get_wallet():
 @wallet_bp.route('/topup', methods=['POST'])
 @jwt_required()
 def topup_wallet():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     wallet = Wallet.query.filter_by(user_id=user_id).first()
     
     if not wallet:
@@ -41,6 +41,7 @@ def topup_wallet():
         transaction_type='topup',
         amount=Decimal(str(amount)),
         status='completed',
+        receiver_id=user_id,
         description=f'Top-up via {method}',
         completed_at=datetime.utcnow(),
         transaction_metadata={'method': method}
@@ -58,7 +59,7 @@ def topup_wallet():
 @wallet_bp.route('/transfer', methods=['POST'])
 @jwt_required()
 def transfer_money():
-    sender_id = get_jwt_identity()
+    sender_id = int(get_jwt_identity())
     sender_wallet = Wallet.query.filter_by(user_id=sender_id).first()
     
     if not sender_wallet:
@@ -91,22 +92,34 @@ def transfer_money():
     sender_wallet.balance -= amount
     receiver_wallet.balance += amount
     
-    transaction = Transaction(
+    sender_transaction = Transaction(
         user_id=sender_id,
         transaction_type='transfer',
         amount=amount,
         status='completed',
         sender_id=sender_id,
         receiver_id=receiver.id,
-        description=description,
+        description=description or f'Transfer to {receiver.username}',
         completed_at=datetime.utcnow()
     )
     
-    db.session.add(transaction)
+    receiver_transaction = Transaction(
+        user_id=receiver.id,
+        transaction_type='transfer',
+        amount=amount,
+        status='completed',
+        sender_id=sender_id,
+        receiver_id=receiver.id,
+        description=description or f'Transfer from {sender_wallet.user.username}',
+        completed_at=datetime.utcnow()
+    )
+    
+    db.session.add(sender_transaction)
+    db.session.add(receiver_transaction)
     db.session.commit()
     
     return jsonify({
         'message': 'Transfer successful',
         'wallet': sender_wallet.to_dict(),
-        'transaction': transaction.to_dict()
+        'transaction': sender_transaction.to_dict()
     }), 200

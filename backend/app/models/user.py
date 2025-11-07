@@ -28,7 +28,7 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     wallet = db.relationship('Wallet', backref='user', uselist=False, cascade='all, delete-orphan')
-    transactions = db.relationship('Transaction', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    transactions = db.relationship('Transaction', foreign_keys='Transaction.user_id', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     virtual_cards = db.relationship('VirtualCard', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     savings_pockets = db.relationship('SavingsPocket', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     goals = db.relationship('Goal', backref='user', lazy='dynamic', cascade='all, delete-orphan')
