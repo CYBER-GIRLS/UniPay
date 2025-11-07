@@ -61,10 +61,6 @@ outputType = "webview"
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 40765
-externalPort = 3000
-
 [deployment]
 run = ["bash", "-c", "gunicorn --reuse-port -w 4 -b 0.0.0.0:8000 app:app & npm run dev"]
 deploymentTarget = "cloudrun"
