@@ -17,7 +17,7 @@ class Transaction(db.Model):
     receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     
     description = db.Column(db.String(255))
-    metadata = db.Column(db.JSON)
+    transaction_metadata = db.Column(db.JSON)
     
     card_id = db.Column(db.Integer, db.ForeignKey('virtual_cards.id'), nullable=True)
     
@@ -38,7 +38,7 @@ class Transaction(db.Model):
             'sender_id': self.sender_id,
             'receiver_id': self.receiver_id,
             'description': self.description,
-            'metadata': self.metadata,
+            'metadata': self.transaction_metadata,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'completed_at': self.completed_at.isoformat() if self.completed_at else None
         }

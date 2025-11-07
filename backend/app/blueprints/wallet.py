@@ -43,7 +43,7 @@ def topup_wallet():
         status='completed',
         description=f'Top-up via {method}',
         completed_at=datetime.utcnow(),
-        metadata={'method': method}
+        transaction_metadata={'method': method}
     )
     
     db.session.add(transaction)
