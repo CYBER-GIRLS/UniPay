@@ -1,18 +1,60 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { loansAPI } from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
 import { Users, Plus, ArrowUpRight, ArrowDownRight, DollarSign } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 const MotionCard = motion(Card);
 
 export default function LoansPage() {
+  const [loanDialogOpen, setLoanDialogOpen] = useState(false);
+  const [repayDialogOpen, setRepayDialogOpen] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState<any>(null);
+  
+  const [borrowerUsername, setBorrowerUsername] = useState('');
+  const [loanAmount, setLoanAmount] = useState('');
+  const [loanDescription, setLoanDescription] = useState('');
+  const [repayAmount, setRepayAmount] = useState('');
+  
+  const queryClient = useQueryClient();
+
   const { data: loansData } = useQuery({
     queryKey: ['loans'],
     queryFn: async () => {
       const response = await loansAPI.getLoans();
       return response.data;
+    },
+  });
+
+  const createLoanMutation = useMutation({
+    mutationFn: (data: any) => loansAPI.createLoan(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['loans'] });
+      setLoanDialogOpen(false);
+      toast.success('Loan created');
+      setBorrowerUsername('');
+      setLoanAmount('');
+      setLoanDescription('');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || 'Failed to create loan');
+    },
+  });
+
+  const repayMutation = useMutation({
+    mutationFn: ({ loanId, amount }: { loanId: number; amount: number }) =>
+      loansAPI.repayLoan(loanId, amount),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['loans'] });
+      setRepayDialogOpen(false);
+      toast.success('Repayment successful');
+      setRepayAmount('');
     },
   });
 
@@ -41,10 +83,60 @@ export default function LoansPage() {
           <h1 className="text-2xl font-bold text-gray-900">P2P Loans</h1>
           <p className="text-gray-600 mt-1">Manage loans with friends and track debts</p>
         </div>
-        <Button className="bg-gradient-to-r from-violet-600 to-indigo-600">
-          <Plus className="h-4 w-4 mr-2" />
-          New Loan
-        </Button>
+        <Dialog open={loanDialogOpen} onOpenChange={setLoanDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-gradient-to-r from-violet-600 to-indigo-600">
+              <Plus className="h-4 w-4 mr-2" />
+              New Loan
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create Loan</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="borrower">Borrower Username</Label>
+                <Input
+                  id="borrower"
+                  placeholder="johndoe"
+                  value={borrowerUsername}
+                  onChange={(e) => setBorrowerUsername(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="amount">Amount ($)</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  placeholder="100"
+                  value={loanAmount}
+                  onChange={(e) => setLoanAmount(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Input
+                  id="description"
+                  placeholder="Textbook expenses"
+                  value={loanDescription}
+                  onChange={(e) => setLoanDescription(e.target.value)}
+                />
+              </div>
+              <Button
+                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
+                onClick={() => createLoanMutation.mutate({
+                  borrower_username: borrowerUsername,
+                  amount: Number(loanAmount),
+                  description: loanDescription,
+                })}
+                disabled={createLoanMutation.isPending || !borrowerUsername || !loanAmount}
+              >
+                {createLoanMutation.isPending ? 'Creating...' : 'Create Loan'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </motion.div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -126,8 +218,18 @@ export default function LoansPage() {
                       </div>
                     </div>
                     {loan.status !== 'repaid' && (
-                      <div className="mt-3">
-                        <Button size="sm" className="w-full">
+                      <div className="mt-3 space-y-2">
+                        <div className="text-sm text-gray-600">
+                          Remaining: ${(loan.amount - (loan.amount_repaid || 0)).toFixed(2)}
+                        </div>
+                        <Button
+                          size="sm"
+                          className="w-full"
+                          onClick={() => {
+                            setSelectedLoan(loan);
+                            setRepayDialogOpen(true);
+                          }}
+                        >
                           Repay Loan
                         </Button>
                       </div>
@@ -146,6 +248,47 @@ export default function LoansPage() {
           )}
         </motion.div>
       </div>
+
+      <Dialog open={repayDialogOpen} onOpenChange={setRepayDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Repay Loan</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-gray-50 rounded-lg space-y-1">
+              <p className="text-sm text-gray-600">Loan Amount: ${selectedLoan?.amount}</p>
+              <p className="text-sm text-gray-600">Already Repaid: ${selectedLoan?.amount_repaid || 0}</p>
+              <p className="text-sm font-semibold text-gray-900">
+                Remaining: ${selectedLoan ? (selectedLoan.amount - (selectedLoan.amount_repaid || 0)).toFixed(2) : '0.00'}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="repay-amount">Repayment Amount ($)</Label>
+              <Input
+                id="repay-amount"
+                type="number"
+                placeholder="50"
+                value={repayAmount}
+                onChange={(e) => setRepayAmount(e.target.value)}
+              />
+            </div>
+            <Button
+              className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
+              onClick={() => {
+                if (selectedLoan && repayAmount) {
+                  repayMutation.mutate({
+                    loanId: selectedLoan.id,
+                    amount: Number(repayAmount),
+                  });
+                }
+              }}
+              disabled={repayMutation.isPending || !repayAmount}
+            >
+              {repayMutation.isPending ? 'Processing...' : 'Repay'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

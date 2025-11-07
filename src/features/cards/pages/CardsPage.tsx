@@ -1,15 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { cardsAPI } from '@/lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
 import { CreditCard, Plus, Lock, Unlock, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 const MotionCard = motion(Card);
 
 export default function CardsPage() {
-  const [selectedCard, setSelectedCard] = useState<any>(null);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [cardName, setCardName] = useState('');
+  const [cardType, setCardType] = useState('standard');
+  const [spendingLimit, setSpendingLimit] = useState('');
   const queryClient = useQueryClient();
 
   const { data: cardsData } = useQuery({
@@ -20,10 +27,25 @@ export default function CardsPage() {
     },
   });
 
+  const createMutation = useMutation({
+    mutationFn: (data: any) => cardsAPI.createCard(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cards'] });
+      setCreateDialogOpen(false);
+      toast.success('Card created successfully');
+      setCardName('');
+      setSpendingLimit('');
+    },
+    onError: () => {
+      toast.error('Failed to create card');
+    },
+  });
+
   const freezeMutation = useMutation({
     mutationFn: (cardId: number) => cardsAPI.freezeCard(cardId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cards'] });
+      toast.success('Card frozen');
     },
   });
 
@@ -31,8 +53,17 @@ export default function CardsPage() {
     mutationFn: (cardId: number) => cardsAPI.unfreezeCard(cardId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cards'] });
+      toast.success('Card unfrozen');
     },
   });
+
+  const handleCreateCard = () => {
+    createMutation.mutate({
+      card_name: cardName || 'Virtual Card',
+      card_type: cardType,
+      spending_limit: spendingLimit ? Number(spendingLimit) : undefined,
+    });
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -59,10 +90,59 @@ export default function CardsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Virtual Cards</h1>
           <p className="text-gray-600 mt-1">Manage your virtual cards and subscriptions</p>
         </div>
-        <Button className="bg-gradient-to-r from-violet-600 to-indigo-600">
-          <Plus className="h-4 w-4 mr-2" />
-          Create Card
-        </Button>
+        <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-gradient-to-r from-violet-600 to-indigo-600">
+              <Plus className="h-4 w-4 mr-2" />
+              Create Card
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create Virtual Card</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="card-name">Card Name</Label>
+                <Input
+                  id="card-name"
+                  placeholder="My Shopping Card"
+                  value={cardName}
+                  onChange={(e) => setCardName(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="card-type">Card Type</Label>
+                <select
+                  id="card-type"
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={cardType}
+                  onChange={(e) => setCardType(e.target.value)}
+                >
+                  <option value="standard">Standard</option>
+                  <option value="premium">Premium</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="spending-limit">Spending Limit (optional)</Label>
+                <Input
+                  id="spending-limit"
+                  type="number"
+                  placeholder="500"
+                  value={spendingLimit}
+                  onChange={(e) => setSpendingLimit(e.target.value)}
+                />
+              </div>
+              <Button
+                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
+                onClick={handleCreateCard}
+                disabled={createMutation.isPending}
+              >
+                {createMutation.isPending ? 'Creating...' : 'Create Card'}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </motion.div>
 
       {cardsData && cardsData.length > 0 ? (
@@ -116,9 +196,6 @@ export default function CardsPage() {
                       Freeze
                     </Button>
                   )}
-                  <Button size="sm" variant="outline">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
                 </div>
               </CardContent>
             </MotionCard>
@@ -133,7 +210,10 @@ export default function CardsPage() {
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No cards yet</h3>
               <p className="text-gray-600 mb-6">Create your first virtual card to get started</p>
-              <Button className="bg-gradient-to-r from-violet-600 to-indigo-600">
+              <Button
+                className="bg-gradient-to-r from-violet-600 to-indigo-600"
+                onClick={() => setCreateDialogOpen(true)}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Create Your First Card
               </Button>
