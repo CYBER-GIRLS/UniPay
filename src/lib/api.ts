@@ -64,8 +64,8 @@ export const cardsAPI = {
 export const savingsAPI = {
   getPockets: () => api.get('/savings/pockets'),
   createPocket: (data: any) => api.post('/savings/pockets', data),
-  depositToPocket: (pocketId: number, amount: number, pin: string) => 
-    api.post(`/savings/pockets/${pocketId}/deposit`, { amount, pin }),
+  depositToPocket: (pocketId: number, data: { amount: number; pin: string }) => 
+    api.post(`/savings/pockets/${pocketId}/deposit`, data),
   getGoals: () => api.get('/savings/goals'),
   createGoal: (data: any) => api.post('/savings/goals', data),
   contributeToGoal: (goalId: number, amount: number) => 

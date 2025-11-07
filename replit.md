@@ -130,9 +130,27 @@ The application features distinct layouts for authenticated (`DashboardLayout`) 
 ## Documentation
 
 Comprehensive documentation available in `/docs`:
-- **Features** (12 docs): Detailed component descriptions, functionality, implementation
+- **Features** (14 docs): Detailed component descriptions, functionality, implementation
 - **Architecture**: System overview, technology stack, design patterns
 - **API**: Complete endpoint reference with request/response examples
+
+## Latest Features Documentation
+
+**DarkDays Pocket / Secure Wallet** (`docs/features/14-darkdays-pocket.md`):
+- Comprehensive documentation of all 8 expected functionalities
+- Clear marking of implemented vs pending features
+- Component specifications and implementation roadmap
+- Security considerations and UX guidelines
+
+## Component Status
+
+**DarkDays Pocket Components:**
+1. ✅ DarkDaysCard - Black card visualization with vault aesthetics
+2. ✅ SecurityVerificationModal - Multi-step PIN + password verification
+3. ✅ AutoSaveConfigPanel - Auto-save configuration with percentage slider
+4. ✅ EmergencyUnlockDialog - Emergency access with category selection
+5. ✅ SavingsReportWidget - Progress reports and milestone tracking
+6. ✅ DarkDaysPocketPage - Main interface integrating all components
 
 ## Notes
 
