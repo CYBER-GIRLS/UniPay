@@ -19,6 +19,7 @@ import TransactionsPage from './features/transactions/pages/TransactionsPage';
 import TransfersPage from './features/transfers/pages/TransfersPage';
 import TopupPage from './features/topup/pages/TopupPage';
 import NotificationsPage from './features/notifications/pages/NotificationsPage';
+import SubscriptionsPage from './features/subscriptions/pages/SubscriptionsPage';
 
 import './App.css';
 
@@ -37,6 +38,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/cards" element={<CardsPage />} />
+            <Route path="/subscriptions" element={<SubscriptionsPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
             <Route path="/savings" element={<SavingsPage />} />
             <Route path="/marketplace" element={<MarketplacePage />} />

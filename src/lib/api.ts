@@ -85,3 +85,13 @@ export const loansAPI = {
   createLoan: (data: any) => api.post('/loans', data),
   repayLoan: (loanId: number, amount: number) => api.post(`/loans/${loanId}/repay`, { amount }),
 };
+
+export const subscriptionsAPI = {
+  getCatalog: (category?: string) => api.get('/subscriptions/catalog', { params: { category } }),
+  getSubscriptions: (status?: string) => api.get('/subscriptions', { params: { status } }),
+  createSubscription: (data: any) => api.post('/subscriptions', data),
+  updateSubscription: (id: number, data: any) => api.put(`/subscriptions/${id}`, data),
+  cancelSubscription: (id: number) => api.delete(`/subscriptions/${id}`),
+  processPayment: (id: number) => api.post(`/subscriptions/${id}/process-payment`),
+  getStatistics: () => api.get('/subscriptions/statistics'),
+};

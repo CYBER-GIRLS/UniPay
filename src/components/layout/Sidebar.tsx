@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Wallet, CreditCard, PiggyBank, Store, Users, User, ArrowLeftRight, Plus, Bell, Receipt } from 'lucide-react';
+import { Home, Wallet, CreditCard, PiggyBank, Store, Users, User, ArrowLeftRight, Plus, Bell, Receipt, Repeat } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -8,6 +8,7 @@ const navItems = [
   { path: '/topup', icon: Plus, label: 'Top Up' },
   { path: '/transfers', icon: ArrowLeftRight, label: 'Transfers' },
   { path: '/cards', icon: CreditCard, label: 'Cards' },
+  { path: '/subscriptions', icon: Repeat, label: 'Subscriptions' },
   { path: '/transactions', icon: Receipt, label: 'Transactions' },
   { path: '/savings', icon: PiggyBank, label: 'Savings' },
   { path: '/marketplace', icon: Store, label: 'Marketplace' },
