@@ -65,6 +65,18 @@ externalPort = 80
 localPort = 5001
 externalPort = 3000
 
+[[ports]]
+localPort = 5002
+externalPort = 3002
+
+[[ports]]
+localPort = 33369
+externalPort = 3003
+
+[[ports]]
+localPort = 45559
+externalPort = 3001
+
 [deployment]
 run = ["bash", "-c", "gunicorn --reuse-port -w 4 -b 0.0.0.0:8000 app:app & npm run dev"]
 deploymentTarget = "cloudrun"
