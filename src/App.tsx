@@ -16,6 +16,9 @@ import SavingsPage from './features/savings/pages/SavingsPage';
 import MarketplacePage from './features/marketplace/pages/MarketplacePage';
 import LoansPage from './features/loans/pages/LoansPage';
 import TransactionsPage from './features/transactions/pages/TransactionsPage';
+import TransfersPage from './features/transfers/pages/TransfersPage';
+import TopupPage from './features/topup/pages/TopupPage';
+import NotificationsPage from './features/notifications/pages/NotificationsPage';
 
 import './App.css';
 
@@ -38,7 +41,9 @@ function App() {
             <Route path="/savings" element={<SavingsPage />} />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/loans" element={<LoansPage />} />
-            <Route path="/wallet" element={<div>Wallet Page - Coming Soon</div>} />
+            <Route path="/transfers" element={<TransfersPage />} />
+            <Route path="/topup" element={<TopupPage />} />
+            <Route path="/notifications" element={<NotificationsPage />} />
           </Route>
 
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

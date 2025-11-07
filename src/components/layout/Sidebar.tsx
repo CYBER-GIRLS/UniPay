@@ -1,15 +1,18 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Wallet, CreditCard, PiggyBank, Store, Users, User } from 'lucide-react';
+import { Home, Wallet, CreditCard, PiggyBank, Store, Users, User, ArrowLeftRight, Plus, Bell, Receipt } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { path: '/dashboard', icon: Home, label: 'Dashboard' },
-  { path: '/wallet', icon: Wallet, label: 'Wallet' },
+  { path: '/topup', icon: Plus, label: 'Top Up' },
+  { path: '/transfers', icon: ArrowLeftRight, label: 'Transfers' },
   { path: '/cards', icon: CreditCard, label: 'Cards' },
+  { path: '/transactions', icon: Receipt, label: 'Transactions' },
   { path: '/savings', icon: PiggyBank, label: 'Savings' },
   { path: '/marketplace', icon: Store, label: 'Marketplace' },
   { path: '/loans', icon: Users, label: 'Loans' },
+  { path: '/notifications', icon: Bell, label: 'Notifications' },
   { path: '/profile', icon: User, label: 'Profile' },
 ];
 
@@ -47,7 +50,7 @@ export default function Sidebar() {
       </aside>
 
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t">
-        <div className="grid grid-cols-7 gap-1 p-2">
+        <div className="grid grid-cols-5 gap-1 p-2 overflow-x-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path || 
