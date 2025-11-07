@@ -34,7 +34,7 @@ def get_listings():
 @marketplace_bp.route('/listings', methods=['POST'])
 @jwt_required()
 def create_listing():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     listing = MarketplaceListing(
@@ -71,7 +71,7 @@ def get_listing(listing_id):
 @marketplace_bp.route('/orders', methods=['POST'])
 @jwt_required()
 def create_order():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     listing_id = data.get('listing_id')

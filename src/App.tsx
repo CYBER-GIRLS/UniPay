@@ -11,6 +11,11 @@ import RegisterPage from './features/auth/pages/RegisterPage';
 import DashboardPage from './features/dashboard/pages/DashboardPage';
 import ProfilePage from './features/profile/pages/ProfilePage';
 import SettingsPage from './features/settings/pages/SettingsPage';
+import CardsPage from './features/cards/pages/CardsPage';
+import SavingsPage from './features/savings/pages/SavingsPage';
+import MarketplacePage from './features/marketplace/pages/MarketplacePage';
+import LoansPage from './features/loans/pages/LoansPage';
+import TransactionsPage from './features/transactions/pages/TransactionsPage';
 
 import './App.css';
 
@@ -28,12 +33,12 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/cards" element={<CardsPage />} />
+            <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/savings" element={<SavingsPage />} />
+            <Route path="/marketplace" element={<MarketplacePage />} />
+            <Route path="/loans" element={<LoansPage />} />
             <Route path="/wallet" element={<div>Wallet Page - Coming Soon</div>} />
-            <Route path="/cards" element={<div>Cards Page - Coming Soon</div>} />
-            <Route path="/transactions" element={<div>Transactions Page - Coming Soon</div>} />
-            <Route path="/savings" element={<div>Savings Page - Coming Soon</div>} />
-            <Route path="/marketplace" element={<div>Marketplace Page - Coming Soon</div>} />
-            <Route path="/loans" element={<div>Loans Page - Coming Soon</div>} />
           </Route>
 
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

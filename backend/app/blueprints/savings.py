@@ -3,13 +3,14 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
 from app.models import SavingsPocket, Goal, User
 from decimal import Decimal
+from datetime import datetime
 
 savings_bp = Blueprint('savings', __name__)
 
 @savings_bp.route('/pockets', methods=['GET'])
 @jwt_required()
 def get_savings_pockets():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     pockets = SavingsPocket.query.filter_by(user_id=user_id).all()
     
     return jsonify({
@@ -19,7 +20,7 @@ def get_savings_pockets():
 @savings_bp.route('/pockets', methods=['POST'])
 @jwt_required()
 def create_savings_pocket():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     pocket = SavingsPocket(
@@ -40,7 +41,7 @@ def create_savings_pocket():
 @savings_bp.route('/pockets/<int:pocket_id>/deposit', methods=['POST'])
 @jwt_required()
 def deposit_to_pocket(pocket_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     pocket = SavingsPocket.query.filter_by(id=pocket_id, user_id=user_id).first()
     
     if not pocket:
@@ -68,7 +69,7 @@ def deposit_to_pocket(pocket_id):
 @savings_bp.route('/goals', methods=['GET'])
 @jwt_required()
 def get_goals():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     goals = Goal.query.filter_by(user_id=user_id).all()
     
     return jsonify({
@@ -78,7 +79,7 @@ def get_goals():
 @savings_bp.route('/goals', methods=['POST'])
 @jwt_required()
 def create_goal():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     goal = Goal(
@@ -102,7 +103,7 @@ def create_goal():
 @savings_bp.route('/goals/<int:goal_id>/contribute', methods=['POST'])
 @jwt_required()
 def contribute_to_goal(goal_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     goal = Goal.query.filter_by(id=goal_id, user_id=user_id).first()
     
     if not goal:

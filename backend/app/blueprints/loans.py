@@ -10,7 +10,7 @@ loans_bp = Blueprint('loans', __name__)
 @loans_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_loans():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     loans_given = Loan.query.filter_by(lender_id=user_id).all()
     loans_taken = Loan.query.filter_by(borrower_id=user_id).all()
@@ -23,7 +23,7 @@ def get_loans():
 @loans_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_loan():
-    lender_id = get_jwt_identity()
+    lender_id = int(get_jwt_identity())
     data = request.get_json()
     
     borrower_username = data.get('borrower_username')
@@ -53,7 +53,7 @@ def create_loan():
 @loans_bp.route('/<int:loan_id>/repay', methods=['POST'])
 @jwt_required()
 def repay_loan(loan_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     loan = Loan.query.get(loan_id)
     
     if not loan:

@@ -9,7 +9,7 @@ cards_bp = Blueprint('cards', __name__)
 @cards_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_cards():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     cards = VirtualCard.query.filter_by(user_id=user_id).all()
     
     return jsonify({
@@ -19,7 +19,7 @@ def get_cards():
 @cards_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_card():
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     card_type = data.get('card_type', 'standard')
@@ -47,7 +47,7 @@ def create_card():
 @cards_bp.route('/<int:card_id>', methods=['GET'])
 @jwt_required()
 def get_card(card_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     card = VirtualCard.query.filter_by(id=card_id, user_id=user_id).first()
     
     if not card:
@@ -58,7 +58,7 @@ def get_card(card_id):
 @cards_bp.route('/<int:card_id>/freeze', methods=['POST'])
 @jwt_required()
 def freeze_card(card_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     card = VirtualCard.query.filter_by(id=card_id, user_id=user_id).first()
     
     if not card:
@@ -72,7 +72,7 @@ def freeze_card(card_id):
 @cards_bp.route('/<int:card_id>/unfreeze', methods=['POST'])
 @jwt_required()
 def unfreeze_card(card_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     card = VirtualCard.query.filter_by(id=card_id, user_id=user_id).first()
     
     if not card:
@@ -86,7 +86,7 @@ def unfreeze_card(card_id):
 @cards_bp.route('/<int:card_id>/subscriptions', methods=['GET'])
 @jwt_required()
 def get_card_subscriptions(card_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     card = VirtualCard.query.filter_by(id=card_id, user_id=user_id).first()
     
     if not card:
@@ -101,7 +101,7 @@ def get_card_subscriptions(card_id):
 @cards_bp.route('/<int:card_id>/subscriptions', methods=['POST'])
 @jwt_required()
 def add_subscription(card_id):
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     card = VirtualCard.query.filter_by(id=card_id, user_id=user_id).first()
     
     if not card:
