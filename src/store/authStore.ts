@@ -9,6 +9,9 @@ interface User {
   last_name?: string;
   university?: string;
   faculty?: string;
+  phone?: string;
+  is_verified?: boolean;
+  created_at?: string;
 }
 
 interface AuthState {

@@ -9,6 +9,8 @@ import DashboardLayout from './layouts/DashboardLayout';
 import LoginPage from './features/auth/pages/LoginPage';
 import RegisterPage from './features/auth/pages/RegisterPage';
 import DashboardPage from './features/dashboard/pages/DashboardPage';
+import ProfilePage from './features/profile/pages/ProfilePage';
+import SettingsPage from './features/settings/pages/SettingsPage';
 
 import './App.css';
 
@@ -24,6 +26,8 @@ function App() {
 
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="/wallet" element={<div>Wallet Page - Coming Soon</div>} />
             <Route path="/cards" element={<div>Cards Page - Coming Soon</div>} />
             <Route path="/transactions" element={<div>Transactions Page - Coming Soon</div>} />
