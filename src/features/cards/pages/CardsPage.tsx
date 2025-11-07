@@ -17,6 +17,7 @@ export default function CardsPage() {
   const [cardName, setCardName] = useState('');
   const [cardType, setCardType] = useState('standard');
   const [spendingLimit, setSpendingLimit] = useState('');
+  const [mutatingCardIds, setMutatingCardIds] = useState<Set<number>>(new Set());
   const queryClient = useQueryClient();
 
   const { data: cardsData } = useQuery({
@@ -42,18 +43,50 @@ export default function CardsPage() {
   });
 
   const freezeMutation = useMutation({
-    mutationFn: (cardId: number) => cardsAPI.freezeCard(cardId),
-    onSuccess: () => {
+    mutationFn: (cardId: number) => {
+      setMutatingCardIds(prev => new Set(prev).add(cardId));
+      return cardsAPI.freezeCard(cardId);
+    },
+    onSuccess: (_data, cardId) => {
       queryClient.invalidateQueries({ queryKey: ['cards'] });
       toast.success('Card frozen');
+      setMutatingCardIds(prev => {
+        const next = new Set(prev);
+        next.delete(cardId);
+        return next;
+      });
+    },
+    onError: (_error, cardId) => {
+      toast.error('Failed to freeze card');
+      setMutatingCardIds(prev => {
+        const next = new Set(prev);
+        next.delete(cardId);
+        return next;
+      });
     },
   });
 
   const unfreezeMutation = useMutation({
-    mutationFn: (cardId: number) => cardsAPI.unfreezeCard(cardId),
-    onSuccess: () => {
+    mutationFn: (cardId: number) => {
+      setMutatingCardIds(prev => new Set(prev).add(cardId));
+      return cardsAPI.unfreezeCard(cardId);
+    },
+    onSuccess: (_data, cardId) => {
       queryClient.invalidateQueries({ queryKey: ['cards'] });
       toast.success('Card unfrozen');
+      setMutatingCardIds(prev => {
+        const next = new Set(prev);
+        next.delete(cardId);
+        return next;
+      });
+    },
+    onError: (_error, cardId) => {
+      toast.error('Failed to unfreeze card');
+      setMutatingCardIds(prev => {
+        const next = new Set(prev);
+        next.delete(cardId);
+        return next;
+      });
     },
   });
 
@@ -128,6 +161,8 @@ export default function CardsPage() {
                 <Input
                   id="spending-limit"
                   type="number"
+                  min="1"
+                  step="0.01"
                   placeholder="500"
                   value={spendingLimit}
                   onChange={(e) => setSpendingLimit(e.target.value)}
@@ -181,9 +216,10 @@ export default function CardsPage() {
                       variant="outline"
                       className="flex-1"
                       onClick={() => unfreezeMutation.mutate(card.id)}
+                      disabled={mutatingCardIds.has(card.id)}
                     >
                       <Unlock className="h-4 w-4 mr-1" />
-                      Unfreeze
+                      {mutatingCardIds.has(card.id) ? 'Unfreezing...' : 'Unfreeze'}
                     </Button>
                   ) : (
                     <Button
@@ -191,9 +227,10 @@ export default function CardsPage() {
                       variant="outline"
                       className="flex-1"
                       onClick={() => freezeMutation.mutate(card.id)}
+                      disabled={mutatingCardIds.has(card.id)}
                     >
                       <Lock className="h-4 w-4 mr-1" />
-                      Freeze
+                      {mutatingCardIds.has(card.id) ? 'Freezing...' : 'Freeze'}
                     </Button>
                   )}
                 </div>

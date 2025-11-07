@@ -16,6 +16,7 @@ export default function LoansPage() {
   const [loanDialogOpen, setLoanDialogOpen] = useState(false);
   const [repayDialogOpen, setRepayDialogOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState<any>(null);
+  const [repayingLoanIds, setRepayingLoanIds] = useState<Set<number>>(new Set());
   
   const [borrowerUsername, setBorrowerUsername] = useState('');
   const [loanAmount, setLoanAmount] = useState('');
@@ -48,13 +49,28 @@ export default function LoansPage() {
   });
 
   const repayMutation = useMutation({
-    mutationFn: ({ loanId, amount }: { loanId: number; amount: number }) =>
-      loansAPI.repayLoan(loanId, amount),
-    onSuccess: () => {
+    mutationFn: ({ loanId, amount }: { loanId: number; amount: number }) => {
+      setRepayingLoanIds(prev => new Set(prev).add(loanId));
+      return loansAPI.repayLoan(loanId, amount);
+    },
+    onSuccess: (_data, { loanId }) => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
       setRepayDialogOpen(false);
       toast.success('Repayment successful');
       setRepayAmount('');
+      setRepayingLoanIds(prev => {
+        const next = new Set(prev);
+        next.delete(loanId);
+        return next;
+      });
+    },
+    onError: (_error, { loanId }) => {
+      toast.error('Failed to process repayment');
+      setRepayingLoanIds(prev => {
+        const next = new Set(prev);
+        next.delete(loanId);
+        return next;
+      });
     },
   });
 
@@ -109,6 +125,8 @@ export default function LoansPage() {
                 <Input
                   id="amount"
                   type="number"
+                  min="1"
+                  step="0.01"
                   placeholder="100"
                   value={loanAmount}
                   onChange={(e) => setLoanAmount(e.target.value)}
@@ -130,7 +148,7 @@ export default function LoansPage() {
                   amount: Number(loanAmount),
                   description: loanDescription,
                 })}
-                disabled={createLoanMutation.isPending || !borrowerUsername || !loanAmount}
+                disabled={createLoanMutation.isPending || !borrowerUsername || !loanAmount || Number(loanAmount) <= 0}
               >
                 {createLoanMutation.isPending ? 'Creating...' : 'Create Loan'}
               </Button>
@@ -229,8 +247,9 @@ export default function LoansPage() {
                             setSelectedLoan(loan);
                             setRepayDialogOpen(true);
                           }}
+                          disabled={repayingLoanIds.has(loan.id)}
                         >
-                          Repay Loan
+                          {repayingLoanIds.has(loan.id) ? 'Processing...' : 'Repay Loan'}
                         </Button>
                       </div>
                     )}
@@ -267,6 +286,8 @@ export default function LoansPage() {
               <Input
                 id="repay-amount"
                 type="number"
+                min="1"
+                step="0.01"
                 placeholder="50"
                 value={repayAmount}
                 onChange={(e) => setRepayAmount(e.target.value)}
@@ -275,14 +296,14 @@ export default function LoansPage() {
             <Button
               className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
               onClick={() => {
-                if (selectedLoan && repayAmount) {
+                if (selectedLoan && repayAmount && Number(repayAmount) > 0) {
                   repayMutation.mutate({
                     loanId: selectedLoan.id,
                     amount: Number(repayAmount),
                   });
                 }
               }}
-              disabled={repayMutation.isPending || !repayAmount}
+              disabled={repayMutation.isPending || !repayAmount || Number(repayAmount) <= 0}
             >
               {repayMutation.isPending ? 'Processing...' : 'Repay'}
             </Button>

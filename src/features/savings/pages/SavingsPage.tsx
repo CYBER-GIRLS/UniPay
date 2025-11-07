@@ -53,6 +53,9 @@ export default function SavingsPage() {
       setPocketName('');
       setAutoSavePercentage('20');
     },
+    onError: () => {
+      toast.error('Failed to create savings pocket');
+    },
   });
 
   const createGoalMutation = useMutation({
@@ -64,6 +67,9 @@ export default function SavingsPage() {
       setGoalTitle('');
       setGoalAmount('');
       setGoalDescription('');
+    },
+    onError: () => {
+      toast.error('Failed to create goal');
     },
   });
 
@@ -79,6 +85,9 @@ export default function SavingsPage() {
       } else {
         toast.success('Contribution added');
       }
+    },
+    onError: () => {
+      toast.error('Failed to contribute to goal');
     },
   });
 
@@ -336,14 +345,14 @@ export default function SavingsPage() {
             <Button
               className="w-full bg-gradient-to-r from-green-600 to-emerald-600"
               onClick={() => {
-                if (selectedGoal && contributionAmount) {
+                if (selectedGoal && contributionAmount && Number(contributionAmount) > 0) {
                   contributeMutation.mutate({
                     goalId: selectedGoal.id,
                     amount: Number(contributionAmount),
                   });
                 }
               }}
-              disabled={contributeMutation.isPending || !contributionAmount}
+              disabled={contributeMutation.isPending || !contributionAmount || Number(contributionAmount) <= 0}
             >
               {contributeMutation.isPending ? 'Contributing...' : 'Contribute'}
             </Button>

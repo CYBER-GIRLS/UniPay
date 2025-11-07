@@ -18,6 +18,7 @@ export default function MarketplacePage() {
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('books');
   const [price, setPrice] = useState('');
+  const [buyingListingIds, setBuyingListingIds] = useState<Set<number>>(new Set());
   const queryClient = useQueryClient();
 
   const { data: listingsData } = useQuery({
@@ -38,12 +39,31 @@ export default function MarketplacePage() {
       setDescription('');
       setPrice('');
     },
+    onError: () => {
+      toast.error('Failed to create listing');
+    },
   });
 
   const createOrderMutation = useMutation({
-    mutationFn: (listingId: number) => marketplaceAPI.createOrder(listingId),
-    onSuccess: () => {
+    mutationFn: (listingId: number) => {
+      setBuyingListingIds(prev => new Set(prev).add(listingId));
+      return marketplaceAPI.createOrder(listingId);
+    },
+    onSuccess: (_data, listingId) => {
       toast.success('Order created! Seller will be notified.');
+      setBuyingListingIds(prev => {
+        const next = new Set(prev);
+        next.delete(listingId);
+        return next;
+      });
+    },
+    onError: (_error, listingId) => {
+      toast.error('Failed to create order');
+      setBuyingListingIds(prev => {
+        const next = new Set(prev);
+        next.delete(listingId);
+        return next;
+      });
     },
   });
 
@@ -122,6 +142,8 @@ export default function MarketplacePage() {
                 <Input
                   id="price"
                   type="number"
+                  min="1"
+                  step="0.01"
                   placeholder="25"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
@@ -135,7 +157,7 @@ export default function MarketplacePage() {
                   category,
                   price: Number(price),
                 })}
-                disabled={createListingMutation.isPending || !title || !price}
+                disabled={createListingMutation.isPending || !title || !price || Number(price) <= 0}
               >
                 {createListingMutation.isPending ? 'Creating...' : 'Create Listing'}
               </Button>
@@ -185,8 +207,9 @@ export default function MarketplacePage() {
                   size="sm"
                   className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
                   onClick={() => createOrderMutation.mutate(listing.id)}
+                  disabled={buyingListingIds.has(listing.id)}
                 >
-                  Buy Now
+                  {buyingListingIds.has(listing.id) ? 'Processing...' : 'Buy Now'}
                 </Button>
               </CardContent>
             </MotionCard>
