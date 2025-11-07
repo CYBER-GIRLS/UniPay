@@ -26,37 +26,43 @@ export default function SettingsPage() {
       icon: Bell,
       title: 'Notifications',
       description: 'Manage your notification preferences',
-      color: 'violet',
+      bgColor: 'bg-violet-100',
+      iconColor: 'text-violet-600',
     },
     {
       icon: Lock,
       title: 'Security',
       description: 'Password, PIN, and two-factor authentication',
-      color: 'blue',
+      bgColor: 'bg-blue-100',
+      iconColor: 'text-blue-600',
     },
     {
       icon: Globe,
       title: 'Language & Region',
       description: 'Language, currency, and timezone settings',
-      color: 'green',
+      bgColor: 'bg-green-100',
+      iconColor: 'text-green-600',
     },
     {
       icon: Palette,
       title: 'Appearance',
       description: 'Customize the look and feel',
-      color: 'pink',
+      bgColor: 'bg-pink-100',
+      iconColor: 'text-pink-600',
     },
     {
       icon: Shield,
       title: 'Privacy',
       description: 'Control your data and privacy settings',
-      color: 'orange',
+      bgColor: 'bg-orange-100',
+      iconColor: 'text-orange-600',
     },
     {
       icon: CreditCard,
       title: 'Payment Methods',
       description: 'Manage your linked payment methods',
-      color: 'indigo',
+      bgColor: 'bg-indigo-100',
+      iconColor: 'text-indigo-600',
     },
   ];
 
@@ -85,8 +91,8 @@ export default function SettingsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className={`p-3 bg-${section.color}-100 rounded-lg`}>
-                      <Icon className={`h-6 w-6 text-${section.color}-600`} />
+                    <div className={`p-3 ${section.bgColor} rounded-lg`}>
+                      <Icon className={`h-6 w-6 ${section.iconColor}`} />
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">{section.title}</h3>
