@@ -21,40 +21,49 @@ def get_wallet():
 @wallet_bp.route('/topup', methods=['POST'])
 @jwt_required()
 def topup_wallet():
-    user_id = int(get_jwt_identity())
-    wallet = Wallet.query.filter_by(user_id=user_id).first()
-    
-    if not wallet:
-        return jsonify({'error': 'Wallet not found'}), 404
-    
-    data = request.get_json()
-    amount = data.get('amount')
-    method = data.get('method', 'bank_transfer')
-    
-    if not amount or float(amount) <= 0:
-        return jsonify({'error': 'Invalid amount'}), 400
-    
-    wallet.balance += Decimal(str(amount))
-    
-    transaction = Transaction(
-        user_id=user_id,
-        transaction_type='topup',
-        amount=Decimal(str(amount)),
-        status='completed',
-        receiver_id=user_id,
-        description=f'Top-up via {method}',
-        completed_at=datetime.utcnow(),
-        transaction_metadata={'method': method}
-    )
-    
-    db.session.add(transaction)
-    db.session.commit()
-    
-    return jsonify({
-        'message': 'Wallet topped up successfully',
-        'wallet': wallet.to_dict(),
-        'transaction': transaction.to_dict()
-    }), 200
+    try:
+        user_id = int(get_jwt_identity())
+        wallet = Wallet.query.filter_by(user_id=user_id).first()
+        
+        if not wallet:
+            return jsonify({'error': 'Wallet not found'}), 404
+        
+        data = request.get_json()
+        amount = data.get('amount')
+        method = data.get('method', 'bank_transfer')
+        
+        if not amount or float(amount) <= 0:
+            return jsonify({'error': 'Invalid amount'}), 400
+        
+        amount_decimal = Decimal(str(amount))
+        
+        wallet.balance += amount_decimal
+        
+        transaction = Transaction(
+            user_id=user_id,
+            transaction_type='topup',
+            amount=amount_decimal,
+            status='completed',
+            receiver_id=user_id,
+            description=f'Top-up via {method}',
+            completed_at=datetime.utcnow(),
+            transaction_metadata={'method': method}
+        )
+        
+        db.session.add(wallet)
+        db.session.add(transaction)
+        db.session.commit()
+        db.session.refresh(wallet)
+        
+        return jsonify({
+            'message': 'Wallet topped up successfully',
+            'wallet': wallet.to_dict(),
+            'transaction': transaction.to_dict()
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Top-up error: {str(e)}")
+        return jsonify({'error': f'Top-up failed: {str(e)}'}), 500
 
 @wallet_bp.route('/transfer', methods=['POST'])
 @jwt_required()
