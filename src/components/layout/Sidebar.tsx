@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Wallet, CreditCard, PiggyBank, Store, Users, User, ArrowLeftRight, Plus, Bell, Receipt, Repeat, ShieldCheck, Percent, CalendarDays, Target } from 'lucide-react';
+import { Home, CreditCard, PiggyBank, Store, Users, User, ArrowLeftRight, Plus, Receipt, Repeat, ShieldCheck, Percent } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
@@ -9,15 +9,12 @@ const navItems = [
   { path: '/transfers', icon: ArrowLeftRight, label: 'Transfers' },
   { path: '/cards', icon: CreditCard, label: 'Cards' },
   { path: '/subscriptions', icon: Repeat, label: 'Subscriptions' },
-  { path: '/transactions', icon: Receipt, label: 'Transactions' },
-  { path: '/timeline', icon: CalendarDays, label: 'Finance Timeline' },
-  { path: '/piggy-goals', icon: Target, label: 'Piggy Goals' },
-  { path: '/savings', icon: PiggyBank, label: 'Savings' },
+  { path: '/transactions', icon: Receipt, label: 'Activity' },
+  { path: '/savings', icon: PiggyBank, label: 'Savings & Goals' },
   { path: '/darkdays-pocket', icon: ShieldCheck, label: 'DarkDays Pocket' },
   { path: '/isic', icon: Percent, label: 'ISIC Discounts' },
   { path: '/marketplace', icon: Store, label: 'Marketplace' },
   { path: '/loans', icon: Users, label: 'Loans' },
-  { path: '/notifications', icon: Bell, label: 'Notifications' },
   { path: '/profile', icon: User, label: 'Profile' },
 ];
 

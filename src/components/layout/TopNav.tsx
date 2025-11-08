@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Settings, User, LogOut, ChevronDown } from 'lucide-react';
+import { Bell, User, LogOut, ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,13 +45,13 @@ export default function TopNav() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Link to="/settings">
+          <Link to="/notifications">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors"
             >
-              <Settings className="h-5 w-5 text-gray-600" />
+              <Bell className="h-5 w-5 text-gray-600" />
             </motion.button>
           </Link>
 
@@ -86,12 +86,6 @@ export default function TopNav() {
                 <Link to="/profile" className="cursor-pointer">
                   <User className="mr-2 h-4 w-4" />
                   <span>My Profile</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/settings" className="cursor-pointer">
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
