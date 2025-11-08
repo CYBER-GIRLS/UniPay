@@ -58,19 +58,21 @@ The frontend features a Revolut-inspired modern interface using `shadcn/ui` (Rad
 *   **Form Management & Validation:** React Hook Form, Zod
 *   **Animations:** Framer Motion## Recent Changes
 
-**November 8, 2025 (Enriched Historical Transaction Data - 166 Total Transactions):**
-- ✅ **Transaction History Generator** - Created comprehensive Python script with auto-confirm flag for batch generation
-- ✅ **166 Historical Transactions** - Successfully inserted transactions spanning May 13 - Nov 6, 2025 (2 batches: 85 + 81)
-- ✅ **Rich Distribution** - ~6.6 transactions/week with natural spread (48 income, 58 payments, 60 transfers)
-- ✅ **All Accounts Enriched** - Every account (16/16) now has 9-25 transactions with varied patterns
-- ✅ **Realistic Daily Patterns** - Mix of income-only days, expense-only days, and mixed activity days
-- ✅ **Natural Amounts** - $5-$1,000 range with realistic distribution (mostly $5-$500, occasional large amounts)
+**November 8, 2025 (Fully Enriched Historical Data - 260 Total Transactions with Mixed Days):**
+- ✅ **Transaction History Generator** - Python script with auto-confirm for seamless batch generation
+- ✅ **260 Historical Transactions** - Successfully inserted over 6 months: May 13 - Nov 6, 2025 (3 batches: 85 + 81 + 94)
+- ✅ **Extremely Rich Distribution** - ~10.4 transactions/week (84 income, 88 payments, 88 transfers)
+- ✅ **All Accounts Fully Enriched** - Every account (16/16) has 15-40 transactions with varied patterns
+- ✅ **35 Mixed-Activity Days** - Days where users both receive AND spend money (gradient calendar cells 🟣)
+- ✅ **Realistic Daily Patterns** - 25% mixed days, 22% income-only days, 53% expense-only days
+- ✅ **Natural Amounts** - $5-$1,000 range (30% small, 40% medium, 20% large, 10% very large)
 - ✅ **Balance Preservation** - Wallet balances unchanged (historical data only, no negative balances)
-- ✅ **Peak Activity Months** - June (34 txns) and September (32 txns) show authentic student financial patterns
-- ✅ **Audit Trail** - All transactions tagged with `HISTORICAL_GEN_2025` for easy identification and removal
-- ✅ **Reversibility** - Cleanup script created for removing all 166 generated transactions
-- ✅ **Comprehensive Reports** - CSV exports, JSON summaries, and detailed reports in `backend/transaction_reports/`
-- ✅ **Calendar Integration** - Finance Timeline shows 6 months of color-coded activity (green=income, red=expenses, gradient=mixed)
+- ✅ **Peak Activity** - June (52 txns, 9 mixed days), August (48 txns) show authentic student patterns
+- ✅ **141 Active Days** - Rich calendar with colorful visual indicators across 6 months
+- ✅ **Audit Trail** - All transactions tagged with `HISTORICAL_GEN_2025` for easy identification
+- ✅ **Reversibility** - Cleanup script available to remove all 260 generated transactions
+- ✅ **Comprehensive Reports** - 3 CSV exports, JSON summaries, and detailed analytics in `backend/transaction_reports/`
+- ✅ **Calendar Integration** - Finance Timeline displays gradient cells for mixed days, green for income, red for expenses
 
 **November 8, 2025 (Critical Mock-to-API Migration & Performance Optimization):**
 - ✅ **Piggy Goals API Integration** - Connected PiggyGoalsPage to real backend endpoints (replaced mock data with savingsAPI)
