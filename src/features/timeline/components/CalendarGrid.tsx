@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import TransactionDot from './TransactionDot';
 
 interface CalendarGridProps {
   currentDate: Date;
@@ -42,13 +41,13 @@ export default function CalendarGrid({
     );
   };
 
-  const getTransactionColors = (date: Date | null) => {
-    if (!date) return [];
+  const getCellBackgroundColor = (date: Date | null) => {
+    if (!date) return '';
     
     const dateKey = date.toISOString().split('T')[0];
     const dayTransactions = transactionsByDate[dateKey] || [];
 
-    if (dayTransactions.length === 0) return [];
+    if (dayTransactions.length === 0) return '';
 
     const hasIncome = dayTransactions.some((t: any) => 
       t.transaction_type === 'topup' || t.transaction_type === 'income' || t.transaction_type === 'refund'
@@ -61,12 +60,20 @@ export default function CalendarGrid({
       t.transaction_type === 'upcoming' || t.status === 'pending'
     );
 
-    const colors: string[] = [];
-    if (hasExpense) colors.push('red');
-    if (hasIncome) colors.push('green');
-    if (hasUpcoming && !hasExpense && !hasIncome) colors.push('yellow');
+    if (hasExpense && hasIncome) {
+      return 'bg-gradient-to-br from-red-100 to-green-100';
+    }
+    if (hasExpense) {
+      return 'bg-red-50 hover:bg-red-100';
+    }
+    if (hasIncome) {
+      return 'bg-green-50 hover:bg-green-100';
+    }
+    if (hasUpcoming) {
+      return 'bg-yellow-50 hover:bg-yellow-100';
+    }
 
-    return colors;
+    return '';
   };
 
   return (
@@ -84,8 +91,9 @@ export default function CalendarGrid({
 
       <div className="grid grid-cols-7 gap-2">
         {calendarDays.map((date, index) => {
-          const colors = getTransactionColors(date);
+          const bgColor = getCellBackgroundColor(date);
           const dayIsToday = isToday(date);
+          const hasTransactions = bgColor !== '';
 
           return (
             <motion.button
@@ -99,28 +107,22 @@ export default function CalendarGrid({
                 aspect-square p-2 rounded-lg border relative
                 transition-all duration-200
                 ${!date ? 'invisible' : ''}
-                ${dayIsToday ? 'bg-violet-100 border-violet-400 ring-2 ring-violet-400' : 'border-gray-200'}
-                ${date && colors.length > 0 ? 'hover:shadow-md hover:scale-105' : ''}
-                ${date && colors.length === 0 ? 'hover:bg-gray-50' : ''}
+                ${dayIsToday && !hasTransactions ? 'bg-violet-100 border-violet-400 ring-2 ring-violet-400' : ''}
+                ${dayIsToday && hasTransactions ? 'border-violet-400 ring-2 ring-violet-400' : ''}
+                ${!dayIsToday ? 'border-gray-200' : ''}
+                ${bgColor}
+                ${hasTransactions ? 'hover:shadow-md hover:scale-105 font-semibold' : ''}
+                ${!hasTransactions ? 'hover:bg-gray-50' : ''}
                 disabled:cursor-default cursor-pointer
               `}
             >
               {date && (
-                <>
-                  <span className={`
-                    text-sm font-semibold
-                    ${dayIsToday ? 'text-violet-700' : 'text-gray-900'}
-                  `}>
-                    {date.getDate()}
-                  </span>
-                  {colors.length > 0 && (
-                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 flex gap-1">
-                      {colors.map((color, i) => (
-                        <TransactionDot key={i} color={color as any} />
-                      ))}
-                    </div>
-                  )}
-                </>
+                <span className={`
+                  text-sm font-semibold
+                  ${dayIsToday ? 'text-violet-700' : 'text-gray-900'}
+                `}>
+                  {date.getDate()}
+                </span>
               )}
             </motion.button>
           );

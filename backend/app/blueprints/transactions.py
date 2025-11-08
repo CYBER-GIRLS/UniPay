@@ -5,6 +5,7 @@ from datetime import datetime
 
 transactions_bp = Blueprint('transactions', __name__)
 
+@transactions_bp.route('', methods=['GET'])
 @transactions_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_transactions():
