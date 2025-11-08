@@ -73,7 +73,6 @@ waitForPort = 8000
 [workflows.workflow.metadata]
 outputType = "console"
 
-# --- Ports (union of both files, preserving all entries) ---
 [[ports]]
 localPort = 5000
 externalPort = 80
@@ -113,6 +112,9 @@ externalPort = 3001
 [[ports]]
 localPort = 46425
 externalPort = 4200
+
+[[ports]]
+localPort = 36735
 
 [deployment]
 run = [
