@@ -8,7 +8,6 @@ const navItems = [
   { path: '/topup', icon: Plus, label: 'Top Up' },
   { path: '/transfers', icon: ArrowLeftRight, label: 'Transfers' },
   { path: '/budget-cards', icon: CreditCard, label: 'Budget Cards' },
-  { path: '/subscriptions', icon: Repeat, label: 'Subscriptions' },
   { path: '/transactions', icon: Receipt, label: 'Activity' },
   { path: '/savings', icon: PiggyBank, label: 'Savings & Goals' },
   { path: '/darkdays-pocket', icon: ShieldCheck, label: 'DarkDays Pocket' },
