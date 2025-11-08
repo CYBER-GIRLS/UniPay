@@ -1,30 +1,41 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { marketplaceAPI } from '@/lib/api';
+import { marketplaceAPI, authAPI } from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
-import { Store, Plus, Search, ShoppingBag } from 'lucide-react';
-import { useState } from 'react';
+import { Store, Plus, Search, ShoppingBag, Layers } from 'lucide-react';
 import { toast } from 'sonner';
+import AdvancedFilters from '../components/AdvancedFilters';
+import ListingDetailModal from '../components/ListingDetailModal';
+import CreateListingForm from '../components/CreateListingForm';
+import EscrowStatusBadge from '../components/EscrowStatusBadge';
 
 const MotionCard = motion(Card);
 
-export default function MarketplacePage() {
+export default function EnhancedMarketplacePage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('books');
-  const [price, setPrice] = useState('');
+  const [selectedListing, setSelectedListing] = useState<any>(null);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<any>({});
   const [buyingListingIds, setBuyingListingIds] = useState<Set<number>>(new Set());
   const queryClient = useQueryClient();
 
-  const { data: listingsData } = useQuery({
-    queryKey: ['marketplace-listings'],
+  const { data: listingsData, isLoading: listingsLoading } = useQuery({
+    queryKey: ['marketplace-listings', filters],
     queryFn: async () => {
       const response = await marketplaceAPI.getListings();
+      return response.data;
+    },
+  });
+
+  const { data: currentUser } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: async () => {
+      const response = await authAPI.getCurrentUser();
       return response.data;
     },
   });
@@ -34,10 +45,7 @@ export default function MarketplacePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['marketplace-listings'] });
       setCreateDialogOpen(false);
-      toast.success('Listing created successfully');
-      setTitle('');
-      setDescription('');
-      setPrice('');
+      toast.success('Listing created successfully!');
     },
     onError: () => {
       toast.error('Failed to create listing');
@@ -50,12 +58,14 @@ export default function MarketplacePage() {
       return marketplaceAPI.createOrder(listingId);
     },
     onSuccess: (_data, listingId) => {
-      toast.success('Order created! Seller will be notified.');
+      toast.success('Order created! Payment held in escrow until delivery.');
       setBuyingListingIds(prev => {
         const next = new Set(prev);
         next.delete(listingId);
         return next;
       });
+      setDetailModalOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['marketplace-listings'] });
     },
     onError: (_error, listingId) => {
       toast.error('Failed to create order');
@@ -67,174 +77,178 @@ export default function MarketplacePage() {
     },
   });
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
+  const handleViewDetails = (listing: any) => {
+    setSelectedListing(listing);
+    setDetailModalOpen(true);
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
+  const handleBuyListing = () => {
+    if (selectedListing) {
+      createOrderMutation.mutate(selectedListing.id);
+    }
   };
+
+  const filteredListings = listingsData?.listings?.filter((listing: any) => {
+    if (!searchQuery) return true;
+    return listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           listing.description?.toLowerCase().includes(searchQuery.toLowerCase());
+  }) || [];
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      className="space-y-6 max-w-7xl mx-auto"
-    >
-      <motion.div variants={itemVariants} className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Student Marketplace</h1>
-          <p className="text-gray-600 mt-1">Buy and sell items within your university community</p>
-        </div>
-        <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-violet-600 to-indigo-600">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Listing
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create Marketplace Listing</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <Input
-                  id="title"
-                  placeholder="Calculus Textbook"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Input
-                  id="description"
-                  placeholder="Brand new, never used"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <select
-                  id="category"
-                  className="w-full px-3 py-2 border rounded-md"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  <option value="books">Books</option>
-                  <option value="notes">Notes</option>
-                  <option value="electronics">Electronics</option>
-                  <option value="furniture">Furniture</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="price">Price ($)</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  min="1"
-                  step="0.01"
-                  placeholder="25"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-              </div>
-              <Button
-                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
-                onClick={() => createListingMutation.mutate({
-                  title,
-                  description,
-                  category,
-                  price: Number(price),
-                })}
-                disabled={createListingMutation.isPending || !title || !price || Number(price) <= 0}
-              >
-                {createListingMutation.isPending ? 'Creating...' : 'Create Listing'}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </motion.div>
+    <div className="flex gap-6 max-w-7xl mx-auto">
+      <div className="hidden lg:block w-80 flex-shrink-0">
+        <AdvancedFilters onFilterChange={setFilters} />
+      </div>
 
-      <motion.div variants={itemVariants}>
+      <div className="flex-1 space-y-6 min-w-0">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Layers className="h-7 w-7 text-violet-600" />
+              Student Marketplace
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Buy and sell academic materials with escrow protection
+            </p>
+          </div>
+          <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-violet-600 to-indigo-600">
+                <Plus className="h-4 w-4 mr-2" />
+                Create Listing
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Create Marketplace Listing</DialogTitle>
+              </DialogHeader>
+              <CreateListingForm
+                onSubmit={createListingMutation.mutate}
+                isLoading={createListingMutation.isPending}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
+
         <Card className="border-0 shadow-sm">
           <CardContent className="p-4">
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
+                <Input
                   type="text"
-                  placeholder="Search for books, notes, gadgets..."
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-600"
+                  placeholder="Search for course projects, notes, protocols..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
                 />
               </div>
-              <Button variant="outline">Filter</Button>
+              <div className="lg:hidden">
+                <AdvancedFilters onFilterChange={setFilters} isMobile />
+              </div>
             </div>
           </CardContent>
         </Card>
-      </motion.div>
 
-      {listingsData && listingsData.listings && listingsData.listings.length > 0 ? (
-        <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {listingsData.listings.map((listing: any) => (
-            <MotionCard
-              key={listing.id}
-              variants={itemVariants}
-              whileHover={{ scale: 1.02 }}
-              className="border-0 shadow-sm cursor-pointer overflow-hidden"
-            >
-              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <ShoppingBag className="h-16 w-16 text-gray-400" />
-              </div>
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{listing.title}</h3>
-                <p className="text-sm text-gray-600 mb-2 line-clamp-2">{listing.description}</p>
-                <div className="flex justify-between items-center mb-3">
-                  <p className="text-lg font-bold text-violet-600">${listing.price}</p>
-                  <span className="text-xs bg-gray-100 px-2 py-1 rounded">{listing.category}</span>
+        {listingsLoading ? (
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <Card key={i} className="border-0 shadow-sm animate-pulse">
+                <div className="aspect-square bg-gray-200"></div>
+                <CardContent className="p-4 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded"></div>
+                  <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : filteredListings.length > 0 ? (
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {filteredListings.map((listing: any, index: number) => (
+              <MotionCard
+                key={listing.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                whileHover={{ scale: 1.02 }}
+                className="border-0 shadow-sm cursor-pointer overflow-hidden"
+                onClick={() => handleViewDetails(listing)}
+              >
+                <div className="aspect-square bg-gradient-to-br from-violet-50 via-indigo-50 to-purple-50 flex items-center justify-center relative">
+                  <ShoppingBag className="h-20 w-20 text-violet-300" />
+                  <div className="absolute top-2 right-2">
+                    <EscrowStatusBadge status={listing.is_available ? 'available' : 'completed'} />
+                  </div>
                 </div>
-                <Button
-                  size="sm"
-                  className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
-                  onClick={() => createOrderMutation.mutate(listing.id)}
-                  disabled={buyingListingIds.has(listing.id)}
-                >
-                  {buyingListingIds.has(listing.id) ? 'Processing...' : 'Buy Now'}
-                </Button>
-              </CardContent>
-            </MotionCard>
-          ))}
-        </div>
-      ) : (
-        <motion.div variants={itemVariants}>
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">{listing.title}</h3>
+                  <p className="text-sm text-gray-600 mb-2 line-clamp-2">{listing.description}</p>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xl font-bold text-violet-600">${listing.price}</p>
+                    <span className="text-xs bg-violet-100 text-violet-700 px-2 py-1 rounded font-medium">
+                      {listing.category}
+                    </span>
+                  </div>
+                  {(listing.university || listing.faculty) && (
+                    <div className="text-xs text-gray-500 mb-3 space-y-1">
+                      {listing.university && <p>📚 {listing.university}</p>}
+                      {listing.faculty && <p>🏛️ {listing.faculty}</p>}
+                    </div>
+                  )}
+                  <Button
+                    size="sm"
+                    className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleViewDetails(listing);
+                    }}
+                  >
+                    View Details
+                  </Button>
+                </CardContent>
+              </MotionCard>
+            ))}
+          </div>
+        ) : (
           <Card className="border-0 shadow-sm">
             <CardContent className="p-12 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                 <Store className="h-8 w-8 text-gray-400" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No listings yet</h3>
-              <p className="text-gray-600 mb-6">Be the first to sell something in the marketplace</p>
-              <Button
-                className="bg-gradient-to-r from-violet-600 to-indigo-600"
-                onClick={() => setCreateDialogOpen(true)}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create Your First Listing
-              </Button>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {searchQuery ? 'No results found' : 'No listings yet'}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {searchQuery 
+                  ? 'Try adjusting your search or filters'
+                  : 'Be the first to sell academic materials in the marketplace'
+                }
+              </p>
+              {!searchQuery && (
+                <Button
+                  className="bg-gradient-to-r from-violet-600 to-indigo-600"
+                  onClick={() => setCreateDialogOpen(true)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Your First Listing
+                </Button>
+              )}
             </CardContent>
           </Card>
-        </motion.div>
+        )}
+      </div>
+
+      {selectedListing && currentUser && (
+        <ListingDetailModal
+          listing={selectedListing}
+          seller={currentUser}
+          open={detailModalOpen}
+          onClose={() => setDetailModalOpen(false)}
+          onBuy={handleBuyListing}
+          isBuying={buyingListingIds.has(selectedListing.id)}
+        />
       )}
-    </motion.div>
+    </div>
   );
 }
