@@ -11,11 +11,12 @@ import RegisterPage from './features/auth/pages/RegisterPage';
 import DashboardPage from './features/dashboard/pages/DashboardPage';
 import ProfilePage from './features/profile/pages/ProfilePage';
 import SettingsPage from './features/settings/pages/SettingsPage';
-import BudgetCardsPage from './features/budget-cards/pages/BudgetCardsPage';
+import CardsPage from './features/cards/pages/CardsPage';
 import SavingsPage from './features/savings/pages/SavingsPage';
 import DarkDaysPocketPage from './features/savings/pages/DarkDaysPocketPage';
 import ISICCardPage from './features/isic/pages/ISICCardPage';
 import MarketplacePage from './features/marketplace/pages/MarketplacePage';
+import LoansPage from './features/loans/pages/LoansPage';
 import EnhancedLoansPage from './features/loans/pages/EnhancedLoansPage';
 import FinanceTimelinePage from './features/timeline/pages/FinanceTimelinePage';
 import PiggyGoalsPage from './features/piggy-goals/pages/PiggyGoalsPage';
@@ -23,6 +24,7 @@ import TransactionsPage from './features/transactions/pages/TransactionsPage';
 import TransfersPage from './features/transfers/pages/TransfersPage';
 import TopupPage from './features/topup/pages/TopupPage';
 import NotificationsPage from './features/notifications/pages/NotificationsPage';
+import SubscriptionsPage from './features/subscriptions/pages/SubscriptionsPage';
 
 import './App.css';
 
@@ -40,7 +42,8 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/budget-cards" element={<BudgetCardsPage />} />
+            <Route path="/cards" element={<CardsPage />} />
+            <Route path="/subscriptions" element={<SubscriptionsPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
             <Route path="/timeline" element={<FinanceTimelinePage />} />
             <Route path="/piggy-goals" element={<PiggyGoalsPage />} />

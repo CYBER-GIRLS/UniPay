@@ -71,7 +71,6 @@ export default function RegisterPage() {
                   name="first_name"
                   value={formData.first_name}
                   onChange={handleChange}
-                  autoComplete="given-name"
                   required
                 />
               </div>
@@ -82,7 +81,6 @@ export default function RegisterPage() {
                   name="last_name"
                   value={formData.last_name}
                   onChange={handleChange}
-                  autoComplete="family-name"
                   required
                 />
               </div>
@@ -96,7 +94,6 @@ export default function RegisterPage() {
                 placeholder="student@university.edu"
                 value={formData.email}
                 onChange={handleChange}
-                autoComplete="email"
                 required
               />
             </div>
@@ -107,7 +104,6 @@ export default function RegisterPage() {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                autoComplete="username"
                 required
               />
             </div>
@@ -119,7 +115,6 @@ export default function RegisterPage() {
                 type="password"
                 value={formData.password}
                 onChange={handleChange}
-                autoComplete="new-password"
                 required
               />
             </div>

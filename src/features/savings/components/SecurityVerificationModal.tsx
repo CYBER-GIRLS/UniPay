@@ -73,11 +73,11 @@ export function SecurityVerificationModal({
   const canProceed = () => {
     switch (step) {
       case 1:
-        return pin && pin.length >= 4 && pin.length <= 6;
+        return pin.length >= 4;
       case 2:
-        return password && password.length >= 1;
+        return password.length >= 8;
       case 3:
-        return emergencyConfirmed === true;
+        return emergencyConfirmed;
       case 4:
         return true;
       default:

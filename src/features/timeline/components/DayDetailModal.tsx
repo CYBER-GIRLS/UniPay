@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ArrowUpCircle, ArrowDownCircle, DollarSign, Calendar } from 'lucide-react';
@@ -37,9 +37,6 @@ export default function DayDetailModal({ date, transactions, open, onClose }: Da
             <Calendar className="h-5 w-5 text-violet-600" />
             {formattedDate}
           </DialogTitle>
-           <DialogDescription>
-            View all transactions and financial activity for this day
-          </DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="max-h-[calc(90vh-100px)] p-6">

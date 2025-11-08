@@ -25,7 +25,7 @@ def get_listings():
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
     
     return jsonify({
-        'listings': [listing.to_dict() for listing in pagination.items],
+        'listings': [listing.to_dict(include_seller=True) for listing in pagination.items],
         'total': pagination.total,
         'page': page,
         'pages': pagination.pages
@@ -66,7 +66,7 @@ def get_listing(listing_id):
     if not listing:
         return jsonify({'error': 'Listing not found'}), 404
     
-    return jsonify({'listing': listing.to_dict()}), 200
+    return jsonify({'listing': listing.to_dict(include_seller=True)}), 200
 
 @marketplace_bp.route('/orders', methods=['POST'])
 @jwt_required()
