@@ -15,13 +15,21 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let isRedirecting = false;
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !isRedirecting) {
+      isRedirecting = true;
+      
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      window.location.href = '/login';
+      localStorage.removeItem('auth-storage');
+      
+      setTimeout(() => {
+        window.location.replace('/login');
+      }, 100);
     }
     return Promise.reject(error);
   }

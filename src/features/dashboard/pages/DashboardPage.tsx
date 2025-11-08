@@ -10,7 +10,7 @@ import { useAuthStore } from '@/store/authStore';
 const MotionCard = motion(Card);
 
 export default function DashboardPage() {
-  const { user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
 
   const { data: walletData } = useQuery({
     queryKey: ['wallet'],
@@ -18,6 +18,7 @@ export default function DashboardPage() {
       const response = await walletAPI.getWallet();
       return response.data.wallet;
     },
+    enabled: isAuthenticated,
   });
 
   const { data: statsData } = useQuery({
@@ -26,6 +27,7 @@ export default function DashboardPage() {
       const response = await transactionsAPI.getStats();
       return response.data;
     },
+    enabled: isAuthenticated,
   });
 
   const containerVariants = {
