@@ -56,4 +56,17 @@ The frontend features a Revolut-inspired modern interface using `shadcn/ui` (Rad
 *   **HTTP Client:** Axios
 *   **UI Components:** shadcn/ui (Radix UI + Tailwind CSS)
 *   **Form Management & Validation:** React Hook Form, Zod
-*   **Animations:** Framer Motion
+*   **Animations:** Framer Motion## Recent Changes
+
+**November 8, 2025 (Finance Timeline - Transaction Calendar):**
+- ✅ **Comprehensive documentation** - docs/features/17-finance-timeline.md with complete specifications
+- ✅ **Calendar view component** - Monthly calendar grid with smooth month navigation  
+- ✅ **Color-coded transaction indicators** - 🔴 Red (expense), 🟢 Green (income), 🟡 Yellow (upcoming), 🔴🟢 Mixed
+- ✅ **Color legend** - Fixed legend explaining all transaction types
+- ✅ **Day detail modal** - Click any day to see detailed transaction list with totals
+- ✅ **Transaction grouping** - Smart grouping by date with income/expense calculation
+- ✅ **Today highlight** - Current date highlighted with violet border
+- ✅ **Responsive design** - Mobile-friendly calendar with touch-optimized interactions
+- ✅ **Smooth animations** - Framer Motion transitions for calendar and modal
+- ✅ **Navigation integration** - Accessible via sidebar with CalendarDays icon
+- 📋 **Pending** - API endpoint for calendar data, upcoming payments integration

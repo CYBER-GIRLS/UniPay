@@ -17,6 +17,7 @@ import DarkDaysPocketPage from './features/savings/pages/DarkDaysPocketPage';
 import ISICCardPage from './features/isic/pages/ISICCardPage';
 import MarketplacePage from './features/marketplace/pages/MarketplacePage';
 import LoansPage from './features/loans/pages/LoansPage';
+import FinanceTimelinePage from './features/timeline/pages/FinanceTimelinePage';
 import TransactionsPage from './features/transactions/pages/TransactionsPage';
 import TransfersPage from './features/transfers/pages/TransfersPage';
 import TopupPage from './features/topup/pages/TopupPage';
@@ -42,6 +43,7 @@ function App() {
             <Route path="/cards" element={<CardsPage />} />
             <Route path="/subscriptions" element={<SubscriptionsPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
+            <Route path="/timeline" element={<FinanceTimelinePage />} />
             <Route path="/savings" element={<SavingsPage />} />
             <Route path="/darkdays-pocket" element={<DarkDaysPocketPage />} />
             <Route path="/isic" element={<ISICCardPage />} />
