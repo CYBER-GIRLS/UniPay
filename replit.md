@@ -58,6 +58,17 @@ The frontend features a Revolut-inspired modern interface using `shadcn/ui` (Rad
 *   **Form Management & Validation:** React Hook Form, Zod
 *   **Animations:** Framer Motion## Recent Changes
 
+**November 8, 2025 (Historical Transaction Data Generation):**
+- ✅ **Transaction History Generator** - Created comprehensive Python script to generate realistic 6-month financial history
+- ✅ **85 Historical Transactions** - Successfully inserted transactions spanning May 12 - Nov 7, 2025
+- ✅ **Realistic Distribution** - ~3.5 transactions/week with natural spread (26 income, 25 payments, 34 transfers)
+- ✅ **All Accounts Active** - Every account (16/16) received 2-14 transactions
+- ✅ **Balance Preservation** - Wallet balances unchanged (historical data only)
+- ✅ **Audit Trail** - All transactions tagged with `HISTORICAL_GEN_2025` for easy identification
+- ✅ **Reversibility** - Cleanup script created for removing generated transactions
+- ✅ **Comprehensive Reports** - CSV export, JSON summary, and human-readable reports in `backend/transaction_reports/`
+- ✅ **Calendar Integration** - Finance Timeline now shows 6 months of realistic transaction activity
+
 **November 8, 2025 (Critical Mock-to-API Migration & Performance Optimization):**
 - ✅ **Piggy Goals API Integration** - Connected PiggyGoalsPage to real backend endpoints (replaced mock data with savingsAPI)
 - ✅ **P2P Loans API Integration** - Connected EnhancedLoansPage to real backend endpoints (replaced mock data with loansAPI)
