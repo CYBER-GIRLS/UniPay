@@ -89,40 +89,9 @@ export default function EnhancedMarketplacePage() {
   };
 
   const filteredListings = listingsData?.listings?.filter((listing: any) => {
-    // Apply search query filter
-    if (searchQuery) {
-      const matchesSearch = listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           listing.description?.toLowerCase().includes(searchQuery.toLowerCase());
-      if (!matchesSearch) return false;
-    }
-
-    // Apply category filter
-    if (filters.categories && filters.categories.length > 0) {
-      if (!filters.categories.includes(listing.category)) return false;
-    }
-
-    // Apply discipline filter (check if listing has discipline or similar field)
-    if (filters.disciplines && filters.disciplines.length > 0) {
-      // Disciplines aren't stored in listings, so skip this filter for now
-    }
-
-    // Apply faculty filter
-    if (filters.faculties && filters.faculties.length > 0) {
-      if (!listing.faculty || !filters.faculties.includes(listing.faculty)) return false;
-    }
-
-    // Apply price range filter
-    if (filters.priceRange && filters.priceRange.length === 2) {
-      const price = parseFloat(listing.price);
-      if (price < filters.priceRange[0] || price > filters.priceRange[1]) return false;
-    }
-
-    // Apply condition filter
-    if (filters.condition && filters.condition.length > 0) {
-      if (!listing.condition || !filters.condition.includes(listing.condition)) return false;
-    }
-
-    return true;
+    if (!searchQuery) return true;
+    return listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           listing.description?.toLowerCase().includes(searchQuery.toLowerCase());
   }) || [];
 
   return (
@@ -217,7 +186,7 @@ export default function EnhancedMarketplacePage() {
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">{listing.description}</p>
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-xl font-bold text-violet-600">${listing.price}</p>
-                    <span className="text-[10px] bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-medium">
+                    <span className="text-xs bg-violet-100 text-violet-700 px-2 py-1 rounded font-medium">
                       {listing.category}
                     </span>
                   </div>
@@ -270,10 +239,10 @@ export default function EnhancedMarketplacePage() {
         )}
       </div>
 
-      {selectedListing && (
+      {selectedListing && currentUser && (
         <ListingDetailModal
           listing={selectedListing}
-          seller={selectedListing.seller || currentUser}
+          seller={currentUser}
           open={detailModalOpen}
           onClose={() => setDetailModalOpen(false)}
           onBuy={handleBuyListing}

@@ -46,8 +46,8 @@ export default function CreateListingForm({ onSubmit, isLoading = false }: Creat
   const conditions = ['New', 'Like New', 'Good', 'Fair'];
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <ScrollArea className="h-[calc(80vh-180px)] border rounded-lg p-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <ScrollArea className="max-h-[60vh]">
         <div className="space-y-4 pr-4">
           <div>
             <Label htmlFor="title" className="text-sm font-semibold">

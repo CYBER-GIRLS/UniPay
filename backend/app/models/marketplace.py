@@ -30,8 +30,8 @@ class MarketplaceListing(db.Model):
     
     orders = db.relationship('MarketplaceOrder', backref='listing', lazy='dynamic')
     
-    def to_dict(self, include_seller=False):
-        data = {
+    def to_dict(self):
+        return {
             'id': self.id,
             'seller_id': self.seller_id,
             'title': self.title,
@@ -48,20 +48,6 @@ class MarketplaceListing(db.Model):
             'images': self.images,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
-        
-        if include_seller and self.seller:
-            data['seller'] = {
-                'id': self.seller.id,
-                'username': self.seller.username,
-                'first_name': self.seller.first_name,
-                'last_name': self.seller.last_name,
-                'university': self.seller.university,
-                'faculty': self.seller.faculty,
-                'email': self.seller.email,
-                'created_at': self.seller.created_at.isoformat() if self.seller.created_at else None
-            }
-        
-        return data
 
 class MarketplaceOrder(db.Model):
     __tablename__ = 'marketplace_orders'
