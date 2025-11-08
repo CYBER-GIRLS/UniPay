@@ -85,3 +85,18 @@ The frontend features a Revolut-inspired modern interface using `shadcn/ui` (Rad
 - ✅ **Progress tracking** - Percentage display, remaining amount, days until deadline
 - ✅ **Navigation integration** - Accessible via sidebar with Target icon
 - 📋 **Pending** - API endpoints for CRUD operations, goal achievements system
+
+**November 8, 2025 (P2P Borrow/Lend System):**
+- ✅ **Comprehensive documentation** - docs/features/19-p2p-lending.md with 450+ lines
+- ✅ **EnhancedLoansPage** - Main page with 3 tabs (Owed to Me, I Owe, History)
+- ✅ **Summary cards** - Total owed, total owing, net balance, overdue count
+- ✅ **DebtCard component** - Loan details with profile, progress bar, deadline badges
+- ✅ **LoanRequestModal** - Multi-tab request system (Username, QR Code, Contacts)
+- ✅ **QRCodeDisplay** - QR generation with loan data, share/save functionality
+- ✅ **LoanHistoryList** - Repaid loans with duration and on-time badges
+- ✅ **Reminder system** - Send reminder button with toast notifications
+- ✅ **Repayment actions** - Repay button on debt cards
+- ✅ **Overdue detection** - Red badges for overdue loans
+- ✅ **Validation** - Zod schema with $5-$500 limits, 10-200 char descriptions
+- ✅ **Color-coded QR** - Amount-based colors (green/blue/orange/red)
+- 📋 **Pending** - API integration, QR scanning, automated reminders
