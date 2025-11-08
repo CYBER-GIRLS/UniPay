@@ -59,6 +59,15 @@ The application features distinct layouts for authenticated (`DashboardLayout`) 
 *   **Animations:** Framer Motion
 ## Recent Changes
 
+**November 8, 2025 (Critical Bug Fix - Infinite Redirect Loop):**
+- 🐛 **Fixed infinite redirect loop** - Application was flickering with constant white screens
+- ✅ **Root cause identified** - Dashboard queries running before auth check, causing 401 errors
+- ✅ **Axios interceptor fix** - Added `isRedirecting` flag to prevent duplicate redirects
+- ✅ **Auth state cleanup** - Properly clear all localStorage items including Zustand auth-storage
+- ✅ **React Query configuration** - Disable retry on 401 errors, limit max retries to 1
+- ✅ **Query gating** - Dashboard queries now use `enabled: isAuthenticated` flag
+- ✅ **Stable application** - No more flickering, clean login/logout flow
+
 **November 7, 2025 (Subscription Cards Feature):**
 - ✅ **Complete Subscription Cards management system** - Full backend and frontend
 - ✅ **SubscriptionCard model** - Status tracking (active/paused), billing dates, cost tracking
