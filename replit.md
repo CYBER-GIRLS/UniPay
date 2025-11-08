@@ -100,3 +100,58 @@ The frontend features a Revolut-inspired modern interface using `shadcn/ui` (Rad
 - ✅ **Validation** - Zod schema with $5-$500 limits, 10-200 char descriptions
 - ✅ **Color-coded QR** - Amount-based colors (green/blue/orange/red)
 - 📋 **Pending** - API integration, QR scanning, automated reminders
+
+**November 8, 2025 (ISIC Partner Merchants - Enhanced Category Filtering):**
+- ✅ **Comprehensive category system** - 11 categories: All categories, Accommodation, Culture, Entertainment, Food and drink, Services, Shopping, Sport, Study, Travel, Other
+- ✅ **Frontend filtering** - Updated MerchantsList component with new category filter buttons
+- ✅ **Category mapping** - Migrated legacy categories (Food→Food and drink, Retail→Shopping, Sports→Sport, Education→Study, Transport→Travel)
+- ✅ **Database migration** - Created migrate_categories.py script to update existing merchant records
+- ✅ **Seed data update** - Updated all merchants in seed_merchants.py with new category taxonomy
+- ✅ **Special categorization** - City Museum moved from Entertainment to Culture for better accuracy
+- ✅ **Accommodation merchants** - Added 5 accommodation partners (Хотел Kitchen59, хотел Перелик 5*, Хотел Балканско Бижу, Хотел Фламинго, Homestay)
+- ✅ **Culture merchants** - Added 5 culture partners (Historical Park, Museum of Illusions, Castle Ravadinovo, Sofia Opera and Ballet, Regional Archaeological Museum)
+- ✅ **Entertainment merchants** - Added 5 entertainment partners (GIFT TUBE, Funky Monkeys - Escape HUB, ALCOHOPOLY, Escape Project - Illusion, CLWD/EXE Club)
+- ✅ **Food and drink merchants** - Updated 3 existing (KFC, Subway, Starbucks) and added 2 new (Пица и Вино - Студентски град, Jagermeister Online Shop), removed McDonald's
+- ✅ **Services merchants** - Added 5 services partners (Volt Premium Taxi, Diana Tires, Kandilarov Laboratory, MANIA PRINT, SALT ME - солни стаи)
+- ✅ **Shopping merchants** - Added 5 shopping partners (Elephant Bookstore, Bookspace, Lenovo Exclusive Store, Grand Optics, Sport Box)
+- ✅ **Sport merchants** - Added 5 sport partners (Under Armour, Sofia Karting Ring, AREA 52 - Park, GymBeam, Fit City)
+- ✅ **Study merchants** - Added 5 study partners (JetBrains, Hacker4e Programming Academy for Children, Telerik Academy, Kabinata, Lingua Mundi Language Center)
+- ✅ **Travel merchants** - Added 5 travel partners (Bulgarian State Railways, Usit Colours, FlixBUS, Kiwi, QATAR Airways)
+- ✅ **Other merchants** - Added 5 other category partners (OMV Gas Stations, Mastercard Day Cashback, Imotiko Real Estate, Enigma Aesthetic Center, Sexwell)
+- ✅ **Active categories** - 10 active categories across 61 merchants (Accommodation, Culture, Entertainment, Food and drink, Other, Services, Shopping, Sport, Study, Travel)
+- ✅ **Merchant distribution** - Shopping (9), Entertainment (7), Sport (7), Culture (6), Study (6), Travel (6), Accommodation (5), Food and drink (5), Other (5), Services (5)
+
+**November 8, 2025 (ISIC Card Screenshot Upload - Privacy-First Feature):**
+- ✅ **Comprehensive documentation** - docs/features/20-isic-card-screenshot-upload.md with 400+ lines
+- ✅ **On-device OCR processor** - Tesseract.js for privacy-first text extraction with intelligent field parsing
+- ✅ **ISICCardUploadModal component** - Multi-step wizard (Upload → Process → Review → Complete)
+- ✅ **ISICCardFields component** - Form with validation for reviewing/editing extracted card data
+- ✅ **Privacy controls** - Server upload opt-in only, defaults to on-device processing
+- ✅ **Smart field extraction** - Detects card number, name, dates, institution, card type
+- ✅ **Backend API endpoints** - POST /api/isic/upload, GET/PATCH/DELETE /api/isic/metadata
+- ✅ **ISICCardMetadata model** - Database model for storing optional card metadata
+- ✅ **Upload button** - Appears after successful ISIC card linking with clear call-to-action
+- ✅ **Success state UI** - Green success message + blue info card explaining upload benefits
+- ✅ **Image preprocessing** - Auto-resize and grayscale conversion for better OCR accuracy
+- ✅ **Validation & error handling** - Zod schema validation with clear error messages
+- ✅ **CRITICAL FIX #1** - Fixed ISICCardMetadata model ForeignKey table name references (user→users, virtual_card→virtual_cards) that were breaking ALL database queries
+- ✅ **CRITICAL FIX #2** - Fixed ISICCardUploadModal using wrong localStorage key for JWT token (token→access_token) that prevented saving card data
+- ✅ **Screenshot viewing** - "View ISIC Card" button in UploadedISICCardView displays uploaded screenshot in modal dialog
+- ✅ **Query invalidation** - Automatic refresh of uploaded card data after successful save
+- ✅ **JWT authentication fix** - UploadedISICCardView now uses isicAPI.getUploadedCardMetadata() with proper JWT token
+- ✅ **Screenshot visibility fix** - Backend always returns screenshot_url regardless of verification status (not just for verified cards)
+- ✅ **Uploaded card display** - Complete metadata display with verification status, card details, and screenshot access
+- ✅ **Dialog UX** - Clean screenshot viewer with close button and responsive design
+- ✅ **Auto-verification** - Changed default verification_status from 'pending' to 'verified' for instant approval
+- ✅ **Database screenshot storage** - Screenshots stored directly in database as base64 TEXT data (more reliable than object storage)
+- ✅ **Screenshot persistence** - Base64 images saved to screenshot_url column and retrieved directly from database
+- ✅ **Base64 retrieval** - GET /api/isic/metadata returns screenshot_base64 field with full data URI for image display
+- ✅ **Frontend integration** - UploadedISICCardView displays screenshots from screenshot_base64 field
+- ✅ **Error handling** - Graceful fallback if screenshot retrieval fails, preventing application crashes
+- ✅ **ISIC Profile linking** - Added isic_profile_id foreign key to link uploaded metadata to user's ISIC profile
+- ✅ **Automatic linking** - Upload API automatically links new uploads to user's existing ISIC profile
+- ✅ **Model relationships** - ISICCardMetadata now has relationship to ISICProfile for data integration
+- ✅ **Automatic profile syncing** - Uploaded screenshot data automatically updates ISIC profile (card number, name, institution, expiry date)
+- ✅ **CRITICAL FIX #3** - Fixed duplicate metadata bug: Upload logic now UPDATES existing user metadata instead of creating duplicate records on re-upload
+- ✅ **Update vs Create logic** - System checks for existing metadata by user_id and updates in place, preventing multiple records per user
+- ✅ **Updated_at timestamp** - Existing records now properly update their updated_at timestamp when modified

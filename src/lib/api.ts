@@ -117,4 +117,5 @@ export const isicAPI = {
   applyDiscount: (merchantId: number, amount: number, detectionMethod: string, transactionId?: number) => api.post('/isic/discounts/apply', { merchant_id: merchantId, amount, detection_method: detectionMethod, transaction_id: transactionId }),
   getDiscountHistory: () => api.get('/isic/discounts/history'),
   getSavingsStats: () => api.get('/isic/discounts/savings'),
+  getUploadedCardMetadata: () => api.get('/isic/metadata'),
 };
