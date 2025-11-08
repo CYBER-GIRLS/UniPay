@@ -20,11 +20,20 @@ export default function DayDetailModal({ date, transactions, open, onClose }: Da
   });
 
   const totalIncome = transactions
-    .filter((t: any) => t.type === 'credit' || t.type === 'income' || t.type === 'topup')
+    .filter((t: any) => 
+      t.transaction_type === 'topup' || 
+      t.transaction_type === 'income' || 
+      t.transaction_type === 'refund'
+    )
     .reduce((sum: number, t: any) => sum + parseFloat(t.amount || 0), 0);
 
   const totalExpense = transactions
-    .filter((t: any) => t.type === 'debit' || t.type === 'expense' || t.type === 'transfer')
+    .filter((t: any) => 
+      t.transaction_type === 'transfer' || 
+      t.transaction_type === 'payment' || 
+      t.transaction_type === 'withdrawal' ||
+      t.transaction_type === 'purchase'
+    )
     .reduce((sum: number, t: any) => sum + parseFloat(t.amount || 0), 0);
 
   const netBalance = totalIncome - totalExpense;
@@ -86,7 +95,10 @@ export default function DayDetailModal({ date, transactions, open, onClose }: Da
                   Transactions ({transactions.length})
                 </h3>
                 {transactions.map((transaction: any, index: number) => {
-                  const isIncome = transaction.type === 'credit' || transaction.type === 'income' || transaction.type === 'topup';
+                  const isIncome = 
+                    transaction.transaction_type === 'topup' || 
+                    transaction.transaction_type === 'income' || 
+                    transaction.transaction_type === 'refund';
                   
                   return (
                     <motion.div
@@ -111,7 +123,7 @@ export default function DayDetailModal({ date, transactions, open, onClose }: Da
                               </div>
                               <div>
                                 <p className="font-semibold text-gray-900">
-                                  {transaction.description || transaction.type}
+                                  {transaction.description || transaction.transaction_type}
                                 </p>
                                 <p className="text-xs text-gray-500">
                                   {new Date(transaction.created_at).toLocaleTimeString('en-US', {

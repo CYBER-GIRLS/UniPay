@@ -51,15 +51,20 @@ export default function CalendarGrid({
     if (dayTransactions.length === 0) return [];
 
     const hasIncome = dayTransactions.some((t: any) => 
-      t.type === 'credit' || t.type === 'income' || t.type === 'topup'
+      t.transaction_type === 'topup' || t.transaction_type === 'income' || t.transaction_type === 'refund'
     );
     const hasExpense = dayTransactions.some((t: any) => 
-      t.type === 'debit' || t.type === 'expense' || t.type === 'transfer'
+      t.transaction_type === 'transfer' || t.transaction_type === 'payment' || 
+      t.transaction_type === 'withdrawal' || t.transaction_type === 'purchase'
+    );
+    const hasUpcoming = dayTransactions.some((t: any) => 
+      t.transaction_type === 'upcoming' || t.status === 'pending'
     );
 
     const colors: string[] = [];
     if (hasExpense) colors.push('red');
     if (hasIncome) colors.push('green');
+    if (hasUpcoming && !hasExpense && !hasIncome) colors.push('yellow');
 
     return colors;
   };
