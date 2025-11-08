@@ -13,6 +13,7 @@ import ProfilePage from './features/profile/pages/ProfilePage';
 import SettingsPage from './features/settings/pages/SettingsPage';
 import CardsPage from './features/cards/pages/CardsPage';
 import SavingsPage from './features/savings/pages/SavingsPage';
+import DarkDaysPocketPage from './features/savings/pages/DarkDaysPocketPage';
 import MarketplacePage from './features/marketplace/pages/MarketplacePage';
 import LoansPage from './features/loans/pages/LoansPage';
 import TransactionsPage from './features/transactions/pages/TransactionsPage';
@@ -41,6 +42,7 @@ function App() {
             <Route path="/subscriptions" element={<SubscriptionsPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
             <Route path="/savings" element={<SavingsPage />} />
+            <Route path="/darkdays-pocket" element={<DarkDaysPocketPage />} />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/loans" element={<LoansPage />} />
             <Route path="/transfers" element={<TransfersPage />} />
