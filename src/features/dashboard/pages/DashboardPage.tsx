@@ -76,7 +76,7 @@ export default function DashboardPage() {
               <p className="text-white/70 text-sm">{walletData?.currency || 'USD'}</p>
               
               <div className="grid grid-cols-3 gap-4 mt-8">
-                <Link to="/wallet/topup" className="flex-1">
+                <Link to="/topup" className="flex-1">
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -90,7 +90,7 @@ export default function DashboardPage() {
                     </Button>
                   </motion.div>
                 </Link>
-                <Link to="/wallet/transfer" className="flex-1">
+                <Link to="/transfers" className="flex-1">
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -104,7 +104,7 @@ export default function DashboardPage() {
                     </Button>
                   </motion.div>
                 </Link>
-                <Link to="/cards" className="flex-1">
+                <Link to="/budget-cards" className="flex-1">
                   <motion.div
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
