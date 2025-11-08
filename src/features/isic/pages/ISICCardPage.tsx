@@ -9,7 +9,9 @@ import ISICCardFull from '../components/ISICCardFull';
 import ISICProfileSetup from '../components/ISICProfileSetup';
 import MerchantsList from '../components/MerchantsList';
 import DiscountHistory from '../components/DiscountHistory';
-import { CreditCard, Store, History, TrendingDown, AlertCircle } from 'lucide-react';
+import { ISICCardUploadModal } from '@/features/cards/components/ISICCardUploadModal';
+import { UploadedISICCardView } from '@/features/cards/components/UploadedISICCardView';
+import { CreditCard, Store, History, TrendingDown, AlertCircle, Upload } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
@@ -18,6 +20,7 @@ const MotionCard = motion(Card);
 export default function ISICCardPage() {
   const { isAuthenticated } = useAuthStore();
   const [showSetup, setShowSetup] = useState(false);
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: profileData, isLoading: profileLoading } = useQuery({
@@ -235,6 +238,36 @@ export default function ISICCardPage() {
 
         <TabsContent value="card" className="space-y-4">
           <ISICCardFull profile={profileData} />
+          
+          <UploadedISICCardView onReupload={() => setShowUploadModal(true)} />
+          
+          <Card className="border-0 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Upload className="w-6 h-6 text-blue-600" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    Upload Card Screenshot
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Upload a photo of your ISIC card for faster merchant verification and enhanced discount features.
+                  </p>
+                  <Button
+                    onClick={() => setShowUploadModal(true)}
+                    className="bg-gradient-to-r from-blue-600 to-indigo-600"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Card Screenshot
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardContent className="p-6">
               <h3 className="font-semibold text-gray-900 mb-4">Card Settings</h3>
@@ -260,6 +293,12 @@ export default function ISICCardPage() {
           <DiscountHistory />
         </TabsContent>
       </Tabs>
+
+      <ISICCardUploadModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        cardId=""
+      />
     </div>
   );
 }
