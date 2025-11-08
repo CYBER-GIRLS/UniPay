@@ -10,12 +10,15 @@ def register():
     data = request.get_json()
     
     if not data or not data.get('email') or not data.get('password') or not data.get('username'):
+        current_app.logger.warning(f"Registration attempt with missing fields - email: {bool(data.get('email') if data else False)}, password: {bool(data.get('password') if data else False)}, username: {bool(data.get('username') if data else False)}")
         return jsonify({'error': 'Missing required fields'}), 400
     
     if User.query.filter_by(email=data['email']).first():
+        current_app.logger.warning(f"Registration attempt with already registered email: {data['email']}")
         return jsonify({'error': 'Email already registered'}), 400
     
     if User.query.filter_by(username=data['username']).first():
+        current_app.logger.warning(f"Registration attempt with already taken username: {data['username']}")
         return jsonify({'error': 'Username already taken'}), 400
     
     user = User(
