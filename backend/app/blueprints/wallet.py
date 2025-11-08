@@ -7,6 +7,7 @@ from decimal import Decimal
 
 wallet_bp = Blueprint('wallet', __name__)
 
+@wallet_bp.route('', methods=['GET'])
 @wallet_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_wallet():

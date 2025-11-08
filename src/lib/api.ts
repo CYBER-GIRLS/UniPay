@@ -46,7 +46,7 @@ export const authAPI = {
 };
 
 export const walletAPI = {
-  getWallet: () => api.get('/wallet'),
+  getWallet: () => api.get('/wallet/'),
   topup: (amount: number, method: string) => api.post('/wallet/topup', { amount, method }),
   transfer: (receiver_username: string, amount: number, description?: string) => 
     api.post('/wallet/transfer', { receiver_username, amount, description }),
