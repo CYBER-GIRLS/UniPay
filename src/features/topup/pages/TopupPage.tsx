@@ -20,7 +20,7 @@ export default function TopupPage() {
     queryKey: ['wallet'],
     queryFn: async () => {
       const response = await walletAPI.getWallet();
-      return response.data;
+      return response.data.wallet;
     },
   });
 
