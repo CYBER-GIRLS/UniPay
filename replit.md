@@ -58,6 +58,15 @@ The frontend features a Revolut-inspired modern interface using `shadcn/ui` (Rad
 *   **Form Management & Validation:** React Hook Form, Zod
 *   **Animations:** Framer Motion## Recent Changes
 
+**November 8, 2025 (Critical Mock-to-API Migration & Performance Optimization):**
+- ✅ **Piggy Goals API Integration** - Connected PiggyGoalsPage to real backend endpoints (replaced mock data with savingsAPI)
+- ✅ **P2P Loans API Integration** - Connected EnhancedLoansPage to real backend endpoints (replaced mock data with loansAPI)
+- ✅ **Backend N+1 Query Fix** - Added SQLAlchemy `joinedload` for lender/borrower relationships to prevent N+1 queries
+- ✅ **Loan Model Enhancement** - Added username objects to loan responses for better frontend data display
+- ✅ **Repaid Loans Classification** - Fixed history tab to properly distinguish between lent vs borrowed repaid loans
+- ✅ **Field Name Standardization** - Standardized `deadline` field (mapped from backend's `due_date`) across all loan responses
+- ✅ **Code Cleanup** - Removed unused budgetAPI code from frontend api.ts
+
 **November 8, 2025 (Critical API & UI Fixes):**
 - ✅ **Wallet API trailing slash fix** - Backend now accepts both `/api/wallet` and `/api/wallet/` to prevent 308 redirects
 - ✅ **Transactions API trailing slash fix** - Backend now accepts both `/api/transactions` and `/api/transactions/` to prevent 308 redirects
