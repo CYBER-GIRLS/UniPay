@@ -2,11 +2,24 @@ modules = ["nodejs-20", "python-3.11"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "pkg-config", "qhull", "tcl", "tk"]
+packages = [
+  "cairo",
+  "ffmpeg-full",
+  "freetype",
+  "ghostscript",
+  "glibcLocales",
+  "gobject-introspection",
+  "gtk3",
+  "pkg-config",
+  "qhull",
+  "tcl",
+  "tk",
+]
 
 [workflows]
 runButton = "Project"
 
+# --- Run Project (wrapper) ---
 [[workflows.workflow]]
 name = "Run Project"
 mode = "parallel"
@@ -20,6 +33,7 @@ args = "Flask App"
 task = "workflow.run"
 args = "Vite App"
 
+# --- Project (frontend + backend) ---
 [[workflows.workflow]]
 name = "Project"
 mode = "parallel"
@@ -33,6 +47,7 @@ args = "frontend"
 task = "workflow.run"
 args = "backend"
 
+# --- Frontend workflow ---
 [[workflows.workflow]]
 name = "frontend"
 author = "agent"
@@ -45,6 +60,7 @@ waitForPort = 5000
 [workflows.workflow.metadata]
 outputType = "webview"
 
+# --- Backend workflow ---
 [[workflows.workflow]]
 name = "backend"
 author = "agent"
@@ -74,7 +90,11 @@ localPort = 8000
 externalPort = 8000
 
 [[ports]]
-localPort = 36735
+localPort = 36029
+externalPort = 5173
+
+[[ports]]
+localPort = 39211
 externalPort = 5000
 
 [[ports]]
@@ -89,8 +109,19 @@ externalPort = 4200
 localPort = 45559
 externalPort = 3001
 
+[[ports]]
+localPort = 46425
+externalPort = 4200
+
+[[ports]]
+localPort = 36735
+
 [deployment]
-run = ["bash", "-c", "gunicorn --reuse-port -w 4 -b 0.0.0.0:8000 app:app & npm run dev"]
+run = [
+  "bash",
+  "-c",
+  "gunicorn --reuse-port -w 4 -b 0.0.0.0:8000 app:app & npm run dev",
+]
 deploymentTarget = "cloudrun"
 
 [agent]
