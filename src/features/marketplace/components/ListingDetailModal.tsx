@@ -32,8 +32,8 @@ export default function ListingDetailModal({
 
         <ScrollArea className="max-h-[calc(90vh-140px)]">
           <div className="p-6 space-y-6">
-            <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
-              <ShoppingBag className="h-24 w-24 text-gray-400" />
+            <div className="aspect-[2/1] max-h-64 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
+              <ShoppingBag className="h-16 w-16 text-gray-400" />
             </div>
 
             <div className="flex items-center justify-between">
