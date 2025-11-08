@@ -8,6 +8,9 @@ from app.models.savings_pocket import SavingsPocket
 from app.models.goal import Goal
 from app.models.marketplace import MarketplaceListing, MarketplaceOrder
 from app.models.loan import Loan, LoanRepayment
+from app.models.isic_profile import ISICProfile
+from app.models.merchant import Merchant
+from app.models.discount_application import DiscountApplication
 
 __all__ = [
     'User',
@@ -21,5 +24,8 @@ __all__ = [
     'MarketplaceListing',
     'MarketplaceOrder',
     'Loan',
-    'LoanRepayment'
+    'LoanRepayment',
+    'ISICProfile',
+    'Merchant',
+    'DiscountApplication'
 ]

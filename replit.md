@@ -59,6 +59,21 @@ The application features distinct layouts for authenticated (`DashboardLayout`) 
 *   **Animations:** Framer Motion
 ## Recent Changes
 
+**November 8, 2025 (ISIC Student Discounts Feature):**
+- ✅ **Complete ISIC integration** - Link student card for automatic discounts
+- ✅ **Backend models** - ISICProfile, Merchant, DiscountApplication with full CRUD
+- ✅ **15+ partner merchants** - KFC, McDonald's, Starbucks, Nike, Spotify, and more
+- ✅ **Digital ISIC card** - Full-screen card display with QR code verification
+- ✅ **Merchant database** - Browse partners by category (Food, Retail, Sports, etc.)
+- ✅ **Online detection** - URL/domain matching for automatic discount detection
+- ✅ **Physical detection** - NFC simulation for in-store payments
+- ✅ **Discount notifications** - Banner and full-screen alerts for detected discounts
+- ✅ **Discount history** - Track savings and applied discounts
+- ✅ **13 API endpoints** - Profile management, merchant detection, discount application
+- ✅ **Visual components** - ISICCardPage, MerchantsList, DiscountHistory, DiscountAlert
+- ✅ **Navigation integration** - ISIC Discounts accessible via sidebar with Percent icon
+- 📋 **Pending** - Real NFC integration, actual ISIC API verification
+
 **November 8, 2025 (Critical Bug Fix - Infinite Redirect Loop):**
 - 🐛 **Fixed infinite redirect loop** - Application was flickering with constant white screens
 - ✅ **Root cause identified** - Dashboard queries running before auth check, causing 401 errors
@@ -135,6 +150,7 @@ The application features distinct layouts for authenticated (`DashboardLayout`) 
 11. ✅ Settings - Account management UI
 12. 🚧 Notifications - UI complete (WebSocket integration planned)
 13. ✅ Subscriptions - Recurring payment management with catalog
+14. ✅ ISIC Discounts - Student discount detection and application
 
 ## Documentation
 

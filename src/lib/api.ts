@@ -103,3 +103,18 @@ export const subscriptionsAPI = {
   processPayment: (id: number) => api.post(`/subscriptions/${id}/process-payment`),
   getStatistics: () => api.get('/subscriptions/statistics'),
 };
+
+export const isicAPI = {
+  linkProfile: (data: any) => api.post('/isic/profile', data),
+  getProfile: () => api.get('/isic/profile'),
+  updateProfile: (data: any) => api.put('/isic/profile', data),
+  unlinkProfile: () => api.delete('/isic/profile'),
+  getMerchants: (category?: string) => api.get('/isic/merchants', { params: { category } }),
+  getMerchant: (id: number) => api.get(`/isic/merchants/${id}`),
+  detectOnlineMerchant: (url: string, domain: string) => api.post('/isic/merchants/detect-online', { url, domain }),
+  detectPhysicalMerchant: (merchantId?: string, merchantName?: string) => api.post('/isic/merchants/detect-physical', { merchant_id: merchantId, merchant_name: merchantName }),
+  checkDiscount: (merchantId: number, amount: number) => api.post('/isic/discounts/check', { merchant_id: merchantId, amount }),
+  applyDiscount: (merchantId: number, amount: number, detectionMethod: string, transactionId?: number) => api.post('/isic/discounts/apply', { merchant_id: merchantId, amount, detection_method: detectionMethod, transaction_id: transactionId }),
+  getDiscountHistory: () => api.get('/isic/discounts/history'),
+  getSavingsStats: () => api.get('/isic/discounts/savings'),
+};
