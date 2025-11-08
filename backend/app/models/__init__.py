@@ -28,6 +28,6 @@ __all__ = [
     'LoanRepayment',
     'ISICProfile',
     'Merchant',
-    'DiscountApplication'
-    'ISICCardMetadata',
+    'DiscountApplication',
+    'ISICCardMetadata'
 ]
