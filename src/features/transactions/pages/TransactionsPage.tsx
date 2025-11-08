@@ -9,7 +9,7 @@ import CalendarGrid from '@/features/timeline/components/CalendarGrid';
 import ColorLegend from '@/features/timeline/components/ColorLegend';
 import DayDetailModal from '@/features/timeline/components/DayDetailModal';
 
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 export default function TransactionsPage() {
   const [currentDate, setCurrentDate] = useState(new Date());

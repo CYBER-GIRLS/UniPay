@@ -10,7 +10,7 @@ import { ArrowUpRight, ArrowDownLeft, Send, Users } from 'lucide-react';
 import { walletAPI, transactionsAPI } from '@/lib/api';
 import { toast } from 'sonner';
 
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 export default function TransfersPage() {
   const [sendDialogOpen, setSendDialogOpen] = useState(false);

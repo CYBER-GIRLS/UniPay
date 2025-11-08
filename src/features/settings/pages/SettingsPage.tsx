@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Bell, Lock, Globe, Palette, Shield, CreditCard } from 'lucide-react';
 
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 export default function SettingsPage() {
   const containerVariants = {

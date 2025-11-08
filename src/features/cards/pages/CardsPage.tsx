@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { ISICCardUploadModal } from '../components/ISICCardUploadModal';
 
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 export default function CardsPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);

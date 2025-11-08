@@ -17,7 +17,7 @@ import { SubscriptionCardDetailDialog } from '../components/SubscriptionCardDeta
 import { PaymentCardDetailDialog } from '../components/PaymentCardDetailDialog';
 import { BudgetCardDetailDialog } from '../components/BudgetCardDetailDialog';
 
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 export default function BudgetCardsPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);

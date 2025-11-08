@@ -15,7 +15,7 @@ import { CreditCard, Store, History, TrendingDown, AlertCircle, Upload } from 'l
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 export default function ISICCardPage() {
   const { isAuthenticated } = useAuthStore();

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { CheckCircle2, Clock, XCircle, Upload, Eye, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { isicAPI } from '@/lib/api';
@@ -178,6 +178,9 @@ export function UploadedISICCardView({ onReupload }: UploadedISICCardViewProps) 
                 <X className="h-4 w-4" />
               </Button>
             </div>
+            <DialogDescription>
+              View your uploaded ISIC card screenshot
+            </DialogDescription>
           </DialogHeader>
           <div className="mt-4">
             {uploadedCard.screenshot_base64 ? (

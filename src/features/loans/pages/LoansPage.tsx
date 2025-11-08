@@ -10,7 +10,7 @@ import { Users, Plus, ArrowUpRight, ArrowDownRight, DollarSign } from 'lucide-re
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 export default function LoansPage() {
   const [loanDialogOpen, setLoanDialogOpen] = useState(false);

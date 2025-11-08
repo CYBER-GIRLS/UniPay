@@ -86,7 +86,7 @@ export function CatalogView() {
   });
 
   // Extract categories
-  const categories = catalog ? Array.from(new Set(catalog.map((s: any) => s.category))) : [];
+  const categories: string[] = catalog ? Array.from(new Set(catalog.map((s: any) => s.category))) : [];
 
   if (isLoading) {
     return (
