@@ -16,8 +16,7 @@ interface LoanRequestModalProps {
   onSubmit: (requestData: any) => void;
 }
 
-const loanRequestSchema = z.object({
-  borrower_username: z.string().min(2, 'Username must be at least 2 characters'),
+const baseLoanRequestSchema = z.object({
   amount: z.number()
     .min(5, 'Minimum loan amount is $5')
     .max(500, 'Maximum loan amount is $500'),
@@ -26,6 +25,10 @@ const loanRequestSchema = z.object({
     .max(200, 'Description must be less than 200 characters'),
   deadline: z.string().optional(),
   interest_rate: z.number().min(0).max(10).optional(),
+});
+
+const usernameLoanRequestSchema = baseLoanRequestSchema.extend({
+  borrower_username: z.string().min(2, 'Username must be at least 2 characters'),
 });
 
 export default function LoanRequestModal({ open, onClose, onSubmit }: LoanRequestModalProps) {
@@ -40,22 +43,40 @@ export default function LoanRequestModal({ open, onClose, onSubmit }: LoanReques
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showQR, setShowQR] = useState(false);
 
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    setErrors({});
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+
+    if (!formData.amount || formData.amount === '' || isNaN(parseFloat(formData.amount))) {
+      setErrors({ amount: 'Please enter a valid amount' });
+      toast.error('Please enter a valid loan amount');
+      return;
+    }
+
+    if (!formData.description || formData.description.trim() === '') {
+      setErrors({ description: 'Please enter a description' });
+      toast.error('Please enter a description for the loan');
+      return;
+    }
 
     const requestData = {
       ...formData,
       amount: parseFloat(formData.amount),
-      interest_rate: parseFloat(formData.interest_rate),
+      interest_rate: parseFloat(formData.interest_rate) || 0,
       deadline: formData.deadline || undefined,
     };
 
     try {
-      loanRequestSchema.parse(requestData);
-      
       if (activeTab === 'qr') {
+        baseLoanRequestSchema.parse(requestData);
         setShowQR(true);
       } else {
+        usernameLoanRequestSchema.parse(requestData);
         onSubmit({
           ...requestData,
           deadline: requestData.deadline || null,
@@ -116,7 +137,7 @@ export default function LoanRequestModal({ open, onClose, onSubmit }: LoanReques
           <DialogTitle className="text-xl font-bold">Request Loan</DialogTitle>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <Tabs value={activeTab} onValueChange={handleTabChange}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="username">
               <Search className="h-4 w-4 mr-2" />

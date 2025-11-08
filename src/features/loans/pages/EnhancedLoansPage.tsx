@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,12 +10,8 @@ import DebtCard from '../components/DebtCard';
 import LoanRequestModal from '../components/LoanRequestModal';
 import LoanHistoryList from '../components/LoanHistoryList';
 
-export default function EnhancedLoansPage() {
-  const [activeTab, setActiveTab] = useState('owed-to-me');
-  const [requestModalOpen, setRequestModalOpen] = useState(false);
-  const [selectedLoan, setSelectedLoan] = useState<any>(null);
-
-  const mockLoansOwedToMe = [
+const getMockLoansData = () => ({
+  loans_given: [
     {
       id: 1,
       amount: 150,
@@ -35,9 +32,8 @@ export default function EnhancedLoansPage() {
       status: 'active' as const,
       borrower: { username: 'janesmith' },
     },
-  ];
-
-  const mockLoansIOwe = [
+  ],
+  loans_taken: [
     {
       id: 3,
       amount: 200,
@@ -48,9 +44,8 @@ export default function EnhancedLoansPage() {
       status: 'active' as const,
       lender: { username: 'mikebrown' },
     },
-  ];
-
-  const mockRepaidLoans = [
+  ],
+  repaid_loans: [
     {
       id: 4,
       amount: 100,
@@ -59,7 +54,24 @@ export default function EnhancedLoansPage() {
       repaid_at: '2025-10-15T16:00:00Z',
       borrower: { username: 'sarahjones' },
     },
-  ];
+  ],
+});
+
+export default function EnhancedLoansPage() {
+  const [activeTab, setActiveTab] = useState('owed-to-me');
+  const [requestModalOpen, setRequestModalOpen] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState<any>(null);
+
+  const { data: loansData, isLoading } = useQuery({
+    queryKey: ['loans-enhanced'],
+    queryFn: async () => {
+      return getMockLoansData();
+    },
+  });
+
+  const mockLoansOwedToMe = loansData?.loans_given || [];
+  const mockLoansIOwe = loansData?.loans_taken || [];
+  const mockRepaidLoans = loansData?.repaid_loans || [];
 
   const totalOwedToMe = mockLoansOwedToMe.reduce(
     (sum, loan) => sum + (loan.amount - loan.amount_repaid),
@@ -79,17 +91,28 @@ export default function EnhancedLoansPage() {
   }).length;
 
   const handleCreateLoanRequest = (requestData: any) => {
-    console.log('Loan request:', requestData);
-    toast.success(`Loan request sent to ${requestData.borrower_username}!`);
+    if (requestData.borrower_username) {
+      toast.success(`Loan request sent to ${requestData.borrower_username}!`, {
+        description: `Requesting $${requestData.amount} for ${requestData.description}`,
+      });
+    } else {
+      toast.success('Loan request created!', {
+        description: `QR code generated for $${requestData.amount}`,
+      });
+    }
     setRequestModalOpen(false);
   };
 
   const handleRepay = (loan: any) => {
-    toast.success(`Repayment modal would open for loan #${loan.id}`);
+    toast.info('Repayment Feature Coming Soon', {
+      description: `Open repayment modal for $${(loan.amount - loan.amount_repaid).toFixed(2)} to ${loan.lender.username}`,
+    });
   };
 
   const handleRemind = (loan: any) => {
-    toast.success(`Reminder sent to ${loan.borrower.username}!`);
+    toast.success(`Reminder sent to ${loan.borrower.username}!`, {
+      description: 'Your borrower will receive a notification to repay the loan',
+    });
   };
 
   return (
