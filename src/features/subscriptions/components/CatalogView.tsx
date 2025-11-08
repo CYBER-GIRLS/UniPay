@@ -87,7 +87,7 @@ export function CatalogView() {
 
   // Extract categories
   const categories: string[] = catalog ? Array.from(new Set(catalog.map((s: any) => s.category))) : [];
-
+  
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">

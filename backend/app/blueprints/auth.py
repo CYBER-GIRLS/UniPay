@@ -60,7 +60,7 @@ def login():
     if not user:
         current_app.logger.warning(f"Login attempt for non-existent user: {data['email']}")
         return jsonify({'error': 'Invalid email or password'}), 401
-    
+
     if not user.check_password(data['password']):
         current_app.logger.warning(f"Failed login attempt with invalid password for user: {data['email']}")
         return jsonify({'error': 'Invalid email or password'}), 401

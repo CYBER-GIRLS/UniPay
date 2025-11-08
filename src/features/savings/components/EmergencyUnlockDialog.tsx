@@ -55,11 +55,10 @@ export function EmergencyUnlockDialog({
   const [reason, setReason] = useState('');
 
   const handleProceed = () => {
-    if (category && reason.trim()) {
-      onProceed({ category, reason });
+    if (category && reason.trim().length > 0) {
+      onProceed({ category, reason: reason.trim() });
       setCategory('');
       setReason('');
-      onClose();
     }
   };
 
@@ -135,24 +134,6 @@ export function EmergencyUnlockDialog({
             </p>
           </div>
 
-          {/* Emergency Guidelines */}
-          <div className="p-4 bg-amber-50 rounded-lg border border-amber-200 space-y-2">
-            <p className="text-sm font-semibold text-amber-900">✅ Valid Emergency Examples:</p>
-            <ul className="text-xs text-amber-800 space-y-1 ml-4 list-disc">
-              <li>Unexpected medical bills or prescriptions</li>
-              <li>Emergency flight for family crisis</li>
-              <li>Critical car/home repairs affecting safety</li>
-              <li>Urgent living expenses due to job loss</li>
-            </ul>
-            <p className="text-sm font-semibold text-amber-900 mt-3">❌ Not Emergency Examples:</p>
-            <ul className="text-xs text-amber-800 space-y-1 ml-4 list-disc">
-              <li>Shopping sales or impulse purchases</li>
-              <li>Entertainment or vacation expenses</li>
-              <li>Gifts or celebrations</li>
-              <li>Non-urgent wants or upgrades</li>
-            </ul>
-          </div>
-
           {/* Cooldown Notice (Pending Implementation) */}
           <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
             <p className="text-xs text-blue-900">
@@ -171,7 +152,7 @@ export function EmergencyUnlockDialog({
             </Button>
             <Button
               onClick={handleProceed}
-              disabled={!category || !reason.trim()}
+              disabled={!category || !reason || reason.length === 0}
               className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
             >
               Proceed to Verification

@@ -37,7 +37,7 @@ export default function DayDetailModal({ date, transactions, open, onClose }: Da
             <Calendar className="h-5 w-5 text-violet-600" />
             {formattedDate}
           </DialogTitle>
-          <DialogDescription>
+           <DialogDescription>
             View all transactions and financial activity for this day
           </DialogDescription>
         </DialogHeader>
