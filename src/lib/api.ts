@@ -66,7 +66,22 @@ export const cardsAPI = {
   freezeCard: (id: number) => api.post(`/cards/${id}/freeze`),
   unfreezeCard: (id: number) => api.post(`/cards/${id}/unfreeze`),
   getSubscriptions: (cardId: number) => api.get(`/cards/${cardId}/subscriptions`),
-  addSubscription: (cardId: number, data: any) => api.post(`/cards/${cardId}/subscriptions`, data),
+  addSubscriptionToCard: (cardId: number, data: any) => api.post(`/cards/${cardId}/subscriptions`, data),
+  updateSubscription: (cardId: number, subId: number, data: any) => api.put(`/cards/${cardId}/subscriptions/${subId}`, data),
+  deleteSubscription: (cardId: number, subId: number) => api.delete(`/cards/${cardId}/subscriptions/${subId}`),
+  pauseSubscription: (cardId: number, subId: number) => api.post(`/cards/${cardId}/subscriptions/${subId}/pause`),
+  resumeSubscription: (cardId: number, subId: number) => api.post(`/cards/${cardId}/subscriptions/${subId}/resume`),
+  // Budget card operations
+  allocateFunds: (cardId: number, amount: number) => api.post(`/cards/${cardId}/allocate`, { amount }),
+  spendFromCard: (cardId: number, amount: number, description?: string) => 
+    api.post(`/cards/${cardId}/spend`, { amount, description }),
+  withdrawFromCard: (cardId: number, amount: number) => api.post(`/cards/${cardId}/withdraw`, { amount }),
+  getCategories: () => api.get('/cards/categories'),
+  // Subscription card operations
+  getSubscriptionCard: () => api.get('/cards/subscription-card'),
+  getCardCatalog: (cardId: number, category?: string) => api.get(`/cards/${cardId}/catalog`, { params: { category } }),
+  // Default payment cards
+  getDefaultCards: () => api.get('/cards/default-cards'),
 };
 
 export const savingsAPI = {
@@ -117,5 +132,18 @@ export const isicAPI = {
   applyDiscount: (merchantId: number, amount: number, detectionMethod: string, transactionId?: number) => api.post('/isic/discounts/apply', { merchant_id: merchantId, amount, detection_method: detectionMethod, transaction_id: transactionId }),
   getDiscountHistory: () => api.get('/isic/discounts/history'),
   getSavingsStats: () => api.get('/isic/discounts/savings'),
-  getUploadedCardMetadata: () => api.get('/isic/metadata'),
+};
+
+export const budgetAPI = {
+  getCards: (includeInactive?: boolean) => api.get('/budget/cards', { params: { include_inactive: includeInactive } }),
+  createCard: (data: any) => api.post('/budget/cards', data),
+  getCard: (id: number) => api.get(`/budget/cards/${id}`),
+  updateCard: (id: number, data: any) => api.put(`/budget/cards/${id}`, data),
+  deleteCard: (id: number) => api.delete(`/budget/cards/${id}`),
+  allocateFunds: (id: number, amount: number) => api.post(`/budget/cards/${id}/allocate`, { amount }),
+  spendFromCard: (id: number, amount: number, description?: string) => api.post(`/budget/cards/${id}/spend`, { amount, description }),
+  withdrawFromCard: (id: number, amount: number) => api.post(`/budget/cards/${id}/withdraw`, { amount }),
+  resetCard: (id: number) => api.post(`/budget/cards/${id}/reset`),
+  getCategories: () => api.get('/budget/categories'),
+  getStats: () => api.get('/budget/stats'),
 };

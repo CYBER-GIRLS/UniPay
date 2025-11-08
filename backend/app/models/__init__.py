@@ -11,7 +11,6 @@ from app.models.loan import Loan, LoanRepayment
 from app.models.isic_profile import ISICProfile
 from app.models.merchant import Merchant
 from app.models.discount_application import DiscountApplication
-from app.models.isic_card_metadata import ISICCardMetadata
 
 __all__ = [
     'User',
@@ -28,6 +27,5 @@ __all__ = [
     'LoanRepayment',
     'ISICProfile',
     'Merchant',
-    'DiscountApplication',
-    'ISICCardMetadata'
+    'DiscountApplication'
 ]
