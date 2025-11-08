@@ -40,14 +40,12 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 5000
-externalPort = 5000
-
-[[ports]]
 localPort = 8000
 externalPort = 8000
-exposeLocalhost = true
 
 [deployment]
 run = ["bash", "-c", "gunicorn --reuse-port -w 4 -b 0.0.0.0:8000 app:app & npm run dev"]
 deploymentTarget = "cloudrun"
+
+[agent]
+expertMode = true
