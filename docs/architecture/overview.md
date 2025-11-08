@@ -204,6 +204,56 @@ Each feature is a separate blueprint:
 - XSS protection (React escapes by default)
 - CSRF protection (JWT stateless)
 
+### Authentication & Query Management (Updated Nov 8, 2025)
+
+**Infinite Redirect Loop Prevention:**
+
+The application implements safeguards to prevent infinite redirect loops that can occur when unauthenticated API calls trigger repeated redirects:
+
+1. **Axios Response Interceptor** (`src/lib/api.ts`):
+   ```typescript
+   let isRedirecting = false;
+   
+   api.interceptors.response.use(
+     (response) => response,
+     async (error) => {
+       if (error.response?.status === 401 && !isRedirecting) {
+         isRedirecting = true;
+         localStorage.removeItem('access_token');
+         localStorage.removeItem('refresh_token');
+         localStorage.removeItem('auth-storage');
+         setTimeout(() => window.location.replace('/login'), 100);
+       }
+       return Promise.reject(error);
+     }
+   );
+   ```
+   - `isRedirecting` flag prevents duplicate redirects
+   - Clears all authentication data (including Zustand persisted state)
+   - Uses `window.location.replace()` for clean navigation
+
+2. **React Query Configuration** (`src/lib/queryClient.ts`):
+   ```typescript
+   retry: (failureCount, error: any) => {
+     if (error?.response?.status === 401) return false;
+     return failureCount < 1;
+   }
+   ```
+   - Never retry on 401 errors (authentication failures)
+   - Limit other retries to maximum 1 attempt
+
+3. **Query Gating Pattern**:
+   ```typescript
+   const { data } = useQuery({
+     queryKey: ['wallet'],
+     queryFn: async () => await walletAPI.getWallet(),
+     enabled: isAuthenticated, // Only run when authenticated
+   });
+   ```
+   - All dashboard queries use `enabled: isAuthenticated` flag
+   - Prevents API calls before authentication state is confirmed
+   - Eliminates race conditions between auth check and data fetching
+
 ## Data Flow
 
 ### Typical Request Flow

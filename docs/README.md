@@ -38,6 +38,8 @@ This documentation folder contains comprehensive information about all UniPay co
 - [Transfers](features/10-transfers.md) - Dedicated transfer interface
 - [Top-up](features/11-topup.md) - Wallet funding methods
 - [Notifications](features/12-notifications.md) - Real-time alerts
+- [Subscriptions](features/13-subscriptions.md) - Recurring payment management
+- [DarkDays Pocket](features/14-darkdays-pocket.md) - Secure savings vault
 
 ## Development Status
 
@@ -55,6 +57,20 @@ This documentation folder contains comprehensive information about all UniPay co
 | Transfers | ✅ Complete | ✅ | ✅ | ✅ |
 | Top-up | ✅ Complete | ✅ | ✅ | ✅ |
 | Notifications | 🚧 UI Only | 📋 Planned | ✅ | ✅ |
+| Subscriptions | ✅ Complete | ✅ | ✅ | ✅ |
+| DarkDays Pocket | ✅ Complete | ✅ | ✅ | ✅ |
+
+## Recent Updates
+
+### November 8, 2025
+**🐛 Critical Bug Fix: Infinite Redirect Loop**
+- Fixed application flickering and white screen issues
+- Enhanced Axios interceptor with duplicate redirect prevention
+- Implemented query gating to prevent unauthorized API calls
+- Improved React Query retry logic for 401 errors
+- **Impact**: Stable, flicker-free authentication flow
+
+See [Authentication Documentation](features/01-authentication.md#critical-bug-fixes) and [Architecture Overview](architecture/overview.md#authentication--query-management-updated-nov-8-2025) for technical details.
 
 ## Getting Started
 

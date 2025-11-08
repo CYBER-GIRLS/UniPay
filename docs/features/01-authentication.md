@@ -132,6 +132,39 @@ users (
 )
 ```
 
+## Critical Bug Fixes
+
+### Infinite Redirect Loop Fix (November 8, 2025)
+**Issue:** Application was constantly flickering with white screens due to an infinite redirect loop.
+
+**Root Cause:**
+- Dashboard components were fetching data before authentication state was fully initialized
+- Unauthenticated API calls returned 401 errors
+- 401 interceptor redirected to login without clearing Zustand state
+- Created loop: Dashboard → 401 → /login → redirect → Dashboard
+
+**Solution Implemented:**
+
+1. **Axios Interceptor Enhancement** (`src/lib/api.ts`):
+   - Added `isRedirecting` flag to prevent duplicate redirects
+   - Clear all localStorage items including `auth-storage` (Zustand persist)
+   - Use `window.location.replace()` instead of `window.location.href`
+
+2. **React Query Retry Logic** (`src/lib/queryClient.ts`):
+   - Disable retries for 401 errors (authentication failures)
+   - Limit max retries to 1 for other error types
+
+3. **Query Gating** (Dashboard and other protected pages):
+   - Add `enabled: isAuthenticated` to all data-fetching queries
+   - Prevents premature API calls before auth check completes
+   - Ensures clean login/logout flow
+
+**Impact:**
+- ✅ No more flickering or white screens
+- ✅ Stable authentication flow
+- ✅ Clean redirects on session expiration
+- ✅ Proper auth state cleanup on logout
+
 ## Future Enhancements
 - [ ] Email verification
 - [ ] Password reset flow
