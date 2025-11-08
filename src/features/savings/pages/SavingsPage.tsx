@@ -10,7 +10,7 @@ import { PiggyBank, Target, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 export default function SavingsPage() {
   const [pocketDialogOpen, setPocketDialogOpen] = useState(false);
