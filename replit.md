@@ -58,6 +58,16 @@ The frontend features a Revolut-inspired modern interface using `shadcn/ui` (Rad
 *   **Form Management & Validation:** React Hook Form, Zod
 *   **Animations:** Framer Motion## Recent Changes
 
+**November 8, 2025 (Collapsible Filterable Transaction List):**
+- ✅ **CollapsibleTransactionList Component** - New accordion-style component with smooth expand/collapse animations
+- ✅ **Transaction Filtering** - Three filter tabs: All, Income (green), Expenses (red) with transaction counts
+- ✅ **Smart Categorization** - Correctly classifies transfers as income/expense based on user_id comparison
+- ✅ **Summary Display** - Shows transaction count and total amount when collapsed
+- ✅ **Visual Enhancements** - Color-coded filter buttons, progress indicators, custom scrollbar for long lists
+- ✅ **Performance Optimized** - Helper functions for classification, smooth Framer Motion animations
+- ✅ **Responsive Design** - Works on mobile and desktop with touch-optimized interactions
+- ✅ **Activity Page Integration** - Replaces static list with collapsible component in TransactionsPage
+
 **November 8, 2025 (Fully Enriched Historical Data - 260 Total Transactions with Mixed Days):**
 - ✅ **Transaction History Generator** - Python script with auto-confirm for seamless batch generation
 - ✅ **260 Historical Transactions** - Successfully inserted over 6 months: May 13 - Nov 6, 2025 (3 batches: 85 + 81 + 94)
