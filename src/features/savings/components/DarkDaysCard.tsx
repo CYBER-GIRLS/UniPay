@@ -36,6 +36,7 @@ interface DarkDaysCardProps {
     name: string;
     balance: number;
     auto_save_percentage: number;
+    auto_save_frequency?: string;
     is_locked: boolean;
   };
   onDeposit?: () => void;
@@ -52,7 +53,7 @@ export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysC
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="border-0 shadow-2xl overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+      <Card className="border-0 shadow-2xl overflow-hidden text-white" style={{ backgroundColor: '#663399' }}>
         <CardContent className="p-6 relative">
           {/* Lock Icon Overlay */}
           <div className="absolute top-4 right-4">
@@ -62,22 +63,22 @@ export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysC
               }}
               transition={{ duration: 0.3 }}
             >
-              <ShieldCheck className="h-8 w-8 text-amber-400 opacity-20" />
+              <ShieldCheck className="h-8 w-8 opacity-20" style={{ color: '#FFD700' }} />
             </motion.div>
           </div>
 
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-amber-500/20 rounded-xl border border-amber-500/30">
-                <Lock className="h-6 w-6 text-amber-400" />
+              <div className="p-3 rounded-xl" style={{ backgroundColor: '#FFD70033', borderWidth: '1px', borderStyle: 'solid', borderColor: '#FFD7004D' }}>
+                <Lock className="h-6 w-6" style={{ color: '#FFD700' }} />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white">{pocket.name}</h3>
-                <p className="text-xs text-gray-400">Secure Emergency Fund</p>
+                <p className="text-xs text-white">Secure Emergency Fund</p>
               </div>
             </div>
-            <Badge variant="outline" className="border-amber-500/50 text-amber-400 bg-amber-500/10">
+            <Badge variant="outline" className="bg-opacity-10" style={{ borderColor: '#FFD70080', color: '#FFD700', backgroundColor: '#FFD7001A' }}>
               <ShieldCheck className="h-3 w-3 mr-1" />
               Protected
             </Badge>
@@ -86,10 +87,10 @@ export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysC
           {/* Balance Display */}
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm text-gray-400">Secured Balance</p>
+              <p className="text-sm text-white">Secured Balance</p>
               <button
                 onClick={() => setBalanceHidden(!balanceHidden)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-white hover:text-white transition-colors"
               >
                 {balanceHidden ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
               </button>
@@ -102,31 +103,22 @@ export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysC
                 ${pocket.balance.toFixed(2)}
               </p>
             </motion.div>
-            <div className="flex items-center gap-2 mt-2">
-              <div className="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-amber-400 to-yellow-500"
-                  initial={{ width: 0 }}
-                  animate={{ width: '75%' }}
-                  transition={{ duration: 1, delay: 0.5 }}
-                />
-              </div>
-              <p className="text-xs text-gray-400">75% to goal</p>
-            </div>
           </div>
 
           {/* Auto-Save Info */}
           <div className="bg-white/5 rounded-lg p-3 mb-4 border border-white/10">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-400">Auto-Save Active</p>
+                <p className="text-xs text-white">Auto-Save Active</p>
                 <p className="text-sm font-semibold text-white">
                   {pocket.auto_save_percentage}% of income
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-gray-400">Next transfer</p>
-                <p className="text-sm font-semibold text-amber-400">Dec 1, 2025</p>
+                <p className="text-xs text-white">Transfer Frequency</p>
+                <p className="text-sm font-semibold" style={{ color: '#FFD700' }}>
+                  {pocket.auto_save_frequency ? pocket.auto_save_frequency.charAt(0).toUpperCase() + pocket.auto_save_frequency.slice(1) : 'Not Set'}
+                </p>
               </div>
             </div>
           </div>
@@ -135,7 +127,8 @@ export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysC
           <div className="grid grid-cols-2 gap-3">
             <Button
               onClick={onDeposit}
-              className="bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-black font-semibold"
+              className="text-black font-semibold"
+              style={{ backgroundColor: '#FFD700' }}
             >
               <Plus className="h-4 w-4 mr-2" />
               Deposit
@@ -152,7 +145,7 @@ export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysC
 
           {/* Security Notice */}
           <div className="mt-4 pt-4 border-t border-white/10">
-            <p className="text-xs text-gray-500 text-center">
+            <p className="text-xs text-white text-center">
               🔒 Multi-layer security active • For emergency use only
             </p>
           </div>

@@ -25,7 +25,7 @@ export default function MerchantsList({ preview = false }: MerchantsListProps) {
     enabled: isAuthenticated,
   });
 
-  const categories = ['All categories', 'Accommodation', 'Culture', 'Entertainment', 'Food and drink', 'Services', 'Shopping', 'Sport', 'Study', 'Travel', 'Other'];
+  const categories = ['All', 'Food', 'Retail', 'Sports', 'Education', 'Entertainment', 'Transport'];
 
   const displayedMerchants = preview 
     ? merchantsData?.merchants?.slice(0, 6) || []
@@ -47,10 +47,10 @@ export default function MerchantsList({ preview = false }: MerchantsListProps) {
           {categories.map((category) => (
             <Button
               key={category}
-              variant={selectedCategory === (category === 'All categories' ? undefined : category) ? 'default' : 'outline'}
+              variant={selectedCategory === (category === 'All' ? undefined : category) ? 'default' : 'outline'}
               size="sm"
-              onClick={() => setSelectedCategory(category === 'All categories' ? undefined : category)}
-              className={selectedCategory === (category === 'All categories' ? undefined : category) ? 'bg-violet-600' : ''}
+              onClick={() => setSelectedCategory(category === 'All' ? undefined : category)}
+              className={selectedCategory === (category === 'All' ? undefined : category) ? 'bg-violet-600' : ''}
             >
               {category}
             </Button>

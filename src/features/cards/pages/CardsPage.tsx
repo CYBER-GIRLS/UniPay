@@ -9,9 +9,8 @@ import { motion } from 'framer-motion';
 import { CreditCard, Plus, Lock, Unlock, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { ISICCardUploadModal } from '../components/ISICCardUploadModal';
 
-const MotionCard = motion.create(Card);
+const MotionCard = motion(Card);
 
 export default function CardsPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -19,8 +18,6 @@ export default function CardsPage() {
   const [cardType, setCardType] = useState('standard');
   const [spendingLimit, setSpendingLimit] = useState('');
   const [mutatingCardIds, setMutatingCardIds] = useState<Set<number>>(new Set());
-  const [showISICUpload, setShowISICUpload] = useState(false);
-  const [newCardId, setNewCardId] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const { data: cardsData } = useQuery({
@@ -33,17 +30,12 @@ export default function CardsPage() {
 
   const createMutation = useMutation({
     mutationFn: (data: any) => cardsAPI.createCard(data),
-    onSuccess: (response: any) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cards'] });
       setCreateDialogOpen(false);
       toast.success('Card created successfully');
       setCardName('');
       setSpendingLimit('');
-      
-      if (response && response.card && response.card.id) {
-        setNewCardId(response.card.id.toString());
-        setShowISICUpload(true);
-      }
     },
     onError: () => {
       toast.error('Failed to create card');
@@ -266,12 +258,6 @@ export default function CardsPage() {
           </Card>
         </motion.div>
       )}
-
-      <ISICCardUploadModal
-        isOpen={showISICUpload}
-        onClose={() => setShowISICUpload(false)}
-        cardId={newCardId || ''}
-      />
     </motion.div>
   );
 }

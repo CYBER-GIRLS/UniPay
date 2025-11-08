@@ -9,7 +9,7 @@ import { CreditCard, Banknote, QrCode, Wallet } from 'lucide-react';
 import { walletAPI } from '@/lib/api';
 import { toast } from 'sonner';
 
-const MotionCard = motion.create(Card);
+const MotionCard = motion(Card);
 
 export default function TopupPage() {
   const [amount, setAmount] = useState('');

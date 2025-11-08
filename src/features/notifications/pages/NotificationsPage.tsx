@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-const MotionCard = motion.create(Card);
+const MotionCard = motion(Card);
 
 interface Notification {
   id: number;

@@ -16,7 +16,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 
-const MotionCard = motion.create(Card);
+const MotionCard = motion(Card);
 
 export default function ProfilePage() {
   const { user } = useAuthStore();

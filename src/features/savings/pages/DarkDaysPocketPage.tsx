@@ -48,10 +48,12 @@ export default function DarkDaysPocketPage() {
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
   const [emergencyDialogOpen, setEmergencyDialogOpen] = useState(false);
   const [verificationDialogOpen, setVerificationDialogOpen] = useState(false);
+  const [changePercentageDialogOpen, setChangePercentageDialogOpen] = useState(false);
   
   // Form states
   const [pocketName, setPocketName] = useState('DarkDays Pocket');
   const [autoSavePercentage, setAutoSavePercentage] = useState('20');
+  const [newPercentage, setNewPercentage] = useState('');
   const [depositAmount, setDepositAmount] = useState('');
   const [depositPin, setDepositPin] = useState('');
   const [withdrawalAmount, setWithdrawalAmount] = useState(0);
@@ -100,6 +102,60 @@ export default function DarkDaysPocketPage() {
     },
   });
 
+  // Update auto-save config mutation
+  const updateAutoSaveMutation = useMutation({
+    mutationFn: ({ pocketId, config }: any) => 
+      savingsAPI.updateAutoSave(pocketId, config),
+    onMutate: async ({ pocketId, config }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['savings-pockets'] });
+      
+      // Snapshot the previous value
+      const previousPockets = queryClient.getQueryData(['savings-pockets']);
+      
+      // Optimistically update to the new value
+      queryClient.setQueryData(['savings-pockets'], (old: any) => {
+        if (!old) return old;
+        return old.map((pocket: any) => 
+          pocket.id === pocketId 
+            ? { 
+                ...pocket, 
+                auto_save_enabled: config.enabled,
+                auto_save_percentage: config.percentage,
+                auto_save_frequency: config.frequency,
+              } 
+            : pocket
+        );
+      });
+      
+      return { previousPockets };
+    },
+    onSuccess: () => {
+      toast.success('Auto-save configuration updated successfully!');
+    },
+    onError: (error: any, variables, context: any) => {
+      // Rollback on error
+      if (context?.previousPockets) {
+        queryClient.setQueryData(['savings-pockets'], context.previousPockets);
+      }
+      toast.error(`Failed to update configuration: ${error.response?.data?.error || error.message || 'An error occurred'}`);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['savings-pockets'] });
+    },
+  });
+
+  // Handle percentage update
+  const handlePercentageUpdate = (percentage: number) => {
+    toast.info('Auto-save percentage update will be implemented with backend endpoint');
+    console.log('Update auto-save percentage:', {
+      pocketId: activePocket?.id,
+      percentage,
+    });
+    setChangePercentageDialogOpen(false);
+    setNewPercentage('');
+  };
+
   // Handle emergency access initiation
   const handleEmergencyAccess = (pocket: any) => {
     setSelectedPocket(pocket);
@@ -134,8 +190,12 @@ export default function DarkDaysPocketPage() {
 
   // Handle auto-save config save
   const handleAutoSaveConfig = (config: any) => {
-    toast.info('Auto-save configuration will be saved with backend endpoint');
-    console.log('Auto-save config:', config);
+    if (activePocket) {
+      updateAutoSaveMutation.mutate({
+        pocketId: activePocket.id,
+        config,
+      });
+    }
   };
 
   const activePocket = pocketsData?.[0]; // For demo, using first pocket
@@ -147,8 +207,8 @@ export default function DarkDaysPocketPage() {
       className="container mx-auto p-6 space-y-6"
     >
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col items-center justify-center">
+        <div className="text-center">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
             DarkDays Pocket
           </h1>
@@ -159,7 +219,7 @@ export default function DarkDaysPocketPage() {
         {!activePocket && (
           <Button
             onClick={() => setCreateDialogOpen(true)}
-            className="bg-gradient-to-r from-gray-900 to-gray-700"
+            className="bg-gradient-to-r from-gray-900 to-gray-700 mt-4"
           >
             <Plus className="h-4 w-4 mr-2" />
             Create Pocket
@@ -170,38 +230,28 @@ export default function DarkDaysPocketPage() {
       {/* Main Content */}
       {activePocket ? (
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-2" />
               Settings
             </TabsTrigger>
-            <TabsTrigger value="reports">
-              <FileText className="h-4 w-4 mr-2" />
-              Reports
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid lg:grid-cols-2 gap-6">
-              {/* DarkDays Card */}
-              <DarkDaysCard
-                pocket={activePocket}
-                onDeposit={() => handleDeposit(activePocket)}
-                onEmergencyAccess={() => handleEmergencyAccess(activePocket)}
-              />
-
-              {/* Savings Report Widget */}
-              <SavingsReportWidget
-                pocketId={activePocket.id}
-                totalSaved={activePocket.balance}
-                monthsSaving={6}
-                currentStreak={42}
-              />
+            {/* DarkDays Card */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-2xl">
+                <DarkDaysCard
+                  pocket={activePocket}
+                  onDeposit={() => handleDeposit(activePocket)}
+                  onEmergencyAccess={() => handleEmergencyAccess(activePocket)}
+                />
+              </div>
             </div>
 
             {/* Info Cards */}
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               <div className="p-6 bg-gradient-to-br from-violet-50 to-purple-50 rounded-lg border border-violet-200">
                 <h3 className="font-semibold text-violet-900 mb-2">🔒 Multi-Layer Security</h3>
                 <p className="text-sm text-violet-700">
@@ -212,12 +262,6 @@ export default function DarkDaysPocketPage() {
                 <h3 className="font-semibold text-green-900 mb-2">⚡ Auto-Save Active</h3>
                 <p className="text-sm text-green-700">
                   {activePocket.auto_save_percentage}% of income automatically saved
-                </p>
-              </div>
-              <div className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-200">
-                <h3 className="font-semibold text-amber-900 mb-2">🏆 Emergency Fund Goal</h3>
-                <p className="text-sm text-amber-700">
-                  Build 3-6 months of expenses for financial security
                 </p>
               </div>
             </div>
@@ -232,15 +276,6 @@ export default function DarkDaysPocketPage() {
                 frequency: activePocket.auto_save_frequency || 'monthly',
               }}
               onSave={handleAutoSaveConfig}
-            />
-          </TabsContent>
-
-          <TabsContent value="reports">
-            <SavingsReportWidget
-              pocketId={activePocket.id}
-              totalSaved={activePocket.balance}
-              monthsSaving={6}
-              currentStreak={42}
             />
           </TabsContent>
         </Tabs>
@@ -325,27 +360,17 @@ export default function DarkDaysPocketPage() {
                 placeholder="100.00"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="deposit-pin">Security PIN</Label>
-              <Input
-                id="deposit-pin"
-                type="password"
-                maxLength={6}
-                value={depositPin}
-                onChange={(e) => setDepositPin(e.target.value)}
-                placeholder="••••"
-              />
-            </div>
             <Button
-              onClick={() =>
-                selectedPocket &&
-                depositMutation.mutate({
-                  pocketId: selectedPocket.id,
-                  amount: Number(depositAmount),
-                  pin: depositPin,
-                })
-              }
-              disabled={depositMutation.isPending || !depositAmount || !depositPin}
+              onClick={() => {
+                if (selectedPocket && depositAmount && Number(depositAmount) > 0) {
+                  depositMutation.mutate({
+                    pocketId: selectedPocket.id,
+                    amount: Number(depositAmount),
+                    pin: '',
+                  });
+                }
+              }}
+              disabled={depositMutation.isPending || !depositAmount || Number(depositAmount) <= 0}
               className="w-full bg-gradient-to-r from-green-600 to-emerald-600"
             >
               {depositMutation.isPending ? 'Processing...' : 'Confirm Deposit'}
@@ -369,6 +394,39 @@ export default function DarkDaysPocketPage() {
         onVerified={handleVerificationComplete}
         amount={selectedPocket?.balance || 0}
       />
+
+      {/* Change Percentage Dialog */}
+      <Dialog open={changePercentageDialogOpen} onOpenChange={setChangePercentageDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Change Auto-Save Percentage</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-percentage">Auto-Save Percentage (%)</Label>
+              <Input
+                id="new-percentage"
+                type="number"
+                min="5"
+                max="50"
+                value={newPercentage}
+                onChange={(e) => setNewPercentage(e.target.value)}
+                placeholder="20"
+              />
+              <p className="text-sm text-muted-foreground">
+                Choose between 5% and 50% of your income to automatically save
+              </p>
+            </div>
+            <Button
+              onClick={() => handlePercentageUpdate(Number(newPercentage))}
+              disabled={!newPercentage}
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-700"
+            >
+              Update Percentage
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

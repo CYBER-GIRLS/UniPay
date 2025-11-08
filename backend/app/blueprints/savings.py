@@ -66,6 +66,31 @@ def deposit_to_pocket(pocket_id):
         'pocket': pocket.to_dict()
     }), 200
 
+@savings_bp.route('/pockets/<int:pocket_id>/auto-save', methods=['PUT'])
+@jwt_required()
+def update_auto_save_config(pocket_id):
+    user_id = int(get_jwt_identity())
+    pocket = SavingsPocket.query.filter_by(id=pocket_id, user_id=user_id).first()
+    
+    if not pocket:
+        return jsonify({'error': 'Savings pocket not found'}), 404
+    
+    data = request.get_json()
+    
+    pocket.auto_save_enabled = data.get('enabled', pocket.auto_save_enabled)
+    pocket.auto_save_percentage = Decimal(str(data.get('percentage', pocket.auto_save_percentage)))
+    pocket.auto_save_frequency = data.get('frequency', pocket.auto_save_frequency)
+    
+    if data.get('next_date'):
+        pocket.next_auto_save_date = datetime.fromisoformat(data['next_date']).date()
+    
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'Auto-save configuration updated successfully',
+        'pocket': pocket.to_dict()
+    }), 200
+
 @savings_bp.route('/goals', methods=['GET'])
 @jwt_required()
 def get_goals():

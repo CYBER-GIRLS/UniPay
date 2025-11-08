@@ -13,7 +13,7 @@ import ListingDetailModal from '../components/ListingDetailModal';
 import CreateListingForm from '../components/CreateListingForm';
 import EscrowStatusBadge from '../components/EscrowStatusBadge';
 
-const MotionCard = motion.create(Card);
+const MotionCard = motion(Card);
 
 export default function EnhancedMarketplacePage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
