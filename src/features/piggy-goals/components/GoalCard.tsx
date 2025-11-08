@@ -7,12 +7,12 @@ import GoalProgressBar from './GoalProgressBar';
 
 interface Goal {
   id: number;
-  name: string;
+  title: string;
   target_amount: number;
   current_amount: number;
   icon: string;
-  deadline?: string;
-  status: 'active' | 'completed' | 'paused';
+  target_date?: string;
+  is_completed: boolean;
 }
 
 interface GoalCardProps {
@@ -23,9 +23,9 @@ interface GoalCardProps {
 }
 
 export default function GoalCard({ goal, onAddMoney, onEdit, onDelete }: GoalCardProps) {
-  const isCompleted = goal.current_amount >= goal.target_amount;
-  const daysRemaining = goal.deadline 
-    ? Math.ceil((new Date(goal.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+  const isCompleted = goal.is_completed || goal.current_amount >= goal.target_amount;
+  const daysRemaining = goal.target_date 
+    ? Math.ceil((new Date(goal.target_date).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
     : null;
   
   const isOverdue = daysRemaining !== null && daysRemaining < 0 && !isCompleted;
@@ -45,7 +45,7 @@ export default function GoalCard({ goal, onAddMoney, onEdit, onDelete }: GoalCar
             <div className="flex items-center gap-3">
               <div className="text-4xl">{goal.icon}</div>
               <div>
-                <h3 className="font-bold text-lg text-gray-900">{goal.name}</h3>
+                <h3 className="font-bold text-lg text-gray-900">{goal.title}</h3>
                 <p className="text-sm text-gray-600">
                   ${(goal.target_amount - goal.current_amount).toFixed(2)} to go
                 </p>
@@ -80,9 +80,6 @@ export default function GoalCard({ goal, onAddMoney, onEdit, onDelete }: GoalCar
                   : `${daysRemaining} days left`
                 }
               </Badge>
-            )}
-            {goal.status === 'paused' && (
-              <Badge variant="outline" className="text-xs">Paused</Badge>
             )}
           </div>
 

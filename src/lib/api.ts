@@ -137,16 +137,3 @@ export const isicAPI = {
   getUploadedCardMetadata: () => api.get('/isic/metadata'),
 };
 
-export const budgetAPI = {
-  getCards: (includeInactive?: boolean) => api.get('/budget/cards', { params: { include_inactive: includeInactive } }),
-  createCard: (data: any) => api.post('/budget/cards', data),
-  getCard: (id: number) => api.get(`/budget/cards/${id}`),
-  updateCard: (id: number, data: any) => api.put(`/budget/cards/${id}`, data),
-  deleteCard: (id: number) => api.delete(`/budget/cards/${id}`),
-  allocateFunds: (id: number, amount: number) => api.post(`/budget/cards/${id}/allocate`, { amount }),
-  spendFromCard: (id: number, amount: number, description?: string) => api.post(`/budget/cards/${id}/spend`, { amount, description }),
-  withdrawFromCard: (id: number, amount: number) => api.post(`/budget/cards/${id}/withdraw`, { amount }),
-  resetCard: (id: number) => api.post(`/budget/cards/${id}/reset`),
-  getCategories: () => api.get('/budget/categories'),
-  getStats: () => api.get('/budget/stats'),
-};

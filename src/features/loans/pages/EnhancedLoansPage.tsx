@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { loansAPI } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,103 +11,71 @@ import DebtCard from '../components/DebtCard';
 import LoanRequestModal from '../components/LoanRequestModal';
 import LoanHistoryList from '../components/LoanHistoryList';
 
-const getMockLoansData = () => ({
-  loans_given: [
-    {
-      id: 1,
-      amount: 150,
-      amount_repaid: 50,
-      description: 'Emergency textbook expenses',
-      created_at: '2025-11-01T10:00:00Z',
-      deadline: '2025-11-15',
-      status: 'active' as const,
-      borrower: { username: 'johndoe' },
-    },
-    {
-      id: 2,
-      amount: 75,
-      amount_repaid: 0,
-      description: 'Lunch money for the week',
-      created_at: '2025-11-05T14:30:00Z',
-      deadline: '2025-11-20',
-      status: 'active' as const,
-      borrower: { username: 'janesmith' },
-    },
-  ],
-  loans_taken: [
-    {
-      id: 3,
-      amount: 200,
-      amount_repaid: 100,
-      description: 'Laptop repair costs',
-      created_at: '2025-10-28T09:00:00Z',
-      deadline: '2025-11-12',
-      status: 'active' as const,
-      lender: { username: 'mikebrown' },
-    },
-  ],
-  repaid_loans: [
-    {
-      id: 4,
-      amount: 100,
-      description: 'Study materials',
-      created_at: '2025-10-01T10:00:00Z',
-      repaid_at: '2025-10-15T16:00:00Z',
-      borrower: { username: 'sarahjones' },
-    },
-  ],
-});
-
 export default function EnhancedLoansPage() {
   const [activeTab, setActiveTab] = useState('owed-to-me');
   const [requestModalOpen, setRequestModalOpen] = useState(false);
-  const [selectedLoan, setSelectedLoan] = useState<any>(null);
+  const queryClient = useQueryClient();
 
-  const { data: loansData, isLoading } = useQuery({
-    queryKey: ['loans-enhanced'],
+  const { data: loansData } = useQuery({
+    queryKey: ['loans'],
     queryFn: async () => {
-      return getMockLoansData();
+      const response = await loansAPI.getLoans();
+      return response.data;
     },
   });
 
-  const mockLoansOwedToMe = loansData?.loans_given || [];
-  const mockLoansIOwe = loansData?.loans_taken || [];
-  const mockRepaidLoans = loansData?.repaid_loans || [];
+  const createLoanMutation = useMutation({
+    mutationFn: (loanData: any) => loansAPI.createLoan(loanData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['loans'] });
+      toast.success('Loan request created successfully!');
+      setRequestModalOpen(false);
+    },
+    onError: () => {
+      toast.error('Failed to create loan request');
+    },
+  });
 
-  const totalOwedToMe = mockLoansOwedToMe.reduce(
+  const repayLoanMutation = useMutation({
+    mutationFn: ({ loanId, amount }: { loanId: number; amount: number }) =>
+      loansAPI.repayLoan(loanId, amount),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['loans'] });
+      toast.success('Repayment successful!');
+    },
+    onError: () => {
+      toast.error('Failed to process repayment');
+    },
+  });
+
+  const loansGiven = loansData?.loans_given || [];
+  const loansTaken = loansData?.loans_taken || [];
+  const repaidLoans = loansData?.repaid_loans || [];
+
+  const totalOwedToMe = loansGiven.reduce(
     (sum, loan) => sum + (loan.amount - loan.amount_repaid),
     0
   );
 
-  const totalIOwe = mockLoansIOwe.reduce(
+  const totalIOwe = loansTaken.reduce(
     (sum, loan) => sum + (loan.amount - loan.amount_repaid),
     0
   );
 
   const netBalance = totalOwedToMe - totalIOwe;
 
-  const overdueCount = [...mockLoansOwedToMe, ...mockLoansIOwe].filter((loan) => {
+  const overdueCount = [...loansGiven, ...loansTaken].filter((loan) => {
     if (!loan.deadline) return false;
     return new Date(loan.deadline) < new Date() && loan.amount_repaid < loan.amount;
   }).length;
 
   const handleCreateLoanRequest = (requestData: any) => {
-    if (requestData.borrower_username) {
-      toast.success(`Loan request sent to ${requestData.borrower_username}!`, {
-        description: `Requesting $${requestData.amount} for ${requestData.description}`,
-      });
-    } else {
-      toast.success('Loan request created!', {
-        description: `QR code generated for $${requestData.amount}`,
-      });
-    }
-    setRequestModalOpen(false);
+    createLoanMutation.mutate(requestData);
   };
 
   const handleRepay = (loan: any) => {
-    toast.info('Repayment Feature Coming Soon', {
-      description: `Open repayment modal for $${(loan.amount - loan.amount_repaid).toFixed(2)} to ${loan.lender.username}`,
-    });
+    const remainingAmount = loan.amount - loan.amount_repaid;
+    repayLoanMutation.mutate({ loanId: loan.id, amount: remainingAmount });
   };
 
   const handleRemind = (loan: any) => {
@@ -224,8 +193,8 @@ export default function EnhancedLoansPage() {
           </TabsList>
 
           <TabsContent value="owed-to-me" className="space-y-4 mt-6">
-            {mockLoansOwedToMe.length > 0 ? (
-              mockLoansOwedToMe.map((loan) => (
+            {loansGiven.length > 0 ? (
+              loansGiven.map((loan) => (
                 <DebtCard
                   key={loan.id}
                   loan={loan}
@@ -249,8 +218,8 @@ export default function EnhancedLoansPage() {
           </TabsContent>
 
           <TabsContent value="i-owe" className="space-y-4 mt-6">
-            {mockLoansIOwe.length > 0 ? (
-              mockLoansIOwe.map((loan) => (
+            {loansTaken.length > 0 ? (
+              loansTaken.map((loan) => (
                 <DebtCard
                   key={loan.id}
                   loan={loan}
@@ -278,7 +247,7 @@ export default function EnhancedLoansPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
                 Repaid Loans
               </h3>
-              <LoanHistoryList loans={mockRepaidLoans} type="lent" />
+              <LoanHistoryList loans={repaidLoans} type="lent" />
             </div>
           </TabsContent>
         </Tabs>

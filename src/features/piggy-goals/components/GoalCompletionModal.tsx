@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 
 interface Goal {
   id: number;
-  name: string;
+  title: string;
   target_amount: number;
   current_amount: number;
   icon: string;
@@ -68,7 +68,7 @@ export default function GoalCompletionModal({ open, onClose, goal }: GoalComplet
             className="flex items-center justify-center gap-3 text-2xl"
           >
             <span className="text-4xl">{goal.icon}</span>
-            <span className="font-bold text-gray-900">{goal.name}</span>
+            <span className="font-bold text-gray-900">{goal.title}</span>
           </motion.div>
 
           <motion.div

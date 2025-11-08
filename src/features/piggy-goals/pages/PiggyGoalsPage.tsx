@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { savingsAPI, walletAPI } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Plus, PiggyBank } from 'lucide-react';
@@ -11,51 +13,86 @@ import ConfettiCelebration from '../components/ConfettiCelebration';
 import GoalCompletionModal from '../components/GoalCompletionModal';
 
 export default function PiggyGoalsPage() {
-  const [goals, setGoals] = useState<any[]>([
-    {
-      id: 1,
-      name: 'New Laptop',
-      target_amount: 1200,
-      current_amount: 850,
-      icon: '💻',
-      deadline: '2025-12-25',
-      status: 'active',
-    },
-    {
-      id: 2,
-      name: 'Spring Break Trip',
-      target_amount: 800,
-      current_amount: 200,
-      icon: '✈️',
-      deadline: '2025-03-15',
-      status: 'active',
-    },
-  ]);
-
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState<any>(null);
   const [celebrationActive, setCelebrationActive] = useState(false);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [completedGoal, setCompletedGoal] = useState<any>(null);
-  const [walletBalance, setWalletBalance] = useState(500);
+  const queryClient = useQueryClient();
+
+  const { data: goalsData } = useQuery({
+    queryKey: ['goals'],
+    queryFn: async () => {
+      const response = await savingsAPI.getGoals();
+      return response.data;
+    },
+  });
+
+  const { data: walletData } = useQuery({
+    queryKey: ['wallet'],
+    queryFn: async () => {
+      const response = await walletAPI.getWallet();
+      return response.data;
+    },
+  });
+
+  const createGoalMutation = useMutation({
+    mutationFn: (goalData: any) => savingsAPI.createGoal(goalData),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      toast.success(`Goal "${response.data.goal.title}" created! Start saving now! 🎯`);
+      setCreateModalOpen(false);
+    },
+    onError: () => {
+      toast.error('Failed to create goal');
+    },
+  });
+
+  const contributeToGoalMutation = useMutation({
+    mutationFn: ({ goalId, amount }: { goalId: number; amount: number }) =>
+      savingsAPI.contributeToGoal(goalId, amount),
+    onSuccess: (response, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      
+      const goalUnlocked = response.data.goal_unlocked;
+      toast.success(`Added $${variables.amount.toFixed(2)} to ${selectedGoal?.title}! 🎉`);
+
+      if (goalUnlocked) {
+        setTimeout(() => {
+          setCelebrationActive(true);
+          setCompletedGoal(response.data.goal);
+          setCompletionModalOpen(true);
+          setTimeout(() => setCelebrationActive(false), 4000);
+        }, 500);
+      }
+      
+      setTransferModalOpen(false);
+    },
+    onError: () => {
+      toast.error('Failed to contribute to goal');
+    },
+  });
+
+  const goals = goalsData?.goals || [];
+  const walletBalance = walletData?.wallet?.balance || 0;
 
   const handleCreateGoal = (goalData: any) => {
-    const activeGoals = goals.filter(g => g.status === 'active');
+    const activeGoals = goals.filter((g: any) => !g.is_completed);
     if (activeGoals.length >= 10) {
       toast.error('You can only have 10 active goals at a time');
       return;
     }
 
-    const newGoal = {
-      ...goalData,
-      id: goals.length + 1,
-      current_amount: 0,
-      status: 'active',
-      created_at: new Date().toISOString(),
-    };
-    setGoals([...goals, newGoal]);
-    toast.success(`Goal "${goalData.name}" created! Start saving now! 🎯`);
+    createGoalMutation.mutate({
+      title: goalData.name,
+      description: goalData.description || '',
+      target_amount: goalData.target_amount,
+      target_date: goalData.deadline,
+      icon: goalData.icon,
+      color: goalData.color || '#8b5cf6',
+    });
   };
 
   const handleAddMoney = (goal: any) => {
@@ -69,34 +106,11 @@ export default function PiggyGoalsPage() {
       return;
     }
 
-    setWalletBalance(prev => prev - amount);
-    
-    setGoals(
-      goals.map((goal) => {
-        if (goal.id === goalId) {
-          const newAmount = goal.current_amount + amount;
-          const updated = { ...goal, current_amount: newAmount };
-
-          if (newAmount >= goal.target_amount && goal.current_amount < goal.target_amount) {
-            setTimeout(() => {
-              setCelebrationActive(true);
-              setCompletedGoal(updated);
-              setCompletionModalOpen(true);
-              setTimeout(() => setCelebrationActive(false), 4000);
-            }, 500);
-          }
-
-          return updated;
-        }
-        return goal;
-      })
-    );
-    toast.success(`Added $${amount.toFixed(2)} to ${selectedGoal?.name}! 🎉`);
+    contributeToGoalMutation.mutate({ goalId, amount });
   };
 
   const handleDelete = (goal: any) => {
-    setGoals(goals.filter((g) => g.id !== goal.id));
-    toast.success(`Goal "${goal.name}" deleted`);
+    toast.info('Delete feature coming soon');
   };
 
   return (
