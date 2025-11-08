@@ -38,10 +38,15 @@ export default function PiggyGoalsPage() {
   const [celebrationActive, setCelebrationActive] = useState(false);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [completedGoal, setCompletedGoal] = useState<any>(null);
-
-  const walletBalance = 500;
+  const [walletBalance, setWalletBalance] = useState(500);
 
   const handleCreateGoal = (goalData: any) => {
+    const activeGoals = goals.filter(g => g.status === 'active');
+    if (activeGoals.length >= 10) {
+      toast.error('You can only have 10 active goals at a time');
+      return;
+    }
+
     const newGoal = {
       ...goalData,
       id: goals.length + 1,
@@ -59,6 +64,13 @@ export default function PiggyGoalsPage() {
   };
 
   const handleTransfer = (goalId: number, amount: number) => {
+    if (amount > walletBalance) {
+      toast.error('Insufficient wallet balance');
+      return;
+    }
+
+    setWalletBalance(prev => prev - amount);
+    
     setGoals(
       goals.map((goal) => {
         if (goal.id === goalId) {
@@ -167,6 +179,7 @@ export default function PiggyGoalsPage() {
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onSubmit={handleCreateGoal}
+        activeGoalsCount={goals.filter(g => g.status === 'active').length}
       />
 
       <TransferToGoalModal
