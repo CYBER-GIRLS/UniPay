@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 
 interface Transaction {
   id: number;
+  user_id: number;
   transaction_type: string;
   amount: number;
   description?: string;
@@ -24,21 +25,31 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
   const [isExpanded, setIsExpanded] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
-  // Categorize transactions
-  const incomeTransactions = transactions.filter(
-    (t) =>
-      t.transaction_type === 'topup' ||
-      t.transaction_type === 'income' ||
-      t.transaction_type === 'refund' ||
-      (t.transaction_type === 'transfer' && t.receiver_id)
-  );
+  // Helper to determine if transaction is income
+  const isIncomeTransaction = (t: Transaction): boolean => {
+    if (t.transaction_type === 'topup' || t.transaction_type === 'income' || t.transaction_type === 'refund') {
+      return true;
+    }
+    if (t.transaction_type === 'transfer') {
+      return t.receiver_id === t.user_id;
+    }
+    return false;
+  };
 
-  const expenseTransactions = transactions.filter(
-    (t) =>
-      t.transaction_type === 'payment' ||
-      t.transaction_type === 'purchase' ||
-      (t.transaction_type === 'transfer' && !t.receiver_id)
-  );
+  // Helper to determine if transaction is expense
+  const isExpenseTransaction = (t: Transaction): boolean => {
+    if (t.transaction_type === 'payment' || t.transaction_type === 'purchase') {
+      return true;
+    }
+    if (t.transaction_type === 'transfer') {
+      return t.sender_id === t.user_id;
+    }
+    return false;
+  };
+
+  // Categorize transactions
+  const incomeTransactions = transactions.filter(isIncomeTransaction);
+  const expenseTransactions = transactions.filter(isExpenseTransaction);
 
   // Filter transactions based on active filter
   const filteredTransactions =
@@ -62,11 +73,7 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
   };
 
   const getTransactionIcon = (transaction: Transaction) => {
-    const isIncome =
-      transaction.transaction_type === 'topup' ||
-      transaction.transaction_type === 'income' ||
-      transaction.transaction_type === 'refund' ||
-      (transaction.transaction_type === 'transfer' && transaction.receiver_id);
+    const isIncome = isIncomeTransaction(transaction);
 
     return isIncome ? (
       <div className="p-2 rounded-full bg-green-100">
@@ -80,22 +87,12 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
   };
 
   const getAmountColor = (transaction: Transaction) => {
-    const isIncome =
-      transaction.transaction_type === 'topup' ||
-      transaction.transaction_type === 'income' ||
-      transaction.transaction_type === 'refund' ||
-      (transaction.transaction_type === 'transfer' && transaction.receiver_id);
-
+    const isIncome = isIncomeTransaction(transaction);
     return isIncome ? 'text-green-600' : 'text-gray-900';
   };
 
   const getAmountPrefix = (transaction: Transaction) => {
-    const isIncome =
-      transaction.transaction_type === 'topup' ||
-      transaction.transaction_type === 'income' ||
-      transaction.transaction_type === 'refund' ||
-      (transaction.transaction_type === 'transfer' && transaction.receiver_id);
-
+    const isIncome = isIncomeTransaction(transaction);
     return isIncome ? '+' : '-';
   };
 
