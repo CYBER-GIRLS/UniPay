@@ -70,3 +70,18 @@ The frontend features a Revolut-inspired modern interface using `shadcn/ui` (Rad
 - ✅ **Smooth animations** - Framer Motion transitions for calendar and modal
 - ✅ **Navigation integration** - Accessible via sidebar with CalendarDays icon
 - 📋 **Pending** - API endpoint for calendar data, upcoming payments integration
+
+**November 8, 2025 (Piggy Goals - Financial Goals Feature):**
+- ✅ **Comprehensive documentation** - docs/features/18-piggy-goals.md with 400+ lines
+- ✅ **PiggyGoalsPage component** - Main page with goals grid and empty state
+- ✅ **GoalCard component** - Individual goal cards with progress bars and action buttons
+- ✅ **CreateGoalModal** - Form with icon picker, target amount, deadline, and validation
+- ✅ **TransferToGoalModal** - Manual fund transfer with wallet balance check and preset amounts
+- ✅ **GoalProgressBar** - Color-coded progress bar (red→yellow→blue→green based on %)
+- ✅ **ConfettiCelebration** - Canvas-based confetti animation with particle physics
+- ✅ **GoalCompletionModal** - Celebration modal with trophy icon and achievement summary
+- ✅ **Multiple active goals** - Grid display with 1-3 columns (responsive)
+- ✅ **Gamification effects** - Confetti animation when goal reaches 100%
+- ✅ **Progress tracking** - Percentage display, remaining amount, days until deadline
+- ✅ **Navigation integration** - Accessible via sidebar with Target icon
+- 📋 **Pending** - API endpoints for CRUD operations, goal achievements system
