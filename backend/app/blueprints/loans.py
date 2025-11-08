@@ -10,10 +10,16 @@ loans_bp = Blueprint('loans', __name__)
 @loans_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_loans():
+    from sqlalchemy.orm import joinedload
     user_id = int(get_jwt_identity())
     
-    loans_given = Loan.query.filter_by(lender_id=user_id).all()
-    loans_taken = Loan.query.filter_by(borrower_id=user_id).all()
+    loans_given = Loan.query.options(
+        joinedload(Loan.borrower)
+    ).filter_by(lender_id=user_id).all()
+    
+    loans_taken = Loan.query.options(
+        joinedload(Loan.lender)
+    ).filter_by(borrower_id=user_id).all()
     
     return jsonify({
         'loans_given': [loan.to_dict() for loan in loans_given],

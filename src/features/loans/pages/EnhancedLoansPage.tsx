@@ -48,23 +48,33 @@ export default function EnhancedLoansPage() {
     },
   });
 
-  const loansGiven = loansData?.loans_given || [];
-  const loansTaken = loansData?.loans_taken || [];
-  const repaidLoans = loansData?.repaid_loans || [];
+  const allLoansGiven = loansData?.loans_given || [];
+  const allLoansTaken = loansData?.loans_taken || [];
+
+  const loansGiven = allLoansGiven.filter((loan: any) => loan.status !== 'repaid');
+  const loansTaken = allLoansTaken.filter((loan: any) => loan.status !== 'repaid');
+  
+  const repaidLoansGiven = allLoansGiven
+    .filter((loan: any) => loan.status === 'repaid')
+    .map((loan: any) => ({ ...loan, loan_type: 'lent' }));
+  const repaidLoansTaken = allLoansTaken
+    .filter((loan: any) => loan.status === 'repaid')
+    .map((loan: any) => ({ ...loan, loan_type: 'borrowed' }));
+  const repaidLoans = [...repaidLoansGiven, ...repaidLoansTaken];
 
   const totalOwedToMe = loansGiven.reduce(
-    (sum, loan) => sum + (loan.amount - loan.amount_repaid),
+    (sum: number, loan: any) => sum + (loan.amount - loan.amount_repaid),
     0
   );
 
   const totalIOwe = loansTaken.reduce(
-    (sum, loan) => sum + (loan.amount - loan.amount_repaid),
+    (sum: number, loan: any) => sum + (loan.amount - loan.amount_repaid),
     0
   );
 
   const netBalance = totalOwedToMe - totalIOwe;
 
-  const overdueCount = [...loansGiven, ...loansTaken].filter((loan) => {
+  const overdueCount = [...loansGiven, ...loansTaken].filter((loan: any) => {
     if (!loan.deadline) return false;
     return new Date(loan.deadline) < new Date() && loan.amount_repaid < loan.amount;
   }).length;
