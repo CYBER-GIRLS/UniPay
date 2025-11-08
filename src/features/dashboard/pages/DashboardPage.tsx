@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 
-const MotionCard = motion(Card);
+const MotionCard = motion.create(Card);
 
 export default function DashboardPage() {
   const { user, isAuthenticated } = useAuthStore();

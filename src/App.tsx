@@ -11,7 +11,7 @@ import RegisterPage from './features/auth/pages/RegisterPage';
 import DashboardPage from './features/dashboard/pages/DashboardPage';
 import ProfilePage from './features/profile/pages/ProfilePage';
 import SettingsPage from './features/settings/pages/SettingsPage';
-import CardsPage from './features/cards/pages/CardsPage';
+import BudgetCardsPage from './features/budget-cards/pages/BudgetCardsPage';
 import SavingsPage from './features/savings/pages/SavingsPage';
 import DarkDaysPocketPage from './features/savings/pages/DarkDaysPocketPage';
 import ISICCardPage from './features/isic/pages/ISICCardPage';
@@ -42,7 +42,7 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/cards" element={<CardsPage />} />
+            <Route path="/budget-cards" element={<BudgetCardsPage />} />
             <Route path="/subscriptions" element={<SubscriptionsPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
             <Route path="/timeline" element={<FinanceTimelinePage />} />
