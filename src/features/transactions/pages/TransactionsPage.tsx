@@ -8,6 +8,7 @@ import { Receipt, Download, Filter, ArrowUpRight, ArrowDownLeft, ChevronLeft, Ch
 import CalendarGrid from '@/features/timeline/components/CalendarGrid';
 import ColorLegend from '@/features/timeline/components/ColorLegend';
 import DayDetailModal from '@/features/timeline/components/DayDetailModal';
+import CollapsibleTransactionList from '@/features/transactions/components/CollapsibleTransactionList';
 
 const MotionCard = motion.create(Card);
 
@@ -157,72 +158,12 @@ export default function TransactionsPage() {
         </MotionCard>
       </div>
 
-      <MotionCard variants={itemVariants} className="border-0 shadow-sm">
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">All Transactions</h3>
-
-          {statsData && statsData.recent_transactions && statsData.recent_transactions.length > 0 ? (
-            <div className="space-y-2">
-              {statsData.recent_transactions.map((transaction: any) => (
-                <motion.div
-                  key={transaction.id}
-                  whileHover={{ backgroundColor: 'rgba(0,0,0,0.02)' }}
-                  className="flex items-center justify-between p-4 rounded-lg transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`p-2 rounded-full ${
-                        transaction.transaction_type === 'topup'
-                          ? 'bg-green-100'
-                          : transaction.transaction_type === 'transfer' && transaction.receiver_id
-                          ? 'bg-blue-100'
-                          : 'bg-gray-100'
-                      }`}
-                    >
-                      {transaction.transaction_type === 'topup' ||
-                      (transaction.transaction_type === 'transfer' && transaction.receiver_id) ? (
-                        <ArrowDownLeft className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <ArrowUpRight className="h-4 w-4 text-gray-600" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {transaction.description || transaction.transaction_type}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(transaction.created_at).toLocaleDateString('en-US', {
-                          month: 'long',
-                          day: 'numeric',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p
-                      className={`font-semibold ${
-                        transaction.transaction_type === 'topup' ||
-                        (transaction.transaction_type === 'transfer' && transaction.receiver_id)
-                          ? 'text-green-600'
-                          : 'text-gray-900'
-                      }`}
-                    >
-                      {transaction.transaction_type === 'topup' ||
-                      (transaction.transaction_type === 'transfer' && transaction.receiver_id)
-                        ? '+'
-                        : '-'}
-                      ${transaction.amount.toLocaleString()}
-                    </p>
-                    <span className="text-xs text-gray-500">{transaction.status}</span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+      <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-visible">
+        <CardContent className="p-0">
+          {statsData && statsData.recent_transactions ? (
+            <CollapsibleTransactionList transactions={statsData.recent_transactions} />
           ) : (
-            <div className="text-center py-12">
+            <div className="p-6 text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
                 <Receipt className="h-8 w-8 text-gray-400" />
               </div>
