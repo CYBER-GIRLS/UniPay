@@ -22,11 +22,11 @@ from app.models.transaction import Transaction
 
 GENERATOR_TAG = "HISTORICAL_GEN_2025"
 MONTHS_BACK = 6
-TRANSACTIONS_PER_WEEK = 3.5
+TRANSACTIONS_PER_WEEK = 4.0  # Increased from 3.5 to 4.0 for richer history
 MIN_AMOUNT = Decimal('5.00')
 MAX_AMOUNT = Decimal('500.00')
 LARGE_AMOUNT_MAX = Decimal('1000.00')
-LARGE_AMOUNT_PROBABILITY = 0.1
+LARGE_AMOUNT_PROBABILITY = 0.12  # Slightly increased for more variety
 
 TRANSACTION_DESCRIPTIONS = {
     'income': [
@@ -43,9 +43,10 @@ TRANSACTION_DESCRIPTIONS = {
 
 
 class TransactionGenerator:
-    def __init__(self, dry_run=False):
+    def __init__(self, dry_run=False, auto_confirm=False):
         self.app = create_app()
         self.dry_run = dry_run
+        self.auto_confirm = auto_confirm
         self.generated_transactions = []
         self.account_summaries = {}
         self.skipped_items = []
@@ -69,10 +70,13 @@ class TransactionGenerator:
             
             # Step 2: Check for idempotency
             if self._check_existing_generated_transactions():
-                response = input("\n⚠️  Generated transactions already exist. Continue anyway? (yes/no): ")
-                if response.lower() != 'yes':
-                    print("Aborted by user.")
-                    return
+                if not self.auto_confirm:
+                    response = input("\n⚠️  Generated transactions already exist. Continue anyway? (yes/no): ")
+                    if response.lower() != 'yes':
+                        print("Aborted by user.")
+                        return
+                else:
+                    print("\n✅ Auto-confirmed: Adding more transactions to existing data...")
             
             # Step 3: Generate transactions
             transactions = self._generate_transactions(accounts)
@@ -501,6 +505,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Generate historical transaction data')
     parser.add_argument('--dry-run', action='store_true', help='Run without making changes')
     parser.add_argument('--live', action='store_true', help='Run in live mode (writes to database)')
+    parser.add_argument('--auto-confirm', action='store_true', help='Auto-confirm all prompts')
     
     args = parser.parse_args()
     
@@ -511,7 +516,7 @@ if __name__ == '__main__':
         print("  python generate_transaction_history.py --live     # Write to database")
         sys.exit(1)
     
-    if args.live:
+    if args.live and not args.auto_confirm:
         print("\n" + "!"*70)
         print("⚠️  LIVE MODE - This will modify the database!")
         print("!"*70)
@@ -521,7 +526,7 @@ if __name__ == '__main__':
             print("Aborted.")
             sys.exit(1)
     
-    generator = TransactionGenerator(dry_run=args.dry_run)
+    generator = TransactionGenerator(dry_run=args.dry_run, auto_confirm=args.auto_confirm)
     generator.run()
     
     if args.live:
