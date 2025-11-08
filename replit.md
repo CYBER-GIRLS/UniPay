@@ -58,18 +58,30 @@ The frontend features a Revolut-inspired modern interface using `shadcn/ui` (Rad
 *   **Form Management & Validation:** React Hook Form, Zod
 *   **Animations:** Framer Motion## Recent Changes
 
+**November 8, 2025 (Critical API & UI Fixes):**
+- ✅ **Wallet API trailing slash fix** - Backend now accepts both `/api/wallet` and `/api/wallet/` to prevent 308 redirects
+- ✅ **Transactions API trailing slash fix** - Backend now accepts both `/api/transactions` and `/api/transactions/` to prevent 308 redirects
+- ✅ **Finance Timeline API integration** - Fixed transaction data loading, calendar now displays real transaction data
+- ✅ **Finance Timeline redesign** - Changed from small dots to **full pastel cell backgrounds** for better visibility:
+  - 🟢 Light green (`bg-green-50`) for income days (topups, income, refunds)
+  - 🔴 Light red (`bg-red-50`) for expense days (transfers, payments, purchases)
+  - 🟡 Light yellow (`bg-yellow-50`) for upcoming payments (pending transactions)
+  - 🔴🟢 Red-to-green gradient for days with both income and expenses
+- ✅ **Dashboard button routing** - Fixed quick action buttons to route correctly:
+  - Top Up → `/topup`
+  - Transfer → `/transfers`
+  - Cards → `/budget-cards`
+- ✅ **Transaction type field fix** - Updated calendar components to use `transaction_type` instead of `type`
+
 **November 8, 2025 (Finance Timeline - Transaction Calendar):**
 - ✅ **Comprehensive documentation** - docs/features/17-finance-timeline.md with complete specifications
 - ✅ **Calendar view component** - Monthly calendar grid with smooth month navigation  
-- ✅ **Color-coded transaction indicators** - 🔴 Red (expense), 🟢 Green (income), 🟡 Yellow (upcoming), 🔴🟢 Mixed
-- ✅ **Color legend** - Fixed legend explaining all transaction types
 - ✅ **Day detail modal** - Click any day to see detailed transaction list with totals
 - ✅ **Transaction grouping** - Smart grouping by date with income/expense calculation
 - ✅ **Today highlight** - Current date highlighted with violet border
 - ✅ **Responsive design** - Mobile-friendly calendar with touch-optimized interactions
 - ✅ **Smooth animations** - Framer Motion transitions for calendar and modal
 - ✅ **Navigation integration** - Accessible via sidebar with CalendarDays icon
-- 📋 **Pending** - API endpoint for calendar data, upcoming payments integration
 
 **November 8, 2025 (Piggy Goals - Financial Goals Feature):**
 - ✅ **Comprehensive documentation** - docs/features/18-piggy-goals.md with 400+ lines
