@@ -17,23 +17,50 @@ export default function TransactionsPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
 
-  const { data: statsData } = useQuery({
-    queryKey: ['transaction-stats'],
-    queryFn: async () => {
-      const response = await transactionsAPI.getStats();
-      return response.data;
-    },
-  });
-
+  // Fetch ALL transactions (increased limit for complete data)
   const { data: transactionsData } = useQuery({
-    queryKey: ['transactions', currentDate.getMonth(), currentDate.getFullYear()],
+    queryKey: ['all-transactions'],
     queryFn: async () => {
-      const response = await transactionsAPI.getTransactions(1, 100);
+      const response = await transactionsAPI.getTransactions(1, 1000);
       return response.data;
     },
   });
 
   const transactions = transactionsData?.transactions || [];
+
+  // Calculate stats from the same transaction list for consistency
+  const calculateStats = () => {
+    const income = transactions.filter((t: any) => {
+      if (t.transaction_type === 'topup' || t.transaction_type === 'income' || t.transaction_type === 'refund') {
+        return true;
+      }
+      if (t.transaction_type === 'transfer' && t.receiver_id === t.user_id) {
+        return true;
+      }
+      return false;
+    });
+
+    const expenses = transactions.filter((t: any) => {
+      if (t.transaction_type === 'payment' || t.transaction_type === 'purchase') {
+        return true;
+      }
+      if (t.transaction_type === 'transfer' && t.sender_id === t.user_id) {
+        return true;
+      }
+      return false;
+    });
+
+    const totalIncome = income.reduce((sum: number, t: any) => sum + t.amount, 0);
+    const totalExpenses = expenses.reduce((sum: number, t: any) => sum + t.amount, 0);
+
+    return {
+      total_income: totalIncome,
+      total_expenses: totalExpenses,
+      transaction_count: transactions.length,
+    };
+  };
+
+  const stats = calculateStats();
 
   const groupTransactionsByDate = () => {
     const grouped: Record<string, any[]> = {};
@@ -115,7 +142,7 @@ export default function TransactionsPage() {
               <div>
                 <p className="text-sm text-gray-600">Total Income</p>
                 <p className="text-2xl font-bold text-green-600">
-                  ${statsData?.total_income?.toLocaleString() || '0.00'}
+                  ${stats.total_income.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
               <div className="p-3 bg-green-100 rounded-lg">
@@ -131,7 +158,7 @@ export default function TransactionsPage() {
               <div>
                 <p className="text-sm text-gray-600">Total Expenses</p>
                 <p className="text-2xl font-bold text-red-600">
-                  ${statsData?.total_expenses?.toLocaleString() || '0.00'}
+                  ${stats.total_expenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
               <div className="p-3 bg-red-100 rounded-lg">
@@ -147,7 +174,7 @@ export default function TransactionsPage() {
               <div>
                 <p className="text-sm text-gray-600">Transactions</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {statsData?.recent_transactions?.length || 0}
+                  {stats.transaction_count}
                 </p>
               </div>
               <div className="p-3 bg-violet-100 rounded-lg">
@@ -160,8 +187,8 @@ export default function TransactionsPage() {
 
       <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-visible">
         <CardContent className="p-0">
-          {statsData && statsData.recent_transactions ? (
-            <CollapsibleTransactionList transactions={statsData.recent_transactions} />
+          {transactions.length > 0 ? (
+            <CollapsibleTransactionList transactions={transactions} />
           ) : (
             <div className="p-6 text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
