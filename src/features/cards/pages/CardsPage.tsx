@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
-import { CreditCard, Plus, Lock, Unlock, Trash2 } from 'lucide-react';
+import { CreditCard, Plus, Lock, Unlock } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { ISICCardUploadModal } from '../components/ISICCardUploadModal';
