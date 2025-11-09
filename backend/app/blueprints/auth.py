@@ -124,15 +124,23 @@ def set_pin():
     if not user:
         return jsonify({'error': 'User not found'}), 404
     
+    if user.pin_hash is not None:
+        current_app.logger.warning(f"Attempt to use deprecated set-pin endpoint for existing PIN: {user.email}")
+        return jsonify({
+            'error': 'PIN already set. Use /auth/change-pin to update your PIN.',
+            'requires_password': True
+        }), 403
+    
     data = request.get_json()
     pin = data.get('pin')
     
-    if not pin or len(str(pin)) != 4:
-        return jsonify({'error': 'PIN must be 4 digits'}), 400
+    if not pin or len(str(pin)) != 4 or not str(pin).isdigit():
+        return jsonify({'error': 'PIN must be exactly 4 digits'}), 400
     
     user.set_pin(pin)
     db.session.commit()
     
+    current_app.logger.info(f"Initial PIN set for user: {user.email}")
     return jsonify({'message': 'PIN set successfully'}), 200
 
 @auth_bp.route('/verify-pin', methods=['POST'])

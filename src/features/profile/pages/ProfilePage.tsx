@@ -35,7 +35,6 @@ export default function ProfilePage() {
   const { user } = useAuthStore();
   const { toast } = useToast();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(user?.is_verified || false);
   const [isChangePinDialogOpen, setIsChangePinDialogOpen] = useState(false);
   const [pinStatus, setPinStatus] = useState<{ hasPin: boolean; isDefaultPin: boolean } | null>(null);
   const [isPinStatusLoading, setIsPinStatusLoading] = useState(true);
@@ -281,12 +280,12 @@ export default function ProfilePage() {
                 <div>
                   <p className="font-medium text-gray-900">Email Verification</p>
                   <p className="text-sm text-gray-600">
-                    {emailVerified ? 'Your email has been verified' : 'Please verify your email address'}
+                    {user?.is_verified ? 'Your email has been verified' : 'Please verify your email address'}
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {emailVerified ? (
+                {user?.is_verified ? (
                   <Badge variant="default" className="bg-green-500">
                     <CheckCircle className="h-3 w-3 mr-1" />
                     Verified
