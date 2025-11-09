@@ -164,37 +164,63 @@ def generate_recurring_payments():
     
     created_payments = []
     current_date = base_payment.created_at
+    end_date = current_date + relativedelta(months=months_ahead)
     
-    for i in range(1, months_ahead + 1):
-        if frequency == 'monthly':
+    if frequency == 'monthly':
+        for i in range(1, months_ahead + 1):
             next_date = current_date + relativedelta(months=i)
-        elif frequency == 'weekly':
-            next_date = current_date + timedelta(weeks=i)
-        else:
-            continue
+            
+            existing = Transaction.query.filter_by(
+                user_id=user_id,
+                description=base_payment.description,
+                created_at=next_date,
+                status='scheduled'
+            ).first()
+            
+            if existing:
+                continue
+            
+            new_payment = Transaction(
+                user_id=user_id,
+                transaction_type=base_payment.transaction_type,
+                amount=base_payment.amount,
+                status='scheduled',
+                description=base_payment.description,
+                transaction_metadata=metadata.copy(),
+                created_at=next_date
+            )
+            
+            db.session.add(new_payment)
+            created_payments.append(new_payment.to_dict())
+    
+    elif frequency == 'weekly':
+        week_count = 0
+        next_date = current_date + timedelta(weeks=1)
         
-        existing = Transaction.query.filter_by(
-            user_id=user_id,
-            description=base_payment.description,
-            created_at=next_date,
-            status='scheduled'
-        ).first()
-        
-        if existing:
-            continue
-        
-        new_payment = Transaction(
-            user_id=user_id,
-            transaction_type=base_payment.transaction_type,
-            amount=base_payment.amount,
-            status='scheduled',
-            description=base_payment.description,
-            transaction_metadata=metadata.copy(),
-            created_at=next_date
-        )
-        
-        db.session.add(new_payment)
-        created_payments.append(new_payment.to_dict())
+        while next_date <= end_date:
+            existing = Transaction.query.filter_by(
+                user_id=user_id,
+                description=base_payment.description,
+                created_at=next_date,
+                status='scheduled'
+            ).first()
+            
+            if not existing:
+                new_payment = Transaction(
+                    user_id=user_id,
+                    transaction_type=base_payment.transaction_type,
+                    amount=base_payment.amount,
+                    status='scheduled',
+                    description=base_payment.description,
+                    transaction_metadata=metadata.copy(),
+                    created_at=next_date
+                )
+                
+                db.session.add(new_payment)
+                created_payments.append(new_payment.to_dict())
+            
+            week_count += 1
+            next_date = current_date + timedelta(weeks=week_count + 1)
     
     db.session.commit()
     
