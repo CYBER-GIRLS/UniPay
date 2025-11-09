@@ -48,6 +48,7 @@ export default function DarkDaysPocketPage() {
   // Dialog states
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
+  const [withdrawalAmountDialogOpen, setWithdrawalAmountDialogOpen] = useState(false);
   const [emergencyDialogOpen, setEmergencyDialogOpen] = useState(false);
   const [verificationDialogOpen, setVerificationDialogOpen] = useState(false);
   
@@ -88,13 +89,13 @@ export default function DarkDaysPocketPage() {
 
   // Deposit mutation
   const depositMutation = useMutation({
-    mutationFn: ({ pocketId, amount, pin }: any) => 
+    mutationFn: ({ pocketId, amount, pin, originalAmount }: any) => 
       savingsAPI.depositToPocket(pocketId, { amount, pin }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['savings-pockets'] });
       queryClient.invalidateQueries({ queryKey: ['wallet'] });
       setDepositDialogOpen(false);
-      toast.success(`Deposit of ${formatCurrency(variables.amount, selectedCurrency)} successful!`);
+      toast.success(`Deposit of ${formatCurrency(variables.originalAmount, selectedCurrency)} successful!`);
       setDepositAmount('');
       setDepositPin('');
     },
@@ -104,18 +105,33 @@ export default function DarkDaysPocketPage() {
   });
 
   const withdrawalMutation = useMutation({
-    mutationFn: ({ pocketId, amount, pin }: any) => 
-      savingsAPI.withdrawFromPocket(pocketId, { amount, pin }),
+    mutationFn: ({ pocketId, amount, pin, emergencyData, originalAmount }: any) => 
+      savingsAPI.withdrawFromPocket(pocketId, { amount, pin, emergencyData }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['savings-pockets'] });
       queryClient.invalidateQueries({ queryKey: ['wallet'] });
       setVerificationDialogOpen(false);
+      setWithdrawalAmountDialogOpen(false);
       setEmergencyDialogOpen(false);
-      toast.success(`Withdrawal of ${formatCurrency(variables.amount, selectedCurrency)} successful!`);
+      toast.success(`Withdrawal of ${formatCurrency(variables.originalAmount, selectedCurrency)} successful!`);
       setWithdrawalAmount('');
+      setEmergencyData(null);
     },
     onError: (error: any) => {
       toast.error(`Withdrawal failed: ${error.response?.data?.error || error.message}`);
+    },
+  });
+
+  // Auto-save config mutation
+  const autoSaveConfigMutation = useMutation({
+    mutationFn: ({ pocketId, config }: any) => 
+      savingsAPI.updateAutoSave(pocketId, config),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['savings-pockets'] });
+      toast.success('Auto-save configuration updated successfully!');
+    },
+    onError: (error: any) => {
+      toast.error(`Failed to update auto-save: ${error.response?.data?.error || error.message}`);
     },
   });
 
@@ -129,7 +145,16 @@ export default function DarkDaysPocketPage() {
   const handleEmergencyProceed = (data: { category: string; reason: string }) => {
     setEmergencyData(data);
     setEmergencyDialogOpen(false);
-    setVerificationDialogOpen(true);
+    // Show withdrawal amount dialog first
+    setWithdrawalAmountDialogOpen(true);
+  };
+
+  // Handle withdrawal amount submission
+  const handleWithdrawalAmountSubmit = () => {
+    if (withdrawalAmount && parseFloat(withdrawalAmount) > 0) {
+      setWithdrawalAmountDialogOpen(false);
+      setVerificationDialogOpen(true);
+    }
   };
 
   // Handle security verification complete
@@ -139,10 +164,15 @@ export default function DarkDaysPocketPage() {
       return;
     }
 
+    const originalAmount = Number(withdrawalAmount);
+    const amountInUSD = convertToUSD(originalAmount, selectedCurrency);
+    
     withdrawalMutation.mutate({
       pocketId: selectedPocket.id,
-      amount: parseFloat(withdrawalAmount),
+      amount: amountInUSD,
+      originalAmount: originalAmount,
       pin: verificationData.pin,
+      emergencyData: emergencyData || undefined,
     });
   };
 
@@ -154,8 +184,12 @@ export default function DarkDaysPocketPage() {
 
   // Handle auto-save config save
   const handleAutoSaveConfig = (config: any) => {
-    toast.info('Auto-save configuration will be saved with backend endpoint');
-    console.log('Auto-save config:', config);
+    if (activePocket) {
+      autoSaveConfigMutation.mutate({
+        pocketId: activePocket.id,
+        config: config,
+      });
+    }
   };
 
   const activePocket = pocketsData?.[0]; // For demo, using first pocket
@@ -359,10 +393,12 @@ export default function DarkDaysPocketPage() {
             <Button
               onClick={() => {
                 if (selectedPocket && depositAmount) {
-                  const amountInUSD = convertToUSD(Number(depositAmount), selectedCurrency);
+                  const originalAmount = Number(depositAmount);
+                  const amountInUSD = convertToUSD(originalAmount, selectedCurrency);
                   depositMutation.mutate({
                     pocketId: selectedPocket.id,
                     amount: amountInUSD,
+                    originalAmount: originalAmount,
                     pin: depositPin,
                   });
                 }
@@ -371,6 +407,40 @@ export default function DarkDaysPocketPage() {
               className="w-full bg-gradient-to-r from-green-600 to-emerald-600"
             >
               {depositMutation.isPending ? 'Processing...' : 'Confirm Deposit'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Withdrawal Amount Dialog */}
+      <Dialog open={withdrawalAmountDialogOpen} onOpenChange={setWithdrawalAmountDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Withdrawal Amount</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="withdrawal-amount">Amount ({getCurrencySymbol(selectedCurrency)})</Label>
+              <Input
+                id="withdrawal-amount"
+                type="number"
+                min="0.01"
+                max={selectedPocket?.balance || 0}
+                step="0.01"
+                value={withdrawalAmount}
+                onChange={(e) => setWithdrawalAmount(e.target.value)}
+                placeholder="0.00"
+              />
+              <p className="text-xs text-muted-foreground">
+                Available balance: {formatCurrency(selectedPocket?.balance || 0, selectedCurrency)}
+              </p>
+            </div>
+            <Button
+              onClick={handleWithdrawalAmountSubmit}
+              disabled={!withdrawalAmount || parseFloat(withdrawalAmount) <= 0 || parseFloat(withdrawalAmount) > (selectedPocket?.balance || 0)}
+              className="w-full bg-gradient-to-r from-red-600 to-red-700"
+            >
+              Continue to Verification
             </Button>
           </div>
         </DialogContent>
@@ -389,7 +459,7 @@ export default function DarkDaysPocketPage() {
         open={verificationDialogOpen}
         onClose={() => setVerificationDialogOpen(false)}
         onVerified={handleVerificationComplete}
-        amount={selectedPocket?.balance || 0}
+        amount={parseFloat(withdrawalAmount) || 0}
       />
     </motion.div>
   );

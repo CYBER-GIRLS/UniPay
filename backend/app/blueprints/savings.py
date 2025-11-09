@@ -106,6 +106,7 @@ def withdraw_from_pocket(pocket_id):
     data = request.get_json()
     amount = data.get('amount')
     pin = data.get('pin')
+    emergency_data = data.get('emergencyData')
     
     if not amount or float(amount) <= 0:
         return jsonify({'error': 'Invalid amount'}), 400
@@ -137,15 +138,26 @@ def withdraw_from_pocket(pocket_id):
     # Add to wallet
     wallet.balance += amount_decimal
     
-    # Create transaction record with metadata
+    # Create transaction record with metadata (including emergency data if provided)
+    transaction_metadata = {
+        'pocket_id': pocket.id, 
+        'pocket_name': pocket.name
+    }
+    
+    # Add emergency metadata if this is an emergency withdrawal
+    if emergency_data:
+        transaction_metadata['emergency_category'] = emergency_data.get('category')
+        transaction_metadata['emergency_reason'] = emergency_data.get('reason')
+        transaction_metadata['is_emergency_withdrawal'] = True
+    
     transaction = Transaction(
         user_id=user_id,
         transaction_type='savings_withdrawal',
         amount=amount_decimal,
         status='completed',
-        description=f'Withdrawal from {pocket.name}',
+        description=f'{"Emergency withdrawal" if emergency_data else "Withdrawal"} from {pocket.name}',
         completed_at=datetime.utcnow(),
-        transaction_metadata={'pocket_id': pocket.id, 'pocket_name': pocket.name}
+        transaction_metadata=transaction_metadata
     )
     
     db.session.add(transaction)
