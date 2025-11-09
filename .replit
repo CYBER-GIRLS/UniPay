@@ -97,12 +97,12 @@ externalPort = 5173
 localPort = 36735
 
 [[ports]]
-localPort = 39211
-externalPort = 5000
+localPort = 37827
+externalPort = 6800
 
 [[ports]]
-localPort = 39987
-externalPort = 6000
+localPort = 39211
+externalPort = 5000
 
 [[ports]]
 localPort = 40603

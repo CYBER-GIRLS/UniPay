@@ -51,7 +51,7 @@ export default function CalendarGrid({
 
     const hasUpcoming = dayTransactions.some((t: any) => 
       t.status === 'scheduled' || 
-      (t.transaction_metadata && t.transaction_metadata.upcoming === true)
+      (t.metadata && t.metadata.upcoming === true)
     );
     const hasIncome = dayTransactions.some((t: any) => 
       (t.transaction_type === 'topup' || t.transaction_type === 'income' || t.transaction_type === 'refund') &&
