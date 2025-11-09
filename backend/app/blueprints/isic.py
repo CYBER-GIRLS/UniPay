@@ -43,7 +43,7 @@ def link_profile():
     qr_data = f"ISIC:{isic_number}:{student_name}:{university}"
     qr_code_data = hashlib.sha256(qr_data.encode()).hexdigest()
     
-    profile = ISICProfile(
+    profile = ISICProfile(  # type: ignore
         user_id=current_user_id,
         isic_number=isic_number,
         student_name=student_name,
@@ -271,7 +271,7 @@ def apply_discount():
     discount_amount = float(amount) * (merchant.discount_percentage / 100)
     final_amount = float(amount) - discount_amount
     
-    application = DiscountApplication(
+    application = DiscountApplication(  # type: ignore
         isic_profile_id=profile.id,
         merchant_id=merchant_id,
         transaction_id=transaction_id,

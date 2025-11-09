@@ -30,7 +30,7 @@ def register():
         current_app.logger.warning(f"Registration attempt with already taken username: {data['username']}")
         return jsonify({'error': 'Username already taken'}), 400
     
-    user = User(
+    user = User(  # type: ignore
         email=data['email'],
         username=data['username'],
         phone=data.get('phone'),
@@ -45,7 +45,7 @@ def register():
     db.session.add(user)
     db.session.flush()
     
-    wallet = Wallet(user_id=user.id)
+    wallet = Wallet(user_id=user.id)  # type: ignore
     db.session.add(wallet)
     
     db.session.commit()
