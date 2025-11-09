@@ -23,7 +23,7 @@ def get_available_users():
         } for user in users]
     }), 200
 
-@loans_bp.route('/', methods=['GET'])
+@loans_bp.route('', methods=['GET'])
 @jwt_required()
 def get_loans():
     from sqlalchemy.orm import joinedload
@@ -65,7 +65,7 @@ def get_loans():
         }
     }), 200
 
-@loans_bp.route('/', methods=['POST'])
+@loans_bp.route('', methods=['POST'])
 @jwt_required()
 def create_loan():
     lender_id = int(get_jwt_identity())
