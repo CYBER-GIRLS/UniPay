@@ -37,8 +37,7 @@ import { useCurrencyStore, formatCurrency, convertToUSD, getCurrencySymbol } fro
 
 import { DarkDaysCard } from '../components/DarkDaysCard';
 import { SecurityVerificationModal } from '../components/SecurityVerificationModal';
-import { AutoSaveConfigPanel } from '../components/AutoSaveConfigPanel';
-import { SavingsGoalPanel } from '../components/SavingsGoalPanel';
+import { ConsolidatedSettingsPanel } from '../components/ConsolidatedSettingsPanel';
 import { EmergencyUnlockDialog } from '../components/EmergencyUnlockDialog';
 import { SavingsReportWidget } from '../components/SavingsReportWidget';
 
@@ -123,29 +122,22 @@ export default function DarkDaysPocketPage() {
     },
   });
 
-  // Auto-save config mutation
-  const autoSaveConfigMutation = useMutation({
-    mutationFn: ({ pocketId, config }: any) => 
-      savingsAPI.updateAutoSave(pocketId, config),
+  // Consolidated settings mutation (combines goal and auto-save)
+  const consolidatedSettingsMutation = useMutation({
+    mutationFn: ({ pocketId, settings }: any) => 
+      savingsAPI.updateAutoSave(pocketId, {
+        goal_amount: settings.goal_amount,
+        enabled: settings.auto_save_config.enabled,
+        percentage: settings.auto_save_config.percentage,
+        frequency: settings.auto_save_config.frequency,
+        next_date: settings.auto_save_config.next_date,
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['savings-pockets'] });
-      toast.success('Auto-save configuration updated successfully!');
+      toast.success('Settings updated successfully!');
     },
     onError: (error: any) => {
-      toast.error(`Failed to update auto-save: ${error.response?.data?.error || error.message}`);
-    },
-  });
-
-  // Savings goal mutation
-  const savingsGoalMutation = useMutation({
-    mutationFn: ({ pocketId, goalAmount }: any) => 
-      savingsAPI.updateAutoSave(pocketId, { goal_amount: goalAmount }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['savings-pockets'] });
-      toast.success('Savings goal updated successfully!');
-    },
-    onError: (error: any) => {
-      toast.error(`Failed to update goal: ${error.response?.data?.error || error.message}`);
+      toast.error(`Failed to update settings: ${error.response?.data?.error || error.message}`);
     },
   });
 
@@ -196,22 +188,12 @@ export default function DarkDaysPocketPage() {
     setDepositDialogOpen(true);
   };
 
-  // Handle auto-save config save
-  const handleAutoSaveConfig = (config: any) => {
+  // Handle consolidated settings save
+  const handleConsolidatedSettings = (settings: any) => {
     if (activePocket) {
-      autoSaveConfigMutation.mutate({
+      consolidatedSettingsMutation.mutate({
         pocketId: activePocket.id,
-        config: config,
-      });
-    }
-  };
-
-  // Handle savings goal update
-  const handleSavingsGoal = (goalAmount: number) => {
-    if (activePocket) {
-      savingsGoalMutation.mutate({
-        pocketId: activePocket.id,
-        goalAmount,
+        settings,
       });
     }
   };
@@ -302,25 +284,19 @@ export default function DarkDaysPocketPage() {
           </TabsContent>
 
           <TabsContent value="settings">
-            <div className="space-y-6">
-              {/* Standalone Savings Goal Panel */}
-              <SavingsGoalPanel
-                pocketId={activePocket.id}
-                currentBalance={activePocket.balance}
-                goalAmount={activePocket.goal_amount}
-                onSave={handleSavingsGoal}
-              />
-
-              {/* Auto-Save Configuration */}
-              <AutoSaveConfigPanel
-                currentConfig={{
-                  enabled: activePocket.auto_save_enabled,
-                  percentage: activePocket.auto_save_percentage,
-                  frequency: activePocket.auto_save_frequency || 'monthly',
-                }}
-                onSave={handleAutoSaveConfig}
-              />
-            </div>
+            {/* Consolidated Settings Panel */}
+            <ConsolidatedSettingsPanel
+              pocketId={activePocket.id}
+              currentBalance={activePocket.balance}
+              goalAmount={activePocket.goal_amount}
+              currentConfig={{
+                enabled: activePocket.auto_save_enabled,
+                percentage: activePocket.auto_save_percentage,
+                frequency: activePocket.auto_save_frequency || 'monthly',
+                next_date: activePocket.auto_save_next_date,
+              }}
+              onSave={handleConsolidatedSettings}
+            />
           </TabsContent>
 
           <TabsContent value="reports">
