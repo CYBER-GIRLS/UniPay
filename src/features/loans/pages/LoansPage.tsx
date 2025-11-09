@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { format, parseISO, isPast } from 'date-fns';
 
-const MotionCard = motion.create(Card);
+const MotionCard = motion(Card);
 
 export default function LoansPage() {
   const [loanDialogOpen, setLoanDialogOpen] = useState(false);
