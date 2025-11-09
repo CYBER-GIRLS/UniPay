@@ -286,7 +286,6 @@ export default function DarkDaysPocketPage() {
           <TabsContent value="settings">
             {/* Consolidated Settings Panel */}
             <ConsolidatedSettingsPanel
-              pocketId={activePocket.id}
               currentBalance={activePocket.balance}
               goalAmount={activePocket.goal_amount}
               currentConfig={{

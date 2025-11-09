@@ -29,7 +29,6 @@ import { useCurrencyStore, formatCurrency, getCurrencySymbol } from '@/stores/cu
 import { toast } from 'sonner';
 
 interface ConsolidatedSettingsPanelProps {
-  pocketId: number;
   currentBalance: number;
   goalAmount?: number;
   currentConfig?: {
@@ -50,7 +49,6 @@ interface ConsolidatedSettingsPanelProps {
 }
 
 export function ConsolidatedSettingsPanel({
-  pocketId,
   currentBalance,
   goalAmount = 5000,
   currentConfig,

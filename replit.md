@@ -29,7 +29,7 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
     *   **Transactions:** Comprehensive tracking, filtering, and statistical analysis with 15+ transaction types. Supports "expected payments" (CRUD and recurring instances) and includes balance validation, race condition protection, and detailed transaction records with metadata.
     *   **Virtual Cards:** Creation, management (freeze/unfreeze), and linking to subscriptions. Card payments include freeze/limit checks.
     *   **Subscriptions:** Management of recurring payments.
-    *   **Savings (DarkDays Pocket):** Secure, PIN-protected savings pockets with auto-save options and goal tracking. Includes editable target amount for goals, dynamic progress tracking, and emergency withdrawal flow with metadata tracking and security verification.
+    *   **Savings (DarkDays Pocket):** Secure, PIN-protected savings pockets with auto-save options and goal tracking. Features a consolidated settings interface combining savings goal configuration and auto-save settings with a single Save button. Includes editable target amount for goals, dynamic progress tracking, and emergency withdrawal flow with metadata tracking and security verification.
     *   **Marketplace:** Student-to-student commerce platform supporting listings and escrow services with buyer balance validation and dual transaction recording.
     *   **P2P Lending:** Functionality for loan requests, debt tracking, and repayment, including lender/borrower balance validation and dual transaction recording.
     *   **ISIC Discounts:** Integration to provide student card-based discounts.
