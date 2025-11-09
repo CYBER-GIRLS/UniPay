@@ -6,11 +6,14 @@ import { ArrowUpRight, ArrowDownLeft, Plus, Send, CreditCard, TrendingUp, Trendi
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
+import { CurrencySelector } from '@/components/CurrencySelector';
 
 const MotionCard = motion.create(Card);
 
 export default function DashboardPage() {
   const { user, isAuthenticated } = useAuthStore();
+  const { selectedCurrency } = useCurrencyStore();
 
   const { data: walletData } = useQuery({
     queryKey: ['wallet'],
@@ -52,11 +55,14 @@ export default function DashboardPage() {
       animate="show"
       className="space-y-6 max-w-7xl mx-auto"
     >
-      <motion.div variants={itemVariants}>
-        <h1 className="text-2xl font-bold text-gray-900">
-          Welcome back, {user?.first_name || user?.username}! 👋
-        </h1>
-        <p className="text-gray-600 mt-1">Here's your financial overview</p>
+      <motion.div variants={itemVariants} className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Welcome back, {user?.first_name || user?.username}! 👋
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Here's your financial overview</p>
+        </div>
+        <CurrencySelector compact />
       </motion.div>
 
       <MotionCard
@@ -69,11 +75,20 @@ export default function DashboardPage() {
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
             
             <div className="relative z-10">
-              <p className="text-white/80 text-sm font-medium">Available Balance</p>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-white/80 text-sm font-medium">Available Balance</p>
+                {selectedCurrency !== 'USD' && (
+                  <span className="text-xs bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
+                    Visual conversion
+                  </span>
+                )}
+              </div>
               <h2 className="text-5xl font-bold mt-2 mb-1">
-                ${walletData?.balance?.toLocaleString() || '0.00'}
+                {formatCurrency(walletData?.balance || 0, selectedCurrency)}
               </h2>
-              <p className="text-white/70 text-sm">{walletData?.currency || 'USD'}</p>
+              <p className="text-white/70 text-sm">
+                {selectedCurrency === 'USD' ? 'US Dollar' : selectedCurrency === 'EUR' ? 'Euro' : 'Bulgarian Lev'}
+              </p>
               
               <div className="grid grid-cols-3 gap-4 mt-8">
                 <Link to="/topup" className="flex-1">
