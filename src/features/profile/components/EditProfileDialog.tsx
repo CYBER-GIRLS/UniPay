@@ -34,7 +34,7 @@ interface EditProfileDialogProps {
 }
 
 export function EditProfileDialog({ open, onClose }: EditProfileDialogProps) {
-  const { user, setUser } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -73,7 +73,7 @@ export function EditProfileDialog({ open, onClose }: EditProfileDialogProps) {
       setIsSubmitting(true);
       const response = await authAPI.updateProfile(data);
       
-      setUser(response.data.user);
+      updateUser(response.data.user);
       
       toast({
         title: 'Profile Updated',
