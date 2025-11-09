@@ -38,19 +38,21 @@ def get_loans():
         joinedload(Loan.lender)
     ).filter_by(borrower_id=user_id).all()
     
-    # Calculate summary statistics
+    # Calculate summary statistics (exclude cancelled loans)
     owed_to_me = db.session.query(
         func.sum(Loan.amount - Loan.amount_repaid)
     ).filter(
         Loan.lender_id == user_id,
-        Loan.is_fully_repaid == False
+        Loan.is_fully_repaid == False,
+        Loan.status != 'cancelled'
     ).scalar() or 0
     
     i_owe = db.session.query(
         func.sum(Loan.amount - Loan.amount_repaid)
     ).filter(
         Loan.borrower_id == user_id,
-        Loan.is_fully_repaid == False
+        Loan.is_fully_repaid == False,
+        Loan.status != 'cancelled'
     ).scalar() or 0
     
     net_balance = float(owed_to_me) - float(i_owe)
@@ -294,3 +296,96 @@ def repay_loan(loan_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f'Repayment failed: {str(e)}'}), 500
+
+@loans_bp.route('/<int:loan_id>/cancel', methods=['POST'])
+@jwt_required()
+def cancel_loan(loan_id):
+    user_id = int(get_jwt_identity())
+    
+    # Lock loan record
+    loan = Loan.query.filter_by(id=loan_id).with_for_update().first()
+    
+    if not loan:
+        return jsonify({'error': 'Loan not found'}), 404
+    
+    # Only lender can cancel
+    if loan.lender_id != user_id:
+        return jsonify({'error': 'Only the lender can cancel this loan'}), 403
+    
+    # Can only cancel if no repayments made
+    if loan.amount_repaid > 0:
+        return jsonify({'error': 'Cannot cancel loan with existing repayments. Use repayment feature instead.'}), 400
+    
+    # Can only cancel active loans
+    if loan.status in ['cancelled', 'repaid']:
+        return jsonify({'error': f'Loan is already {loan.status}'}), 400
+    
+    try:
+        # Lock both wallets
+        lender_wallet = Wallet.query.filter_by(user_id=loan.lender_id).with_for_update().first()
+        borrower_wallet = Wallet.query.filter_by(user_id=loan.borrower_id).with_for_update().first()
+        
+        if not lender_wallet or not borrower_wallet:
+            return jsonify({'error': 'Wallet not found'}), 404
+        
+        # Check borrower has enough balance to return
+        if borrower_wallet.balance < loan.amount:
+            return jsonify({'error': 'Borrower has insufficient balance to process cancellation'}), 400
+        
+        # Reverse the loan transaction
+        # Return money to lender
+        lender_wallet.balance += loan.amount
+        
+        # Deduct from borrower
+        borrower_wallet.balance -= loan.amount
+        
+        # Update loan status
+        loan.status = 'cancelled'
+        loan.is_fully_repaid = False
+        loan.cancelled_at = datetime.utcnow()
+        
+        # Create transaction for lender (money in - refund)
+        lender_transaction = Transaction(
+            user_id=loan.lender_id,
+            transaction_type='loan_cancelled_refund',
+            amount=float(loan.amount),
+            status='completed',
+            description=f'Loan cancellation refund from {User.query.get(loan.borrower_id).username}',
+            transaction_metadata={
+                'loan_id': loan.id,
+                'borrower_id': loan.borrower_id,
+                'borrower_username': User.query.get(loan.borrower_id).username,
+                'original_due_date': loan.due_date.isoformat() if loan.due_date else None
+            },
+            completed_at=datetime.utcnow()
+        )
+        db.session.add(lender_transaction)
+        
+        # Create transaction for borrower (money out - return)
+        borrower_transaction = Transaction(
+            user_id=loan.borrower_id,
+            transaction_type='loan_cancelled_return',
+            amount=float(loan.amount),
+            status='completed',
+            description=f'Loan cancellation - returned to {User.query.get(loan.lender_id).username}',
+            transaction_metadata={
+                'loan_id': loan.id,
+                'lender_id': loan.lender_id,
+                'original_due_date': loan.due_date.isoformat() if loan.due_date else None
+            },
+            completed_at=datetime.utcnow()
+        )
+        db.session.add(borrower_transaction)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Loan cancelled successfully',
+            'loan': loan.to_dict(),
+            'lender_wallet_balance': float(lender_wallet.balance),
+            'transaction': lender_transaction.to_dict()
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Loan cancellation failed: {str(e)}'}), 500

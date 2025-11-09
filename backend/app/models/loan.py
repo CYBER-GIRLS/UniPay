@@ -24,6 +24,7 @@ class Loan(db.Model):
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     repaid_at = db.Column(db.DateTime)
+    cancelled_at = db.Column(db.DateTime)
     
     lender = db.relationship('User', foreign_keys=[lender_id], backref='loans_given')
     borrower = db.relationship('User', foreign_keys=[borrower_id], backref='loans_taken')
@@ -67,7 +68,8 @@ class Loan(db.Model):
             'is_overdue': self.is_overdue,
             'days_overdue': self.days_overdue,
             'created_at': self.created_at.isoformat() if self.created_at else None,
-            'repaid_at': self.repaid_at.isoformat() if self.repaid_at else None
+            'repaid_at': self.repaid_at.isoformat() if self.repaid_at else None,
+            'cancelled_at': self.cancelled_at.isoformat() if self.cancelled_at else None
         }
 
 class LoanRepayment(db.Model):

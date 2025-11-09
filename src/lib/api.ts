@@ -116,6 +116,7 @@ export const loansAPI = {
   getAvailableUsers: () => api.get('/loans/available-users'),
   createLoan: (data: any) => api.post('/loans', data),
   repayLoan: (loanId: number, amount: number) => api.post(`/loans/${loanId}/repay`, { amount }),
+  cancelLoan: (loanId: number) => api.post(`/loans/${loanId}/cancel`),
 };
 
 export const subscriptionsAPI = {

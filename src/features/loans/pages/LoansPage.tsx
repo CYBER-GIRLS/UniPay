@@ -23,6 +23,7 @@ export default function LoansPage() {
   const [repayDialogOpen, setRepayDialogOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState<any>(null);
   const [repayingLoanIds, setRepayingLoanIds] = useState<Set<number>>(new Set());
+  const [cancellingLoanIds, setCancellingLoanIds] = useState<Set<number>>(new Set());
   
   const [selectedUserId, setSelectedUserId] = useState('');
   const [loanAmount, setLoanAmount] = useState('');
@@ -92,6 +93,33 @@ export default function LoansPage() {
     },
   });
 
+  const cancelLoanMutation = useMutation({
+    mutationFn: (loanId: number) => {
+      setCancellingLoanIds(prev => new Set(prev).add(loanId));
+      return loansAPI.cancelLoan(loanId);
+    },
+    onSuccess: (_data, loanId) => {
+      queryClient.invalidateQueries({ queryKey: ['loans'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      toast.success('Loan cancelled successfully!', {
+        description: 'The loan has been cancelled and funds have been returned.',
+      });
+      setCancellingLoanIds(prev => {
+        const next = new Set(prev);
+        next.delete(loanId);
+        return next;
+      });
+    },
+    onError: (error: any, loanId) => {
+      toast.error(error.response?.data?.error || 'Failed to cancel loan');
+      setCancellingLoanIds(prev => {
+        const next = new Set(prev);
+        next.delete(loanId);
+        return next;
+      });
+    },
+  });
+
   const handleCreateLoan = () => {
     const selectedUser = usersData?.users.find((u: any) => u.id === Number(selectedUserId));
     if (!selectedUser) {
@@ -117,6 +145,12 @@ export default function LoansPage() {
     toast.info('Loan Details', {
       description: `Full loan details for $${loan.amount} loan.`,
     });
+  };
+
+  const handleCancelLoan = (loan: any) => {
+    if (confirm(`Are you sure you want to cancel this loan of $${loan.amount}? The funds will be returned immediately.`)) {
+      cancelLoanMutation.mutate(loan.id);
+    }
   };
 
   const summary = loansData?.summary || { owed_to_me: 0, i_owe: 0, net_balance: 0 };
@@ -312,6 +346,8 @@ export default function LoansPage() {
                   isLender={true}
                   onSendReminder={handleSendReminder}
                   onViewDetails={handleViewDetails}
+                  onCancel={handleCancelLoan}
+                  isCancelling={cancellingLoanIds.has(loan.id)}
                 />
               ))}
             </div>
