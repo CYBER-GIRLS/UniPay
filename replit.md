@@ -51,3 +51,25 @@ The frontend adopts a modern, Revolut-inspired interface utilizing `shadcn/ui` (
 *   **UI Components:** shadcn/ui (Radix UI + Tailwind CSS)
 *   **Form Management & Validation:** React Hook Form, Zod
 *   **Animations:** Framer Motion
+
+## Recent Changes
+
+**November 9, 2025 (Activity Section Fixes & Calendar Yellow Highlights):**
+- ✅ **Removed Non-Functional Buttons** - Deleted Filter and Export buttons from Activity header
+- ✅ **Centered Title Layout** - Improved title and subtitle formatting with centered alignment
+- ✅ **Fixed Metadata Field Mapping** - CalendarGrid now correctly checks `t.metadata` instead of `t.transaction_metadata`
+- ✅ **Added Demo Account Upcoming Payments** - User 14 (student@test.com) now has 3 scheduled payments visible on calendar
+- ✅ **Yellow Calendar Highlights Working** - November 15 (Netflix), November 20 (Gym), November 25 (Rent) display correctly
+- ✅ **Total Scheduled Payments** - 17 upcoming payments across 9 users (including main demo account)
+- ✅ **API Verification** - Confirmed backend correctly returns scheduled transactions for each user
+- ✅ **Database Consistency** - All scheduled transactions properly stored with status='scheduled' and metadata.upcoming=true
+
+**November 9, 2025 (Activity Section & Calendar UX Improvements - Initial):**
+- ✅ **Transaction List Collapsed by Default** - Cleaner interface with expandable transaction history
+- ✅ **Improved Layout Flow** - Calendar now appears before transaction list for better contextual connection
+- ✅ **Compact Modern Legend** - Replaced large legend with small circular icons with tooltips
+- ✅ **Upcoming Payments Data** - Generated 14 realistic scheduled payments across 8 users
+- ✅ **CompactColorLegend Component** - Modern horizontal legend with hover tooltips
+- ✅ **Scheduled Transaction Status** - New 'scheduled' status for upcoming payments
+- ✅ **Calendar Priority Logic** - Upcoming payments prioritized with yellow color
+- ✅ **Payment Categories** - Rent ($350-$425), Subscriptions ($10.99-$54.99), Utilities ($35-$60)
