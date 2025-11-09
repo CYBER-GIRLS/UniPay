@@ -89,8 +89,8 @@ export function SecurityVerificationModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
+      <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-red-500" />
             Emergency Withdrawal Verification
@@ -100,7 +100,7 @@ export function SecurityVerificationModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 py-4 overflow-y-auto flex-1 pr-2">
           {/* Progress Indicator */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-muted-foreground">
@@ -223,24 +223,24 @@ export function SecurityVerificationModal({
               </div>
             </div>
           )}
+        </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
-            <Button
-              variant="outline"
-              onClick={handleReset}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleNextStep}
-              disabled={!canProceed()}
-              className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
-            >
-              {step === totalSteps ? 'Confirm Withdrawal' : 'Next Step'}
-            </Button>
-          </div>
+        {/* Action Buttons - Fixed at bottom */}
+        <div className="flex gap-3 pt-4 border-t flex-shrink-0">
+          <Button
+            variant="outline"
+            onClick={handleReset}
+            className="flex-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleNextStep}
+            disabled={!canProceed()}
+            className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800"
+          >
+            {step === totalSteps ? 'Confirm Withdrawal' : 'Next Step'}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

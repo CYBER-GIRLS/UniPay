@@ -5,6 +5,19 @@ UniPay is a digital wallet application tailored for students, integrating financ
 
 ## Recent Changes
 
+### November 9, 2025 - DarkDays Pocket Dialog Scrolling Fix
+- **Issue**: Emergency Access and Security Verification dialogs content overflowing on smaller screens or when content is tall
+- **Root Cause**: Dialogs had no max-height constraint and overflow handling, causing content to be cut off beyond viewport
+- **Fix Applied**: 
+  - Added `max-h-[90vh]` to all DarkDays Pocket dialogs for viewport-relative height constraint
+  - Added `flex flex-col` layout to EmergencyUnlockDialog and SecurityVerificationModal
+  - Added `overflow-y-auto` and `flex-1` to scrollable content areas with `pr-2` for scrollbar padding
+  - Made headers `flex-shrink-0` to prevent compression
+  - Made action buttons `flex-shrink-0` with `border-t` separator to keep them fixed at bottom
+  - Updated Create Pocket, Deposit, and Withdrawal Amount dialogs with `max-h-[90vh] overflow-y-auto`
+- **Impact**: All dialogs now properly fit within viewport (90% max height) with smooth scrolling on all screen sizes
+- **User Experience**: Users can now see all fields, explanations, and buttons without content being cut off, with consistent scrolling behavior
+
 ### November 9, 2025 - DarkDays Pocket Complete Feature Implementation
 - **Withdrawal Amount Input Dialog**: Added gated withdrawal flow requiring amount input before security verification
 - **Auto-Save Backend Integration**: Connected frontend auto-save configuration panel to `/api/savings/pockets/<id>/auto-save` endpoint

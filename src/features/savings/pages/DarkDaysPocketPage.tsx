@@ -319,7 +319,7 @@ export default function DarkDaysPocketPage() {
 
       {/* Create Pocket Dialog */}
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Create DarkDays Pocket</DialogTitle>
           </DialogHeader>
@@ -362,7 +362,7 @@ export default function DarkDaysPocketPage() {
 
       {/* Deposit Dialog */}
       <Dialog open={depositDialogOpen} onOpenChange={setDepositDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Deposit to DarkDays Pocket</DialogTitle>
           </DialogHeader>
@@ -414,7 +414,7 @@ export default function DarkDaysPocketPage() {
 
       {/* Withdrawal Amount Dialog */}
       <Dialog open={withdrawalAmountDialogOpen} onOpenChange={setWithdrawalAmountDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Enter Withdrawal Amount</DialogTitle>
           </DialogHeader>
