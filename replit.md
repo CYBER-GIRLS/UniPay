@@ -54,6 +54,26 @@ The frontend adopts a modern, Revolut-inspired interface utilizing `shadcn/ui` (
 
 ## Recent Changes
 
+**November 9, 2025 (Wallet Feature Review & Documentation Update):**
+- ✅ **Backend Verification** - Confirmed all wallet endpoints operational
+  - GET /api/wallet returns: id, user_id, balance, currency, is_frozen, updated_at (NOT username)
+  - POST /api/wallet/topup validates amount, creates transaction, updates balance
+  - POST /api/wallet/transfer implements dual-entry accounting with atomic database transactions
+- ✅ **Frontend Bug Fixes** - Corrected TransfersPage implementation errors
+  - Fixed username display: Changed from `walletData?.username` to `user?.username` from authStore
+  - Fixed transaction filtering: Changed from `type === 'transfer_sent/received'` to `transaction_type === 'transfer'`
+  - Fixed transfer direction logic: Implemented `isSent = transfer.user_id === transfer.sender_id` comparison
+- ✅ **Documentation Accuracy** - Updated docs/features/02-wallet.md to reflect actual implementation
+  - Documented actual wallet API response fields (removed incorrect username field)
+  - Clarified transaction_type values ('topup', 'transfer') and dual-entry accounting model
+  - Explained transfer direction determination logic (user_id vs sender_id comparison)
+  - Corrected cache invalidation behavior description (query invalidation in mounted components)
+  - Added complete database schema showing transaction_type field and wallet-related values
+- ✅ **Architect Review** - All implementation/documentation mismatches resolved
+  - No security issues identified
+  - Recommended: smoke tests for transfer/top-up flows, automated tests for balance updates
+  - Future: ensure transaction descriptions consistently encode counterparty usernames
+
 **November 9, 2025 (Demo Authentication Features - Visual Enhancements):**
 - ✅ **Forgot Password Modal** - Added visual-only password reset feature to LoginPage
   - "Forgot password?" link opens modal dialog
