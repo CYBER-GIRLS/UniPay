@@ -4,11 +4,12 @@ import { transactionsAPI } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Receipt, ArrowUpRight, ArrowDownLeft, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { Receipt, ArrowUpRight, ArrowDownLeft, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Plus } from 'lucide-react';
 import CalendarGrid from '@/features/timeline/components/CalendarGrid';
 import CompactColorLegend from '@/features/timeline/components/CompactColorLegend';
 import DayDetailModal from '@/features/timeline/components/DayDetailModal';
 import CollapsibleTransactionList from '@/features/transactions/components/CollapsibleTransactionList';
+import ExpectedPaymentModal from '@/features/timeline/components/ExpectedPaymentModal';
 
 const MotionCard = motion.create(Card);
 
@@ -16,6 +17,7 @@ export default function TransactionsPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [showExpectedPaymentModal, setShowExpectedPaymentModal] = useState(false);
 
   // Fetch transactions for display (list & calendar)
   const { data: transactionsData } = useQuery({
@@ -158,9 +160,19 @@ export default function TransactionsPage() {
         className="space-y-4"
       >
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-2">
-            <CalendarIcon className="h-6 w-6 text-violet-600" />
-            <h2 className="text-xl font-bold text-gray-900">Finance Timeline</h2>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <CalendarIcon className="h-6 w-6 text-violet-600" />
+              <h2 className="text-xl font-bold text-gray-900">Finance Timeline</h2>
+            </div>
+            <Button
+              onClick={() => setShowExpectedPaymentModal(true)}
+              size="sm"
+              className="bg-violet-600 hover:bg-violet-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Expected Payment
+            </Button>
           </div>
           <CompactColorLegend />
         </div>
@@ -222,6 +234,12 @@ export default function TransactionsPage() {
           onClose={() => setDetailModalOpen(false)}
         />
       )}
+
+      <ExpectedPaymentModal
+        open={showExpectedPaymentModal}
+        onClose={() => setShowExpectedPaymentModal(false)}
+        selectedDate={new Date()}
+      />
     </motion.div>
   );
 }
