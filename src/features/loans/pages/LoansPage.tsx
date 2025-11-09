@@ -7,16 +7,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
+import { LoanCard } from '../components/LoanCard';
 import { 
   Plus, ArrowUpRight, ArrowDownRight, DollarSign, TrendingUp, 
-  TrendingDown, AlertCircle, Calendar, CheckCircle, Clock 
+  TrendingDown
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { format, parseISO, isPast } from 'date-fns';
 
 const MotionCard = motion(Card);
 
@@ -109,111 +107,23 @@ export default function LoansPage() {
     });
   };
 
+  const handleSendReminder = (loan: any) => {
+    toast.info(`Reminder sent to ${loan.borrower.username}!`, {
+      description: 'They have been notified about the outstanding loan.',
+    });
+  };
+
+  const handleViewDetails = (loan: any) => {
+    toast.info('Loan Details', {
+      description: `Full loan details for $${loan.amount} loan.`,
+    });
+  };
+
   const summary = loansData?.summary || { owed_to_me: 0, i_owe: 0, net_balance: 0 };
   const loansGiven = loansData?.loans_given || [];
   const loansTaken = loansData?.loans_taken || [];
 
   const formatCurrency = (amount: number) => `$${amount.toFixed(2)}`;
-
-  const getLoanStatusBadge = (loan: any) => {
-    if (loan.is_overdue) {
-      return <Badge variant="destructive" className="flex items-center gap-1">
-        <AlertCircle className="h-3 w-3" />
-        {loan.days_overdue}d Overdue
-      </Badge>;
-    }
-    if (loan.status === 'repaid') {
-      return <Badge variant="default" className="bg-green-600 flex items-center gap-1">
-        <CheckCircle className="h-3 w-3" />
-        Repaid
-      </Badge>;
-    }
-    if (loan.amount_repaid > 0) {
-      return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 flex items-center gap-1">
-        <Clock className="h-3 w-3" />
-        Partial
-      </Badge>;
-    }
-    return <Badge variant="outline">Active</Badge>;
-  };
-
-  const renderLoanCard = (loan: any, isLender: boolean) => {
-    const otherParty = isLender ? loan.borrower : loan.lender;
-    const progress = (loan.amount_repaid / loan.amount) * 100;
-
-    return (
-      <Card key={loan.id} className={`border-l-4 ${loan.is_overdue ? 'border-l-red-500' : loan.is_fully_repaid ? 'border-l-green-500' : 'border-l-yellow-500'}`}>
-        <CardContent className="p-4">
-          <div className="flex justify-between items-start mb-3">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <p className="font-semibold text-gray-900">
-                  {otherParty?.username || 'Unknown'}
-                </p>
-                {getLoanStatusBadge(loan)}
-              </div>
-              <p className="text-sm text-gray-600 mb-2">{loan.description}</p>
-              
-              <div className="flex items-center gap-4 text-xs text-gray-500">
-                {loan.due_date && (
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
-                    <span>Due: {format(parseISO(loan.due_date), 'MMM dd, yyyy')}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  <span>Created: {format(parseISO(loan.created_at), 'MMM dd, yyyy')}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="text-right">
-              <p className="text-2xl font-bold text-gray-900">{formatCurrency(loan.amount)}</p>
-              {!loan.is_fully_repaid && (
-                <p className="text-sm text-gray-600">
-                  Remaining: {formatCurrency(loan.amount_remaining)}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {!loan.is_fully_repaid && (
-            <>
-              <div className="mb-3">
-                <div className="flex justify-between text-xs text-gray-600 mb-1">
-                  <span>Repaid: {formatCurrency(loan.amount_repaid)}</span>
-                  <span>{progress.toFixed(0)}%</span>
-                </div>
-                <Progress value={progress} className="h-2" />
-              </div>
-
-              {!isLender && (
-                <Button
-                  size="sm"
-                  className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
-                  onClick={() => {
-                    setSelectedLoan(loan);
-                    setRepayDialogOpen(true);
-                  }}
-                  disabled={repayingLoanIds.has(loan.id)}
-                >
-                  {repayingLoanIds.has(loan.id) ? 'Processing...' : 'Repay Loan'}
-                </Button>
-              )}
-            </>
-          )}
-
-          {loan.is_fully_repaid && loan.repaid_at && (
-            <p className="text-xs text-gray-500 flex items-center gap-1">
-              <CheckCircle className="h-3 w-3" />
-              Fully repaid on {format(parseISO(loan.repaid_at), 'MMM dd, yyyy')}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
 
   return (
     <motion.div
@@ -392,10 +302,18 @@ export default function LoansPage() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="given" className="space-y-3">
+        <TabsContent value="given" className="space-y-4">
           {loansGiven.length > 0 ? (
-            <div className="space-y-3">
-              {loansGiven.map((loan: any) => renderLoanCard(loan, true))}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {loansGiven.map((loan: any) => (
+                <LoanCard
+                  key={loan.id}
+                  loan={loan}
+                  isLender={true}
+                  onSendReminder={handleSendReminder}
+                  onViewDetails={handleViewDetails}
+                />
+              ))}
             </div>
           ) : (
             <Card className="border-0 shadow-sm">
@@ -408,10 +326,22 @@ export default function LoansPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="taken" className="space-y-3">
+        <TabsContent value="taken" className="space-y-4">
           {loansTaken.length > 0 ? (
-            <div className="space-y-3">
-              {loansTaken.map((loan: any) => renderLoanCard(loan, false))}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {loansTaken.map((loan: any) => (
+                <LoanCard
+                  key={loan.id}
+                  loan={loan}
+                  isLender={false}
+                  onRepay={(selectedLoan) => {
+                    setSelectedLoan(selectedLoan);
+                    setRepayDialogOpen(true);
+                  }}
+                  onViewDetails={handleViewDetails}
+                  isRepaying={repayingLoanIds.has(loan.id)}
+                />
+              ))}
             </div>
           ) : (
             <Card className="border-0 shadow-sm">
