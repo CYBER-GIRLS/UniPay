@@ -5,6 +5,15 @@ UniPay is a digital wallet application tailored for students, integrating financ
 
 ## Recent Changes
 
+### November 9, 2025 - Budget Card Error Notification Fix
+- **Issue**: Budget card spending errors (insufficient funds) were silently failing without displaying error messages to users
+- **Root Cause**: App.tsx was using the wrong Toaster component (shadcn's hook-based system) while all pages used Sonner's function-based toast calls
+- **Fix Applied**: Updated `App.tsx` to import and render `Toaster` from `'./components/ui/sonner'` instead of `'./components/ui/toaster'`
+- **Impact**: Fixed ALL toast notifications across the entire application (budget cards, marketplace, loans, savings, transfers, etc.)
+- **Backend Validation**: Already properly implemented - returns 400 errors with clear messages like "Insufficient budget in {card_name}. Available: ${amount}"
+- **Frontend Error Handling**: Already properly implemented - all mutations have `onError` handlers that call `toast.error()`
+- **Result**: Users now see clear, visible error notifications when attempting to spend more than available budget in any Budget-type card
+
 ### November 9, 2025 - Transaction System & Frontend Notifications Completion
 - **Balance Validation**: All payment operations now validate wallet balance before processing
 - **Race Condition Protection**: SQLAlchemy `.with_for_update()` row locking prevents concurrent overdrafts
