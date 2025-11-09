@@ -11,8 +11,6 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
-const MotionCard = motion.create(Card);
-
 export default function SavingsPage() {
   const { selectedCurrency } = useCurrencyStore();
   const [pocketDialogOpen, setPocketDialogOpen] = useState(false);
