@@ -9,10 +9,12 @@ import { motion } from 'framer-motion';
 import { PiggyBank, Target, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 const MotionCard = motion.create(Card);
 
 export default function SavingsPage() {
+  const { selectedCurrency } = useCurrencyStore();
   const [pocketDialogOpen, setPocketDialogOpen] = useState(false);
   const [goalDialogOpen, setGoalDialogOpen] = useState(false);
   const [contributionDialogOpen, setContributionDialogOpen] = useState(false);
@@ -181,7 +183,7 @@ export default function SavingsPage() {
                           <p className="text-sm text-gray-600">Auto-save: {pocket.auto_save_percentage}%</p>
                         </div>
                       </div>
-                      <p className="text-xl font-bold text-violet-600">${pocket.balance}</p>
+                      <p className="text-xl font-bold text-violet-600">{formatCurrency(pocket.balance, selectedCurrency)}</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -275,7 +277,7 @@ export default function SavingsPage() {
                       </div>
                       <div className="flex-1">
                         <p className="font-semibold text-gray-900">{goal.title}</p>
-                        <p className="text-sm text-gray-600">${goal.current_amount} of ${goal.target_amount}</p>
+                        <p className="text-sm text-gray-600">{formatCurrency(goal.current_amount, selectedCurrency)} of {formatCurrency(goal.target_amount, selectedCurrency)}</p>
                       </div>
                     </div>
                     <div className="space-y-2">
