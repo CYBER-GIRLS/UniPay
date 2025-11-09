@@ -25,6 +25,7 @@ def create_app(config_name='development'):
     from app.blueprints.subscriptions import subscriptions_bp
     from app.blueprints.isic import isic_bp
     from app.blueprints.isic_upload import isic_upload_bp
+    from app.blueprints.expected_payments import expected_payments_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(wallet_bp, url_prefix='/api/wallet')
@@ -36,6 +37,7 @@ def create_app(config_name='development'):
     app.register_blueprint(subscriptions_bp, url_prefix='/api/subscriptions')
     app.register_blueprint(isic_bp, url_prefix='/api/isic')
     app.register_blueprint(isic_upload_bp)
+    app.register_blueprint(expected_payments_bp, url_prefix='/api/expected-payments')
     
     @app.route('/api/health')
     def health_check():

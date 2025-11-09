@@ -1,20 +1,8 @@
-modules = ["nodejs-20", "python-3.11"]
+modules = ["nodejs-20", "python-3.11", "python3"]
 
 [nix]
 channel = "stable-24_05"
-packages = [
-  "cairo",
-  "ffmpeg-full",
-  "freetype",
-  "ghostscript",
-  "glibcLocales",
-  "gobject-introspection",
-  "gtk3",
-  "pkg-config",
-  "qhull",
-  "tcl",
-  "tk",
-]
+packages = ["cairo", "ffmpeg-full", "freetype", "ghostscript", "glibcLocales", "gobject-introspection", "gtk3", "pkg-config", "qhull", "tcl", "tk"]
 
 [workflows]
 runButton = "Project"
@@ -95,10 +83,6 @@ externalPort = 5173
 
 [[ports]]
 localPort = 36735
-
-[[ports]]
-localPort = 37827
-externalPort = 6800
 
 [[ports]]
 localPort = 39211
