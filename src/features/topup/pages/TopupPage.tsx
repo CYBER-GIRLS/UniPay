@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { CreditCard, Banknote, QrCode, Wallet } from 'lucide-react';
 import { walletAPI } from '@/lib/api';
 import { toast } from 'sonner';
-import { useCurrencyStore, formatCurrency, getCurrencySymbol } from '@/stores/currencyStore';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 const MotionCard = motion.create(Card);
 
@@ -81,23 +81,16 @@ export default function TopupPage() {
 
       <MotionCard variants={itemVariants} className="bg-gradient-to-br from-violet-50 to-indigo-50 dark:from-violet-950 dark:to-indigo-950">
         <CardContent className="pt-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-4 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl">
-                <Wallet className="h-8 w-8 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Current Balance</p>
-                <p className="text-3xl font-bold text-violet-600">
-                  {formatCurrency(walletData?.balance || 0, selectedCurrency)}
-                </p>
-              </div>
+          <div className="flex items-center gap-4">
+            <div className="p-4 bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl">
+              <Wallet className="h-8 w-8 text-white" />
             </div>
-            {selectedCurrency !== 'USD' && (
-              <span className="text-xs bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300 px-3 py-1 rounded-full">
-                Visual conversion
-              </span>
-            )}
+            <div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Current Balance</p>
+              <p className="text-3xl font-bold text-violet-600">
+                {formatCurrency(walletData?.balance || 0, selectedCurrency)}
+              </p>
+            </div>
           </div>
         </CardContent>
       </MotionCard>
@@ -157,25 +150,20 @@ export default function TopupPage() {
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount (USD - {getCurrencySymbol(selectedCurrency)} shown as visual)</Label>
+              <Label htmlFor="amount">Amount</Label>
               <Input
                 id="amount"
                 type="number"
                 min="1"
                 step="0.01"
-                placeholder="Enter amount in USD"
+                placeholder="Enter amount"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
-              {amount && selectedCurrency !== 'USD' && (
-                <p className="text-sm text-gray-500">
-                  ≈ {formatCurrency(Number(amount), selectedCurrency)} (visual conversion)
-                </p>
-              )}
             </div>
 
             <div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Quick amounts (USD):</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Quick amounts:</p>
               <div className="flex flex-wrap gap-2">
                 {quickAmounts.map((quickAmount) => (
                   <Button
@@ -184,13 +172,7 @@ export default function TopupPage() {
                     size="sm"
                     onClick={() => setAmount(quickAmount.toString())}
                   >
-                    ${quickAmount}
-                    {selectedCurrency !== 'USD' && (
-                      <span className="ml-1 text-xs text-gray-500">
-                        ≈ {getCurrencySymbol(selectedCurrency)}
-                        {(quickAmount * (selectedCurrency === 'EUR' ? 0.92 : 1.80)).toFixed(0)}
-                      </span>
-                    )}
+                    {formatCurrency(quickAmount, selectedCurrency)}
                   </Button>
                 ))}
               </div>

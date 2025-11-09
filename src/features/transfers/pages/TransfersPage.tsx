@@ -146,19 +146,12 @@ export default function TransfersPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            <div className="mb-4">
-              <p className="text-gray-600 dark:text-gray-400">
-                Available Balance:{' '}
-                <span className="font-bold text-violet-600">
-                  {formatCurrency(walletData?.balance || 0, selectedCurrency)}
-                </span>
-              </p>
-              {selectedCurrency !== 'USD' && (
-                <p className="text-xs text-gray-500 mt-1">
-                  ${walletData?.balance?.toFixed(2) || '0.00'} USD (visual conversion)
-                </p>
-              )}
-            </div>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Available Balance:{' '}
+              <span className="font-bold text-violet-600">
+                {formatCurrency(walletData?.balance || 0, selectedCurrency)}
+              </span>
+            </p>
             <Button
               className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
               onClick={() => setSendDialogOpen(true)}
@@ -238,18 +231,11 @@ export default function TransfersPage() {
                         </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className={`font-bold ${
-                        isSent ? 'text-red-600' : 'text-green-600'
-                      }`}>
-                        {isSent ? '-' : '+'}{formatCurrency(transfer.amount, selectedCurrency)}
-                      </p>
-                      {selectedCurrency !== 'USD' && (
-                        <p className="text-xs text-gray-500">
-                          ${transfer.amount.toFixed(2)} USD
-                        </p>
-                      )}
-                    </div>
+                    <p className={`font-bold ${
+                      isSent ? 'text-red-600' : 'text-green-600'
+                    }`}>
+                      {isSent ? '-' : '+'}{formatCurrency(transfer.amount, selectedCurrency)}
+                    </p>
                   </div>
                 );
               })}
@@ -288,16 +274,9 @@ export default function TransfersPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="text-right">
-                      <p className="font-bold text-amber-700 dark:text-amber-500">
-                        {formatCurrency(transfer.amount, selectedCurrency)}
-                      </p>
-                      {selectedCurrency !== 'USD' && (
-                        <p className="text-xs text-gray-500">
-                          ${transfer.amount.toFixed(2)} USD
-                        </p>
-                      )}
-                    </div>
+                    <p className="font-bold text-amber-700 dark:text-amber-500">
+                      {formatCurrency(transfer.amount, selectedCurrency)}
+                    </p>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -333,7 +312,7 @@ export default function TransfersPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="transfer-amount">Amount (USD)</Label>
+              <Label htmlFor="transfer-amount">Amount</Label>
               <Input
                 id="transfer-amount"
                 type="number"
@@ -343,11 +322,6 @@ export default function TransfersPage() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
-              {amount && selectedCurrency !== 'USD' && (
-                <p className="text-sm text-gray-500">
-                  ≈ {formatCurrency(Number(amount), selectedCurrency)} (visual conversion)
-                </p>
-              )}
             </div>
 
             <div className="border-t pt-4 space-y-4">
@@ -376,8 +350,8 @@ export default function TransfersPage() {
                     value={scheduledDate}
                     onChange={(e) => setScheduledDate(e.target.value)}
                   />
-                  <p className="text-xs text-gray-500">
-                    Transfer will be marked as scheduled (visual demo only)
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Demo feature - not processed by backend
                   </p>
                 </div>
               )}

@@ -10,10 +10,12 @@ import CompactColorLegend from '@/features/timeline/components/CompactColorLegen
 import DayDetailModal from '@/features/timeline/components/DayDetailModal';
 import CollapsibleTransactionList from '@/features/transactions/components/CollapsibleTransactionList';
 import ExpectedPaymentModal from '@/features/timeline/components/ExpectedPaymentModal';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 const MotionCard = motion.create(Card);
 
 export default function TransactionsPage() {
+  const { selectedCurrency } = useCurrencyStore();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
@@ -110,13 +112,13 @@ export default function TransactionsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Income</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Income</p>
                 <p className="text-2xl font-bold text-green-600">
-                  ${stats.total_income.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {formatCurrency(stats.total_income, selectedCurrency)}
                 </p>
               </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <ArrowDownLeft className="h-6 w-6 text-green-600" />
+              <div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
+                <ArrowDownLeft className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
             </div>
           </CardContent>
@@ -126,13 +128,13 @@ export default function TransactionsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Expenses</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Expenses</p>
                 <p className="text-2xl font-bold text-red-600">
-                  ${stats.total_expenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {formatCurrency(stats.total_expenses, selectedCurrency)}
                 </p>
               </div>
-              <div className="p-3 bg-red-100 rounded-lg">
-                <ArrowUpRight className="h-6 w-6 text-red-600" />
+              <div className="p-3 bg-red-100 dark:bg-red-900 rounded-lg">
+                <ArrowUpRight className="h-6 w-6 text-red-600 dark:text-red-400" />
               </div>
             </div>
           </CardContent>
@@ -142,13 +144,13 @@ export default function TransactionsPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Transactions</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm text-gray-600 dark:text-gray-400">Transactions</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   {stats.transaction_count}
                 </p>
               </div>
-              <div className="p-3 bg-violet-100 rounded-lg">
-                <Receipt className="h-6 w-6 text-violet-600" />
+              <div className="p-3 bg-violet-100 dark:bg-violet-900 rounded-lg">
+                <Receipt className="h-6 w-6 text-violet-600 dark:text-violet-400" />
               </div>
             </div>
           </CardContent>

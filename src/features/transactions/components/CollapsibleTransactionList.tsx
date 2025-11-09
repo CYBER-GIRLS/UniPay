@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ArrowDownLeft, ArrowUpRight, TrendingUp, TrendingDown, Receipt } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 interface Transaction {
   id: number;
@@ -22,6 +23,7 @@ interface CollapsibleTransactionListProps {
 type FilterType = 'all' | 'income' | 'expenses';
 
 export default function CollapsibleTransactionList({ transactions }: CollapsibleTransactionListProps) {
+  const { selectedCurrency } = useCurrencyStore();
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
@@ -64,10 +66,10 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
 
   const getSummaryText = () => {
     if (activeFilter === 'income') {
-      return `${incomeTransactions.length} income transaction${incomeTransactions.length !== 1 ? 's' : ''} • $${totalIncome.toLocaleString()}`;
+      return `${incomeTransactions.length} income transaction${incomeTransactions.length !== 1 ? 's' : ''} • ${formatCurrency(totalIncome, selectedCurrency)}`;
     }
     if (activeFilter === 'expenses') {
-      return `${expenseTransactions.length} expense transaction${expenseTransactions.length !== 1 ? 's' : ''} • $${totalExpenses.toLocaleString()}`;
+      return `${expenseTransactions.length} expense transaction${expenseTransactions.length !== 1 ? 's' : ''} • ${formatCurrency(totalExpenses, selectedCurrency)}`;
     }
     return `${transactions.length} transaction${transactions.length !== 1 ? 's' : ''} • ${incomeTransactions.length} income, ${expenseTransactions.length} expenses`;
   };
@@ -201,8 +203,8 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
                       activeFilter === 'income' ? 'text-green-600' : 'text-red-600'
                     )}
                   >
-                    {activeFilter === 'income' ? '+' : '-'}$
-                    {(activeFilter === 'income' ? totalIncome : totalExpenses).toLocaleString()}
+                    {activeFilter === 'income' ? '+' : '-'}
+                    {formatCurrency(activeFilter === 'income' ? totalIncome : totalExpenses, selectedCurrency)}
                   </span>
                 </div>
               </motion.div>
@@ -248,7 +250,7 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
                         </div>
                         <div className="text-right ml-4">
                           <p className={cn('font-semibold', getAmountColor(transaction))}>
-                            {getAmountPrefix(transaction)}${transaction.amount.toLocaleString()}
+                            {getAmountPrefix(transaction)}{formatCurrency(transaction.amount, selectedCurrency)}
                           </p>
                           <span className="text-xs text-gray-500 capitalize">
                             {transaction.status}

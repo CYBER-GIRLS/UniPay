@@ -8,16 +8,16 @@ interface CurrencyState {
   setCurrency: (currency: Currency) => void;
 }
 
-const CONVERSION_RATES: Record<Currency, number> = {
-  USD: 1,
-  EUR: 0.92,
-  BGN: 1.80,
-};
-
 const CURRENCY_SYMBOLS: Record<Currency, string> = {
   USD: '$',
   EUR: '€',
   BGN: 'лв',
+};
+
+const CURRENCY_NAMES: Record<Currency, string> = {
+  USD: 'US Dollar',
+  EUR: 'Euro',
+  BGN: 'Bulgarian Lev',
 };
 
 export const useCurrencyStore = create<CurrencyState>()(
@@ -32,21 +32,20 @@ export const useCurrencyStore = create<CurrencyState>()(
   )
 );
 
-export const convertAmount = (amountInUSD: number, targetCurrency: Currency): number => {
-  return amountInUSD * CONVERSION_RATES[targetCurrency];
-};
-
-export const formatCurrency = (amountInUSD: number, currency: Currency): string => {
-  const converted = convertAmount(amountInUSD, currency);
+export const formatCurrency = (amount: number, currency: Currency): string => {
   const symbol = CURRENCY_SYMBOLS[currency];
   
   if (currency === 'BGN') {
-    return `${converted.toFixed(2)} ${symbol}`;
+    return `${amount.toFixed(2)} ${symbol}`;
   }
   
-  return `${symbol}${converted.toFixed(2)}`;
+  return `${symbol}${amount.toFixed(2)}`;
 };
 
 export const getCurrencySymbol = (currency: Currency): string => {
   return CURRENCY_SYMBOLS[currency];
+};
+
+export const getCurrencyName = (currency: Currency): string => {
+  return CURRENCY_NAMES[currency];
 };

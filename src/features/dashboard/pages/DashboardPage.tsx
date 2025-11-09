@@ -6,7 +6,7 @@ import { ArrowUpRight, ArrowDownLeft, Plus, Send, CreditCard, TrendingUp, Trendi
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
-import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
+import { useCurrencyStore, formatCurrency, getCurrencyName } from '@/stores/currencyStore';
 import { CurrencySelector } from '@/components/CurrencySelector';
 
 const MotionCard = motion.create(Card);
@@ -75,19 +75,12 @@ export default function DashboardPage() {
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
             
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-white/80 text-sm font-medium">Available Balance</p>
-                {selectedCurrency !== 'USD' && (
-                  <span className="text-xs bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
-                    Visual conversion
-                  </span>
-                )}
-              </div>
+              <p className="text-white/80 text-sm font-medium">Available Balance</p>
               <h2 className="text-5xl font-bold mt-2 mb-1">
                 {formatCurrency(walletData?.balance || 0, selectedCurrency)}
               </h2>
               <p className="text-white/70 text-sm">
-                {selectedCurrency === 'USD' ? 'US Dollar' : selectedCurrency === 'EUR' ? 'Euro' : 'Bulgarian Lev'}
+                {getCurrencyName(selectedCurrency)}
               </p>
               
               <div className="grid grid-cols-3 gap-4 mt-8">
@@ -151,9 +144,9 @@ export default function DashboardPage() {
                   <TrendingDown className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Total Income</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    ${statsData?.total_income?.toLocaleString() || '0.00'}
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Income</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {formatCurrency(statsData?.total_income || 0, selectedCurrency)}
                   </p>
                 </div>
               </div>
@@ -172,9 +165,9 @@ export default function DashboardPage() {
                   <TrendingUp className="h-5 w-5 text-red-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Total Expenses</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    ${statsData?.total_expenses?.toLocaleString() || '0.00'}
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Expenses</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {formatCurrency(statsData?.total_expenses || 0, selectedCurrency)}
                   </p>
                 </div>
               </div>
@@ -223,10 +216,10 @@ export default function DashboardPage() {
                       )}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-gray-900 dark:text-gray-100">
                         {transaction.description || transaction.transaction_type}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {new Date(transaction.created_at).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -240,14 +233,14 @@ export default function DashboardPage() {
                       transaction.transaction_type === 'topup' ||
                       (transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id)
                         ? 'text-green-600'
-                        : 'text-gray-900'
+                        : 'text-gray-900 dark:text-gray-100'
                     }`}
                   >
                     {transaction.transaction_type === 'topup' ||
                     (transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id)
                       ? '+'
                       : '-'}
-                    ${transaction.amount.toLocaleString()}
+                    {formatCurrency(transaction.amount, selectedCurrency)}
                   </span>
                 </motion.div>
               ))}
