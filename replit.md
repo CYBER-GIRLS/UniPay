@@ -54,6 +54,36 @@ The frontend adopts a modern, Revolut-inspired interface utilizing `shadcn/ui` (
 
 ## Recent Changes
 
+**November 9, 2025 (Interactive Expected Payments Feature - Full CRUD):**
+- ✅ **ExpectedPaymentModal Component** - Complete modal form for adding/editing expected payments
+  - Form fields: Title, Amount, Date, Category (9 options), Frequency, Notes
+  - React Hook Form with Zod validation for data integrity
+  - TanStack Query mutations with automatic cache invalidation
+- ✅ **Backend API Endpoints** - New `/api/expected-payments` blueprint
+  - POST - Create new expected payment with recurring instance generation
+  - PUT /:id - Update existing scheduled payment
+  - DELETE /:id - Remove scheduled payment
+  - POST /generate-recurring - Auto-generate recurring instances
+- ✅ **Recurring Payment Logic** - Supports three frequency types:
+  - One-time: Single instance only
+  - Monthly: Generates instances for next 12 months (same date each month)
+  - Weekly: Generates ~52 instances for next 12 months (same weekday) - **FIXED BUG**
+  - Uses python-dateutil's relativedelta for accurate date calculations
+- ✅ **DayDetailModal Integration** - Enhanced calendar day view
+  - "Add Expected Payment" button in header
+  - Yellow highlight and "Expected" badge for scheduled payments
+  - Edit button with recurring frequency display (Monthly 📅 / Weekly 📆)
+  - Opens ExpectedPaymentModal with pre-populated data for editing
+- ✅ **TransactionsPage Quick Access** - Dedicated "Add Expected Payment" button next to "Finance Timeline" title
+- ✅ **Data Model** - Reuses Transaction model with:
+  - status='scheduled' for expected payments
+  - metadata fields: category, frequency, notes, months_ahead, user_created=true
+- ✅ **API Client** - Added expectedPaymentsAPI methods to src/lib/api.ts
+- ✅ **Weekly Recurring Bug Fix** - Corrected logic to generate full 12-month horizon
+  - Previous: Only 12 weekly instances
+  - Current: ~52 weekly instances (proper coverage)
+  - Uses while loop with end_date calculation instead of fixed loop count
+
 **November 9, 2025 (Activity Section Fixes & Calendar Yellow Highlights):**
 - ✅ **Removed Non-Functional Buttons** - Deleted Filter and Export buttons from Activity header
 - ✅ **Centered Title Layout** - Improved title and subtitle formatting with centered alignment
