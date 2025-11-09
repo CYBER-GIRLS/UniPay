@@ -104,7 +104,7 @@ export default function TransfersPage() {
   };
 
   const recentTransfers = transactionsData?.transactions?.filter(
-    (tx: any) => tx.transaction_type === 'transfer'
+    (tx: any) => tx.transaction_type === 'transfer_sent' || tx.transaction_type === 'transfer_received'
   ).slice(0, 10) || [];
 
   const containerVariants = {
