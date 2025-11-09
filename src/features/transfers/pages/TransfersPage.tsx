@@ -6,18 +6,32 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowUpRight, ArrowDownLeft, Send, Users } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowUpRight, ArrowDownLeft, Send, Users, Calendar } from 'lucide-react';
 import { walletAPI, transactionsAPI } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
+import { useCurrencyStore, formatCurrency, getCurrencySymbol } from '@/stores/currencyStore';
 
 const MotionCard = motion.create(Card);
 
+interface ScheduledTransfer {
+  id: string;
+  recipient: string;
+  amount: number;
+  scheduledDate: string;
+  createdAt: string;
+}
+
 export default function TransfersPage() {
   const { user } = useAuthStore();
+  const { selectedCurrency } = useCurrencyStore();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
   const [recipientUsername, setRecipientUsername] = useState('');
   const [amount, setAmount] = useState('');
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState('');
+  const [scheduledTransfers, setScheduledTransfers] = useState<ScheduledTransfer[]>([]);
   const queryClient = useQueryClient();
 
   const { data: walletData } = useQuery({
@@ -57,10 +71,34 @@ export default function TransfersPage() {
       toast.error('Please enter valid recipient and amount');
       return;
     }
-    transferMutation.mutate({
-      recipient: recipientUsername,
-      amount: Number(amount),
-    });
+
+    if (isScheduled) {
+      if (!scheduledDate) {
+        toast.error('Please select a date for scheduled transfer');
+        return;
+      }
+
+      const newScheduledTransfer: ScheduledTransfer = {
+        id: Date.now().toString(),
+        recipient: recipientUsername,
+        amount: Number(amount),
+        scheduledDate,
+        createdAt: new Date().toISOString(),
+      };
+
+      setScheduledTransfers([...scheduledTransfers, newScheduledTransfer]);
+      setSendDialogOpen(false);
+      toast.success(`Transfer to @${recipientUsername} scheduled for ${new Date(scheduledDate).toLocaleDateString()}`);
+      setRecipientUsername('');
+      setAmount('');
+      setScheduledDate('');
+      setIsScheduled(false);
+    } else {
+      transferMutation.mutate({
+        recipient: recipientUsername,
+        amount: Number(amount),
+      });
+    }
   };
 
   const recentTransfers = transactionsData?.transactions?.filter(
@@ -190,11 +228,18 @@ export default function TransfersPage() {
                         </p>
                       </div>
                     </div>
-                    <p className={`font-bold ${
-                      isSent ? 'text-red-600' : 'text-green-600'
-                    }`}>
-                      {isSent ? '-' : '+'}${transfer.amount.toFixed(2)}
-                    </p>
+                    <div className="text-right">
+                      <p className={`font-bold ${
+                        isSent ? 'text-red-600' : 'text-green-600'
+                      }`}>
+                        {isSent ? '-' : '+'}{formatCurrency(transfer.amount, selectedCurrency)}
+                      </p>
+                      {selectedCurrency !== 'USD' && (
+                        <p className="text-xs text-gray-500">
+                          ${transfer.amount.toFixed(2)} USD
+                        </p>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -202,6 +247,65 @@ export default function TransfersPage() {
           )}
         </CardContent>
       </MotionCard>
+
+      {scheduledTransfers.length > 0 && (
+        <MotionCard variants={itemVariants}>
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <Calendar className="h-6 w-6 text-amber-600" />
+              <CardTitle>Scheduled Transfers</CardTitle>
+            </div>
+            <CardDescription>Transfers scheduled for future dates (visual demo only)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {scheduledTransfers.map((transfer) => (
+                <div
+                  key={transfer.id}
+                  className="flex items-center justify-between p-4 bg-amber-50 dark:bg-amber-950 rounded-lg border border-amber-200 dark:border-amber-800"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-900">
+                      <Calendar className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div>
+                      <p className="font-medium">
+                        To <span className="text-violet-600">@{transfer.recipient}</span>
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Scheduled for {new Date(transfer.scheduledDate).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <p className="font-bold text-amber-700 dark:text-amber-500">
+                        {formatCurrency(transfer.amount, selectedCurrency)}
+                      </p>
+                      {selectedCurrency !== 'USD' && (
+                        <p className="text-xs text-gray-500">
+                          ${transfer.amount.toFixed(2)} USD
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setScheduledTransfers(scheduledTransfers.filter(t => t.id !== transfer.id));
+                        toast.success('Scheduled transfer cancelled');
+                      }}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </MotionCard>
+      )}
 
       <Dialog open={sendDialogOpen} onOpenChange={setSendDialogOpen}>
         <DialogContent>
@@ -219,7 +323,7 @@ export default function TransfersPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="transfer-amount">Amount ($)</Label>
+              <Label htmlFor="transfer-amount">Amount (USD)</Label>
               <Input
                 id="transfer-amount"
                 type="number"
@@ -229,13 +333,56 @@ export default function TransfersPage() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
               />
+              {amount && selectedCurrency !== 'USD' && (
+                <p className="text-sm text-gray-500">
+                  ≈ {formatCurrency(Number(amount), selectedCurrency)} (visual conversion)
+                </p>
+              )}
             </div>
+
+            <div className="border-t pt-4 space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="schedule-transfer"
+                  checked={isScheduled}
+                  onCheckedChange={(checked) => setIsScheduled(checked as boolean)}
+                />
+                <label
+                  htmlFor="schedule-transfer"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
+                >
+                  <Calendar className="h-4 w-4" />
+                  Schedule this transfer
+                </label>
+              </div>
+
+              {isScheduled && (
+                <div className="space-y-2 bg-violet-50 dark:bg-violet-950 p-4 rounded-lg">
+                  <Label htmlFor="scheduled-date">Select Date</Label>
+                  <Input
+                    id="scheduled-date"
+                    type="date"
+                    min={new Date().toISOString().split('T')[0]}
+                    value={scheduledDate}
+                    onChange={(e) => setScheduledDate(e.target.value)}
+                  />
+                  <p className="text-xs text-gray-500">
+                    Transfer will be marked as scheduled (visual demo only)
+                  </p>
+                </div>
+              )}
+            </div>
+
             <Button
               className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
               onClick={handleSendMoney}
               disabled={transferMutation.isPending || !recipientUsername || !amount || Number(amount) <= 0}
             >
-              {transferMutation.isPending ? 'Sending...' : 'Send Money'}
+              {transferMutation.isPending 
+                ? 'Sending...' 
+                : isScheduled 
+                ? 'Schedule Transfer' 
+                : 'Send Money'}
             </Button>
           </div>
         </DialogContent>
