@@ -98,7 +98,29 @@ export default function CardsPage() {
     },
   });
 
+  const getCardGradient = (cardType: string) => {
+    switch (cardType) {
+      case 'standard':
+        return 'from-blue-600 to-violet-600'; // Blue/violet gradient
+      case 'premium':
+        return 'from-amber-500 to-yellow-500'; // Gold gradient
+      case 'student':
+        return 'from-green-600 to-emerald-600'; // Green gradient
+      default:
+        return 'from-violet-600 to-indigo-600';
+    }
+  };
+
   const handleCreateCard = () => {
+    // Validate spending limit
+    if (spendingLimit) {
+      const limit = Number(spendingLimit);
+      if (isNaN(limit) || limit <= 0) {
+        toast.error('Spending limit must be a positive number');
+        return;
+      }
+    }
+
     createMutation.mutate({
       card_name: cardName || 'Virtual Card',
       card_type: cardType,
@@ -160,8 +182,9 @@ export default function CardsPage() {
                   value={cardType}
                   onChange={(e) => setCardType(e.target.value)}
                 >
-                  <option value="standard">Standard</option>
-                  <option value="premium">Premium</option>
+                  <option value="standard">Standard (Blue/Violet)</option>
+                  <option value="premium">Premium (Gold)</option>
+                  <option value="student">Student (Green)</option>
                 </select>
               </div>
               <div className="space-y-2">
@@ -175,6 +198,7 @@ export default function CardsPage() {
                   value={spendingLimit}
                   onChange={(e) => setSpendingLimit(e.target.value)}
                 />
+                <p className="text-xs text-gray-500">Leave blank for no limit. Must be a positive number.</p>
               </div>
               <Button
                 className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
@@ -191,59 +215,107 @@ export default function CardsPage() {
       {cardsData && cardsData.length > 0 ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cardsData.map((card: any) => (
-            <MotionCard
+            <motion.div
               key={card.id}
               variants={itemVariants}
-              className="border-0 shadow-md overflow-hidden"
+              className="perspective-1000"
+              style={{ perspective: "1000px" }}
             >
-              <div className="bg-gradient-to-br from-violet-600 to-indigo-600 p-6 text-white">
-                <div className="flex justify-between items-start mb-8">
-                  <div>
-                    <p className="text-white/80 text-sm">{card.card_name}</p>
-                    <p className="text-xs text-white/60 mt-1">{card.card_type}</p>
-                  </div>
-                  <CreditCard className="h-8 w-8 text-white/80" />
-                </div>
-                <div className="space-y-2">
-                  <p className="font-mono text-lg tracking-wider">
-                    {card.card_number?.replace(/(\d{4})/g, '$1 ').trim() || '****  ****  ****'}
-                  </p>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-white/80">Exp: {card.expiry_date || 'XX/XX'}</span>
+              <motion.div
+                whileHover={{ rotateY: 180 }}
+                transition={{ duration: 0.6 }}
+                style={{ transformStyle: "preserve-3d" }}
+                className="relative h-full"
+              >
+                {/* Front Face */}
+                <MotionCard 
+                  className="border-0 shadow-md overflow-hidden absolute inset-0"
+                  style={{ backfaceVisibility: "hidden" }}
+                >
+                  <div className={`bg-gradient-to-br ${getCardGradient(card.card_type)} p-6 text-white relative h-48`}>
                     {card.is_frozen && (
-                      <span className="bg-white/20 px-2 py-0.5 rounded text-xs">FROZEN</span>
+                      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-10">
+                        <Lock className="h-12 w-12 text-white/90" />
+                      </div>
                     )}
+                    <div className="flex justify-between items-start mb-8">
+                      <div>
+                        <p className="text-white/80 text-sm">{card.card_name}</p>
+                        <p className="text-xs text-white/60 mt-1 capitalize">{card.card_type}</p>
+                      </div>
+                      <CreditCard className="h-8 w-8 text-white/80" />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="font-mono text-lg tracking-wider">
+                        {card.card_number?.replace(/(\d{4})/g, '$1 ').trim() || '****  ****  ****'}
+                      </p>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-white/80">Exp: {card.expiry_date || 'XX/XX'}</span>
+                        {card.spending_limit && (
+                          <span className="text-white/80 text-xs">Limit: ${card.spending_limit}</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <CardContent className="p-4 space-y-2">
-                <div className="flex gap-2">
-                  {card.is_frozen ? (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => unfreezeMutation.mutate(card.id)}
-                      disabled={mutatingCardIds.has(card.id)}
-                    >
-                      <Unlock className="h-4 w-4 mr-1" />
-                      {mutatingCardIds.has(card.id) ? 'Unfreezing...' : 'Unfreeze'}
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1"
-                      onClick={() => freezeMutation.mutate(card.id)}
-                      disabled={mutatingCardIds.has(card.id)}
-                    >
-                      <Lock className="h-4 w-4 mr-1" />
-                      {mutatingCardIds.has(card.id) ? 'Freezing...' : 'Freeze'}
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </MotionCard>
+                  <CardContent className="p-4 space-y-2">
+                    <div className="flex gap-2">
+                      {card.is_frozen ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="flex-1"
+                          onClick={() => unfreezeMutation.mutate(card.id)}
+                          disabled={mutatingCardIds.has(card.id)}
+                        >
+                          <Unlock className="h-4 w-4 mr-1" />
+                          {mutatingCardIds.has(card.id) ? 'Unfreezing...' : 'Unfreeze'}
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="flex-1"
+                          onClick={() => freezeMutation.mutate(card.id)}
+                          disabled={mutatingCardIds.has(card.id)}
+                        >
+                          <Lock className="h-4 w-4 mr-1" />
+                          {mutatingCardIds.has(card.id) ? 'Freezing...' : 'Freeze'}
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </MotionCard>
+
+                {/* Back Face */}
+                <MotionCard 
+                  className="border-0 shadow-md overflow-hidden absolute inset-0"
+                  style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+                >
+                  <div className={`bg-gradient-to-br ${getCardGradient(card.card_type)} p-6 text-white relative h-48`}>
+                    <div className="h-12 bg-black/30 -mx-6 mb-6" />
+                    <div className="space-y-4">
+                      <div className="bg-white/20 backdrop-blur-sm p-3 rounded">
+                        <p className="text-xs text-white/70 mb-1">CVV</p>
+                        <p className="font-mono text-2xl tracking-widest">{card.cvv || '***'}</p>
+                      </div>
+                      <div className="text-xs text-white/70">
+                        <p>For online transactions</p>
+                        <p className="mt-2">Keep this code secure</p>
+                      </div>
+                    </div>
+                    <div className="absolute bottom-4 right-6 text-white/50 text-xs">
+                      <Lock className="h-4 w-4 inline mr-1" />
+                      Secure Card
+                    </div>
+                  </div>
+                  <CardContent className="p-4">
+                    <p className="text-sm text-gray-600 text-center">
+                      Hover over to see front
+                    </p>
+                  </CardContent>
+                </MotionCard>
+              </motion.div>
+            </motion.div>
           ))}
         </div>
       ) : (
