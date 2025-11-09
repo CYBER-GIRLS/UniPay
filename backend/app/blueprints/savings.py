@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import db
-from app.models import SavingsPocket, Goal, User
+from app.models import SavingsPocket, Goal, User, Wallet, Transaction
 from decimal import Decimal
 from datetime import datetime
 
@@ -42,10 +42,6 @@ def create_savings_pocket():
 @jwt_required()
 def deposit_to_pocket(pocket_id):
     user_id = int(get_jwt_identity())
-    pocket = SavingsPocket.query.filter_by(id=pocket_id, user_id=user_id).first()
-    
-    if not pocket:
-        return jsonify({'error': 'Savings pocket not found'}), 404
     
     data = request.get_json()
     amount = data.get('amount')
@@ -54,16 +50,112 @@ def deposit_to_pocket(pocket_id):
     if not amount or float(amount) <= 0:
         return jsonify({'error': 'Invalid amount'}), 400
     
+    amount_decimal = Decimal(str(amount))
+    
+    # Lock rows to prevent race conditions
+    pocket = SavingsPocket.query.filter_by(id=pocket_id, user_id=user_id).with_for_update().first()
+    
+    if not pocket:
+        return jsonify({'error': 'Savings pocket not found'}), 404
+    
+    # Lock wallet row
+    wallet = Wallet.query.filter_by(user_id=user_id).with_for_update().first()
+    if not wallet:
+        return jsonify({'error': 'Wallet not found'}), 404
+    
+    # Check wallet balance AFTER locking
+    if wallet.balance < amount_decimal:
+        return jsonify({'error': 'Insufficient balance'}), 400
+    
     user = User.query.get(user_id)
     if pocket.pin_protected and not user.check_pin(pin):
         return jsonify({'error': 'Invalid PIN'}), 401
     
-    pocket.balance += Decimal(str(amount))
+    # Deduct from wallet
+    wallet.balance -= amount_decimal
+    
+    # Add to savings pocket
+    pocket.balance += amount_decimal
+    
+    # Create transaction record with metadata
+    transaction = Transaction(
+        user_id=user_id,
+        transaction_type='savings_deposit',
+        amount=amount_decimal,
+        status='completed',
+        description=f'Deposit to {pocket.name}',
+        completed_at=datetime.utcnow(),
+        transaction_metadata={'pocket_id': pocket.id, 'pocket_name': pocket.name}
+    )
+    
+    db.session.add(transaction)
     db.session.commit()
     
     return jsonify({
         'message': 'Deposit successful',
-        'pocket': pocket.to_dict()
+        'pocket': pocket.to_dict(),
+        'wallet': wallet.to_dict(),
+        'transaction': transaction.to_dict()
+    }), 200
+
+@savings_bp.route('/pockets/<int:pocket_id>/withdraw', methods=['POST'])
+@jwt_required()
+def withdraw_from_pocket(pocket_id):
+    user_id = int(get_jwt_identity())
+    
+    data = request.get_json()
+    amount = data.get('amount')
+    pin = data.get('pin')
+    
+    if not amount or float(amount) <= 0:
+        return jsonify({'error': 'Invalid amount'}), 400
+    
+    amount_decimal = Decimal(str(amount))
+    
+    # Lock rows to prevent race conditions
+    pocket = SavingsPocket.query.filter_by(id=pocket_id, user_id=user_id).with_for_update().first()
+    
+    if not pocket:
+        return jsonify({'error': 'Savings pocket not found'}), 404
+    
+    # Check savings pocket balance AFTER locking
+    if pocket.balance < amount_decimal:
+        return jsonify({'error': 'Insufficient balance in savings pocket'}), 400
+    
+    user = User.query.get(user_id)
+    if pocket.pin_protected and not user.check_pin(pin):
+        return jsonify({'error': 'Invalid PIN'}), 401
+    
+    # Lock wallet row
+    wallet = Wallet.query.filter_by(user_id=user_id).with_for_update().first()
+    if not wallet:
+        return jsonify({'error': 'Wallet not found'}), 404
+    
+    # Deduct from savings pocket
+    pocket.balance -= amount_decimal
+    
+    # Add to wallet
+    wallet.balance += amount_decimal
+    
+    # Create transaction record with metadata
+    transaction = Transaction(
+        user_id=user_id,
+        transaction_type='savings_withdrawal',
+        amount=amount_decimal,
+        status='completed',
+        description=f'Withdrawal from {pocket.name}',
+        completed_at=datetime.utcnow(),
+        transaction_metadata={'pocket_id': pocket.id, 'pocket_name': pocket.name}
+    )
+    
+    db.session.add(transaction)
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'Withdrawal successful',
+        'pocket': pocket.to_dict(),
+        'wallet': wallet.to_dict(),
+        'transaction': transaction.to_dict()
     }), 200
 
 @savings_bp.route('/pockets/<int:pocket_id>/auto-save', methods=['PUT'])
