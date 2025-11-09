@@ -13,10 +13,10 @@ import {
 import { motion } from 'framer-motion';
 
 export default function TopNav() {
-  const { user, clearAuth } = useAuthStore();
+  const { user, logout } = useAuthStore();
 
-  const handleLogout = () => {
-    clearAuth();
+  const handleLogout = async () => {
+    await logout();
   };
 
   const getInitials = () => {

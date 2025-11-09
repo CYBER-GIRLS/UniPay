@@ -13,6 +13,15 @@ def register():
         current_app.logger.warning(f"Registration attempt with missing fields - email: {bool(data.get('email') if data else False)}, password: {bool(data.get('password') if data else False)}, username: {bool(data.get('username') if data else False)}")
         return jsonify({'error': 'Missing required fields'}), 400
     
+    pin = data.get('pin')
+    if not pin:
+        current_app.logger.warning(f"Registration attempt without PIN")
+        return jsonify({'error': 'PIN is required'}), 400
+    
+    if not str(pin).isdigit() or len(str(pin)) != 4:
+        current_app.logger.warning(f"Registration attempt with invalid PIN format: {pin}")
+        return jsonify({'error': 'PIN must be exactly 4 digits'}), 400
+    
     if User.query.filter_by(email=data['email']).first():
         current_app.logger.warning(f"Registration attempt with already registered email: {data['email']}")
         return jsonify({'error': 'Email already registered'}), 400
@@ -31,6 +40,7 @@ def register():
         faculty=data.get('faculty')
     )
     user.set_password(data['password'])
+    user.set_pin(pin)
     
     db.session.add(user)
     db.session.flush()
@@ -93,6 +103,17 @@ def get_current_user():
         return jsonify({'error': 'User not found'}), 404
     
     return jsonify({'user': user.to_dict()}), 200
+
+@auth_bp.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    
+    if user:
+        current_app.logger.info(f"User logged out: {user.email}")
+    
+    return jsonify({'message': 'Logged out successfully'}), 200
 
 @auth_bp.route('/set-pin', methods=['POST'])
 @jwt_required()

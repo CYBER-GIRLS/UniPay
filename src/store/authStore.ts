@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { authAPI } from '@/lib/api';
 
 interface User {
   id: number;
@@ -20,6 +21,7 @@ interface AuthState {
   refreshToken: string | null;
   isAuthenticated: boolean;
   setAuth: (user: User, accessToken: string, refreshToken: string) => void;
+  logout: () => Promise<void>;
   clearAuth: () => void;
 }
 
@@ -34,6 +36,17 @@ export const useAuthStore = create<AuthState>()(
         localStorage.setItem('access_token', accessToken);
         localStorage.setItem('refresh_token', refreshToken);
         set({ user, accessToken, refreshToken, isAuthenticated: true });
+      },
+      logout: async () => {
+        try {
+          await authAPI.logout();
+        } catch (error) {
+          console.error('Logout error:', error);
+        } finally {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
+        }
       },
       clearAuth: () => {
         localStorage.removeItem('access_token');

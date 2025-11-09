@@ -40,6 +40,7 @@ export default api;
 export const authAPI = {
   register: (data: any) => api.post('/auth/register', data),
   login: (data: any) => api.post('/auth/login', data),
+  logout: () => api.post('/auth/logout'),
   getCurrentUser: () => api.get('/auth/me'),
   setPin: (pin: string) => api.post('/auth/set-pin', { pin }),
   verifyPin: (pin: string) => api.post('/auth/verify-pin', { pin }),

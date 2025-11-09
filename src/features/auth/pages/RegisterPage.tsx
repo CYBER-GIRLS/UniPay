@@ -1,5 +1,7 @@
-import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useAuthStore } from '@/store/authStore';
 import { authAPI } from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -8,31 +10,44 @@ import { Label } from '@/components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 
+const registerSchema = z.object({
+  email: z.string().email('Invalid email format').min(1, 'Email is required'),
+  username: z.string().min(3, 'Username must be at least 3 characters').max(80, 'Username too long'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  first_name: z.string().min(1, 'First name is required'),
+  last_name: z.string().min(1, 'Last name is required'),
+  university: z.string().optional(),
+  faculty: z.string().optional(),
+  pin: z.string()
+    .length(4, 'PIN must be exactly 4 digits')
+    .regex(/^\d+$/, 'PIN must contain only numbers'),
+  confirmPin: z.string()
+    .length(4, 'PIN must be exactly 4 digits')
+    .regex(/^\d+$/, 'PIN must contain only numbers'),
+}).refine((data) => data.pin === data.confirmPin, {
+  message: "PINs don't match",
+  path: ['confirmPin'],
+});
+
+type RegisterFormData = z.infer<typeof registerSchema>;
+
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    email: '',
-    username: '',
-    password: '',
-    first_name: '',
-    last_name: '',
-    university: '',
-    faculty: '',
-  });
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
   const { toast } = useToast();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
+  const onSubmit = async (data: RegisterFormData) => {
     try {
-      const response = await authAPI.register(formData);
+      const { confirmPin, ...registrationData } = data;
+      const response = await authAPI.register(registrationData);
       const { user, access_token, refresh_token } = response.data;
       
       setAuth(user, access_token, refresh_token);
@@ -47,8 +62,6 @@ export default function RegisterPage() {
         description: error.response?.data?.error || 'Please try again',
         variant: 'destructive',
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -61,90 +74,116 @@ export default function RegisterPage() {
             Join UniPay - Your smart student wallet
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="first_name">First Name</Label>
+                <Label htmlFor="first_name">First Name *</Label>
                 <Input
                   id="first_name"
-                  name="first_name"
-                  value={formData.first_name}
-                  onChange={handleChange}
                   autoComplete="given-name"
-                  required
+                  {...register('first_name')}
                 />
+                {errors.first_name && (
+                  <p className="text-sm text-red-500">{errors.first_name.message}</p>
+                )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="last_name">Last Name</Label>
+                <Label htmlFor="last_name">Last Name *</Label>
                 <Input
                   id="last_name"
-                  name="last_name"
-                  value={formData.last_name}
-                  onChange={handleChange}
                   autoComplete="family-name"
-                  required
+                  {...register('last_name')}
                 />
+                {errors.last_name && (
+                  <p className="text-sm text-red-500">{errors.last_name.message}</p>
+                )}
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email *</Label>
               <Input
                 id="email"
-                name="email"
                 type="email"
                 placeholder="student@university.edu"
-                value={formData.email}
-                onChange={handleChange}
                 autoComplete="email"
-                required
+                {...register('email')}
               />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Username *</Label>
               <Input
                 id="username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
                 autoComplete="username"
-                required
+                {...register('username')}
               />
+              {errors.username && (
+                <p className="text-sm text-red-500">{errors.username.message}</p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Password *</Label>
               <Input
                 id="password"
-                name="password"
                 type="password"
-                value={formData.password}
-                onChange={handleChange}
                 autoComplete="new-password"
-                required
+                {...register('password')}
               />
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password.message}</p>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="pin">PIN (4 digits) *</Label>
+                <Input
+                  id="pin"
+                  type="password"
+                  placeholder="1234"
+                  maxLength={4}
+                  autoComplete="off"
+                  {...register('pin')}
+                />
+                {errors.pin && (
+                  <p className="text-sm text-red-500">{errors.pin.message}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPin">Confirm PIN *</Label>
+                <Input
+                  id="confirmPin"
+                  type="password"
+                  placeholder="1234"
+                  maxLength={4}
+                  autoComplete="off"
+                  {...register('confirmPin')}
+                />
+                {errors.confirmPin && (
+                  <p className="text-sm text-red-500">{errors.confirmPin.message}</p>
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="university">University</Label>
               <Input
                 id="university"
-                name="university"
-                value={formData.university}
-                onChange={handleChange}
+                {...register('university')}
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="faculty">Faculty</Label>
               <Input
                 id="faculty"
-                name="faculty"
-                value={formData.faculty}
-                onChange={handleChange}
+                {...register('faculty')}
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Create Account'}
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? 'Creating account...' : 'Create Account'}
             </Button>
             <p className="text-sm text-center text-gray-600">
               Already have an account?{' '}
