@@ -36,25 +36,25 @@ export default function Sidebar() {
         animate={isCollapsed ? 'collapsed' : 'expanded'}
         variants={sidebarVariants}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="hidden md:flex md:flex-col border-r bg-white relative"
+        className="hidden md:flex md:flex-col border-r border-border/50 bg-surface-1/80 backdrop-blur-sm relative shadow-soft"
       >
-        <div className="flex items-center justify-end p-4 border-b">
+        <div className="flex items-center justify-end p-4 border-b border-border/50">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleSidebar}
-            className="h-8 w-8 rounded-full hover:bg-violet-50 transition-colors"
+            className="h-9 w-9 rounded-xl hover:bg-primary-light/30 transition-all duration-200"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? (
-              <ChevronRight className="h-4 w-4 text-violet-600" />
+              <ChevronRight className="h-4 w-4 text-primary" />
             ) : (
-              <ChevronLeft className="h-4 w-4 text-violet-600" />
+              <ChevronLeft className="h-4 w-4 text-primary" />
             )}
           </Button>
         </div>
 
-        <nav className="flex-1 space-y-1 p-4 overflow-hidden">
+        <nav className="flex-1 space-y-1.5 p-4 overflow-hidden">
           <TooltipProvider delayDuration={0}>
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -64,17 +64,17 @@ export default function Sidebar() {
               const navItemContent = (
                 <Link key={item.path} to={item.path} className="block">
                   <motion.div
-                    whileHover={{ x: isCollapsed ? 0 : 4 }}
+                    whileHover={{ x: isCollapsed ? 0 : 4, scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-xl transition-all',
+                      'flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200',
                       isCollapsed ? 'justify-center' : '',
                       isActive
-                        ? 'bg-gradient-to-r from-violet-50 to-indigo-50 text-violet-600 font-semibold'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        ? 'bg-gradient-to-r from-primary-light/40 to-secondary-light/40 text-primary shadow-soft backdrop-blur-sm font-semibold'
+                        : 'text-muted-foreground hover:bg-surface-2/60 hover:text-foreground'
                     )}
                   >
-                    <Icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'text-violet-600')} />
+                    <Icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'text-primary')} />
                     <AnimatePresence mode="wait">
                       {!isCollapsed && (
                         <motion.span
@@ -97,7 +97,7 @@ export default function Sidebar() {
                   <TooltipTrigger asChild>
                     {navItemContent}
                   </TooltipTrigger>
-                  <TooltipContent side="right" className="font-medium">
+                  <TooltipContent side="right" className="font-medium bg-surface-1 border-border/50 shadow-soft">
                     {item.label}
                   </TooltipContent>
                 </Tooltip>
@@ -107,8 +107,8 @@ export default function Sidebar() {
         </nav>
       </motion.aside>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t">
-        <div className="grid grid-cols-5 gap-1 p-2 overflow-x-auto">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-1/95 backdrop-blur-md border-t border-border/50 shadow-soft-lg">
+        <div className="grid grid-cols-5 gap-1 p-2.5 overflow-x-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path || 
@@ -117,24 +117,24 @@ export default function Sidebar() {
             return (
               <Link key={item.path} to={item.path}>
                 <motion.div
-                  whileTap={{ scale: 0.9 }}
+                  whileTap={{ scale: 0.92 }}
                   className={cn(
-                    'flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-colors',
+                    'flex flex-col items-center justify-center py-2.5 px-1 rounded-xl transition-all duration-200',
                     isActive
-                      ? 'bg-gradient-to-br from-violet-50 to-indigo-50'
-                      : 'hover:bg-gray-50'
+                      ? 'bg-gradient-to-br from-primary-light/50 to-secondary-light/50 shadow-soft'
+                      : 'hover:bg-surface-2/60'
                   )}
                 >
                   <Icon
                     className={cn(
                       'h-5 w-5',
-                      isActive ? 'text-violet-600' : 'text-gray-600'
+                      isActive ? 'text-primary' : 'text-muted-foreground'
                     )}
                   />
                   <span
                     className={cn(
                       'text-[10px] mt-1 font-medium',
-                      isActive ? 'text-violet-600' : 'text-gray-600'
+                      isActive ? 'text-primary' : 'text-muted-foreground'
                     )}
                   >
                     {item.label}

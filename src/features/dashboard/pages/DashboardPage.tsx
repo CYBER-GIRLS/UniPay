@@ -53,37 +53,37 @@ export default function DashboardPage() {
       variants={containerVariants}
       initial="hidden"
       animate="show"
-      className="space-y-6 max-w-7xl mx-auto"
+      className="space-y-8 max-w-7xl mx-auto"
     >
       <motion.div variants={itemVariants} className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-foreground">
             Welcome back, {user?.first_name || user?.username}! 👋
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">Here's your financial overview</p>
+          <p className="text-muted-foreground mt-2">Here's your financial overview</p>
         </div>
         <CurrencySelector compact />
       </motion.div>
 
       <MotionCard
         variants={itemVariants}
-        className="overflow-hidden border-0 shadow-lg"
+        className="overflow-hidden border-0 shadow-soft-lg"
       >
         <CardContent className="p-0">
-          <div className="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 p-8 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
+          <div className="bg-gradient-to-br from-primary via-primary-hover to-secondary p-10 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl -mr-36 -mt-36" />
+            <div className="absolute bottom-0 left-0 w-56 h-56 bg-white/5 rounded-full blur-2xl -ml-28 -mb-28" />
             
             <div className="relative z-10">
-              <p className="text-white/80 text-sm font-medium">Available Balance</p>
-              <h2 className="text-5xl font-bold mt-2 mb-1">
+              <p className="text-white/90 text-sm font-medium mb-1">Available Balance</p>
+              <h2 className="text-6xl font-bold mt-2 mb-2">
                 {formatCurrency(walletData?.balance || 0, selectedCurrency)}
               </h2>
-              <p className="text-white/70 text-sm">
+              <p className="text-white/80 text-sm">
                 {getCurrencyName(selectedCurrency)}
               </p>
               
-              <div className="grid grid-cols-3 gap-4 mt-8">
+              <div className="grid grid-cols-3 gap-4 mt-10">
                 <Link to="/topup" className="flex-1">
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -91,7 +91,7 @@ export default function DashboardPage() {
                   >
                     <Button
                       variant="secondary"
-                      className="w-full bg-white/20 hover:bg-white/30 text-white border-white/20 backdrop-blur-sm"
+                      className="w-full bg-white/20 hover:bg-white/30 text-white border-white/20 backdrop-blur-sm shadow-soft"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Top Up
@@ -105,7 +105,7 @@ export default function DashboardPage() {
                   >
                     <Button
                       variant="secondary"
-                      className="w-full bg-white/20 hover:bg-white/30 text-white border-white/20 backdrop-blur-sm"
+                      className="w-full bg-white/20 hover:bg-white/30 text-white border-white/20 backdrop-blur-sm shadow-soft"
                     >
                       <Send className="h-4 w-4 mr-2" />
                       Transfer
@@ -119,7 +119,7 @@ export default function DashboardPage() {
                   >
                     <Button
                       variant="secondary"
-                      className="w-full bg-white/20 hover:bg-white/30 text-white border-white/20 backdrop-blur-sm"
+                      className="w-full bg-white/20 hover:bg-white/30 text-white border-white/20 backdrop-blur-sm shadow-soft"
                     >
                       <CreditCard className="h-4 w-4 mr-2" />
                       Cards
@@ -135,20 +135,18 @@ export default function DashboardPage() {
       <div className="grid md:grid-cols-2 gap-6">
         <MotionCard
           variants={itemVariants}
-          className="border-0 shadow-sm hover:shadow-md transition-shadow"
+          className="border-border/50 shadow-soft hover:shadow-soft-lg transition-all duration-300"
         >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <TrendingDown className="h-5 w-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Income</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {formatCurrency(statsData?.total_income || 0, selectedCurrency)}
-                  </p>
-                </div>
+          <CardContent className="p-8">
+            <div className="flex items-center gap-4">
+              <div className="p-4 bg-success-light rounded-2xl shadow-soft">
+                <TrendingDown className="h-6 w-6 text-success-hover" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground font-medium mb-1">Total Income</p>
+                <p className="text-3xl font-bold text-foreground">
+                  {formatCurrency(statsData?.total_income || 0, selectedCurrency)}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -156,20 +154,18 @@ export default function DashboardPage() {
 
         <MotionCard
           variants={itemVariants}
-          className="border-0 shadow-sm hover:shadow-md transition-shadow"
+          className="border-border/50 shadow-soft hover:shadow-soft-lg transition-all duration-300"
         >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-red-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-red-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Expenses</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {formatCurrency(statsData?.total_expenses || 0, selectedCurrency)}
-                  </p>
-                </div>
+          <CardContent className="p-8">
+            <div className="flex items-center gap-4">
+              <div className="p-4 bg-danger-light rounded-2xl shadow-soft">
+                <TrendingUp className="h-6 w-6 text-danger-hover" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground font-medium mb-1">Total Expenses</p>
+                <p className="text-3xl font-bold text-foreground">
+                  {formatCurrency(statsData?.total_expenses || 0, selectedCurrency)}
+                </p>
               </div>
             </div>
           </CardContent>
@@ -178,48 +174,48 @@ export default function DashboardPage() {
 
       <MotionCard
         variants={itemVariants}
-        className="border-0 shadow-sm"
+        className="border-border/50 shadow-soft"
       >
-        <CardContent className="p-6">
+        <CardContent className="p-8">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Recent Transactions</h3>
+            <h3 className="text-xl font-semibold text-foreground">Recent Transactions</h3>
             <Link to="/transactions">
-              <Button variant="ghost" size="sm" className="text-violet-600 hover:text-violet-700">
+              <Button variant="ghost" size="sm" className="text-primary hover:text-primary-hover hover:bg-primary-light/20">
                 View All
               </Button>
             </Link>
           </div>
 
           {statsData?.recent_transactions?.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {statsData.recent_transactions.slice(0, 5).map((transaction: any) => (
                 <motion.div
                   key={transaction.id}
-                  whileHover={{ backgroundColor: 'rgba(0,0,0,0.02)' }}
-                  className="flex items-center justify-between p-3 rounded-lg transition-colors"
+                  whileHover={{ scale: 1.01, backgroundColor: 'hsl(var(--color-surface-2))' }}
+                  className="flex items-center justify-between p-4 rounded-xl transition-all duration-200"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div
-                      className={`p-2 rounded-full ${
+                      className={`p-3 rounded-xl shadow-soft ${
                         transaction.transaction_type === 'topup'
-                          ? 'bg-green-100'
+                          ? 'bg-success-light'
                           : transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id
-                          ? 'bg-green-100'
-                          : 'bg-gray-100'
+                          ? 'bg-success-light'
+                          : 'bg-surface-2'
                       }`}
                     >
                       {transaction.transaction_type === 'topup' || 
                        (transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id) ? (
-                        <ArrowDownLeft className="h-4 w-4 text-green-600" />
+                        <ArrowDownLeft className="h-5 w-5 text-success-hover" />
                       ) : (
-                        <ArrowUpRight className="h-4 w-4 text-gray-600" />
+                        <ArrowUpRight className="h-5 w-5 text-muted-foreground" />
                       )}
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-gray-100">
+                      <p className="font-semibold text-foreground">
                         {transaction.description || transaction.transaction_type}
                       </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-muted-foreground">
                         {new Date(transaction.created_at).toLocaleDateString('en-US', {
                           month: 'short',
                           day: 'numeric',
@@ -229,11 +225,11 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <span
-                    className={`font-semibold ${
+                    className={`font-bold text-lg ${
                       transaction.transaction_type === 'topup' ||
                       (transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id)
-                        ? 'text-green-600'
-                        : 'text-gray-900 dark:text-gray-100'
+                        ? 'text-success-hover'
+                        : 'text-foreground'
                     }`}
                   >
                     {transaction.transaction_type === 'topup' ||
@@ -246,12 +242,12 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                <ArrowUpRight className="h-8 w-8 text-gray-400" />
+            <div className="text-center py-16">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-surface-2 rounded-2xl mb-4 shadow-soft">
+                <ArrowUpRight className="h-10 w-10 text-muted-foreground" />
               </div>
-              <p className="text-gray-500">No transactions yet</p>
-              <p className="text-sm text-gray-400 mt-1">Start by topping up your wallet</p>
+              <p className="text-muted-foreground font-medium">No transactions yet</p>
+              <p className="text-sm text-muted-foreground mt-2">Start by topping up your wallet</p>
             </div>
           )}
         </CardContent>

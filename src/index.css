@@ -1,36 +1,70 @@
+@import './design-tokens.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 99%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 250 60% 58%;
+    /* Background Colors - Light & Airy */
+    --background: var(--color-background);
+    --foreground: var(--color-text-primary);
+    
+    /* Surface & Card Colors */
+    --card: var(--color-surface-1);
+    --card-foreground: var(--color-text-primary);
+    
+    /* Popover Colors */
+    --popover: var(--color-surface-1);
+    --popover-foreground: var(--color-text-primary);
+    
+    /* Primary Colors - Soft Pastel Purple/Lavender */
+    --primary: var(--color-primary-button);
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
-    --accent: 262 83% 58%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 250 60% 58%;
-    --radius: 0.75rem;
-    --chart-1: 250 60% 58%;
-    --chart-2: 262 83% 58%;
-    --chart-3: 197 71% 73%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    
+    /* Secondary Colors - Pastel Blue */
+    --secondary: var(--color-secondary-light);
+    --secondary-foreground: var(--color-text-primary);
+    
+    /* Muted Colors */
+    --muted: var(--color-surface-2);
+    --muted-foreground: var(--color-text-muted);
+    
+    /* Accent Colors */
+    --accent: var(--color-primary-light);
+    --accent-foreground: var(--color-text-primary);
+    
+    /* Destructive/Error Colors - Soft Coral */
+    --destructive: var(--color-danger-button);
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Success Colors - Soft Mint Green */
+    --success: var(--color-success-button);
+    --success-foreground: 0 0% 100%;
+    
+    /* Warning Colors - Soft Apricot */
+    --warning: var(--color-warning-button);
+    --warning-foreground: 0 0% 100%;
+    
+    /* Border Colors */
+    --border: var(--color-border);
+    --input: var(--color-border);
+    
+    /* Ring/Focus Colors */
+    --ring: var(--color-primary);
+    
+    /* Border Radius - More Rounded for Friendliness */
+    --radius: var(--radius-md);
+    
+    /* Chart Colors - Pastel Palette */
+    --chart-1: var(--color-primary);
+    --chart-2: var(--color-secondary);
+    --chart-3: var(--color-success);
+    --chart-4: var(--color-warning);
+    --chart-5: var(--color-danger);
   }
 
+  /* Dark mode - keeping for future use */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -63,7 +97,111 @@
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-family-primary);
+    line-height: var(--line-height-normal);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-display);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Custom scrollbar - Pastel Theme */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--color-surface-2));
+    border-radius: var(--radius-sm);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--color-primary-light));
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-base);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--color-primary));
+  }
+}
+
+/* Custom utility classes for the new design system */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .animation-smooth {
+    transition: all var(--transition-base);
+  }
+  
+  /* Gradient backgrounds */
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .bg-gradient-card {
+    background: var(--gradient-card);
+  }
+  
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  /* Soft shadows */
+  .shadow-soft {
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .shadow-soft-md {
+    box-shadow: var(--shadow-md);
+  }
+  
+  .shadow-soft-lg {
+    box-shadow: var(--shadow-lg);
+  }
+  
+  /* Status badge utilities */
+  .badge-success {
+    background: hsl(var(--color-success-light));
+    color: hsl(var(--color-success-hover));
+    border: 1px solid hsl(var(--color-success));
+  }
+  
+  .badge-warning {
+    background: hsl(var(--color-warning-light));
+    color: hsl(150 55% 25%);
+    border: 1px solid hsl(var(--color-warning));
+  }
+  
+  .badge-danger {
+    background: hsl(var(--color-danger-light));
+    color: hsl(5 80% 30%);
+    border: 1px solid hsl(var(--color-danger));
+  }
+  
+  /* Surface elevation classes */
+  .surface-1 {
+    background: hsl(var(--color-surface-1));
+  }
+  
+  .surface-2 {
+    background: hsl(var(--color-surface-2));
+  }
+  
+  .surface-3 {
+    background: hsl(var(--color-surface-3));
   }
 }

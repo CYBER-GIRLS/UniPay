@@ -30,7 +30,8 @@ export default function TopNav() {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60"
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="sticky top-0 z-50 w-full border-b border-border/50 bg-surface-1/95 backdrop-blur-md shadow-soft"
     >
       <div className="flex h-16 items-center justify-between px-6">
         <div className="flex items-center gap-2">
@@ -38,11 +39,11 @@ export default function TopNav() {
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
-              className="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200"
+              className="h-11 w-11 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-primary"
             >
               <Wallet className="h-6 w-6 text-white" strokeWidth={2.5} />
             </motion.div>
-            <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               UniPay
             </span>
           </div>
@@ -53,9 +54,9 @@ export default function TopNav() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              className="p-2.5 rounded-xl hover:bg-primary-light/30 transition-all duration-200 shadow-soft-xs hover:shadow-soft"
             >
-              <Bell className="h-5 w-5 text-gray-600" />
+              <Bell className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
             </motion.button>
           </Link>
 
@@ -64,20 +65,20 @@ export default function TopNav() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-2 rounded-full hover:bg-gray-100 pr-3 pl-1 py-1 transition-colors"
+                className="flex items-center gap-2.5 rounded-2xl hover:bg-primary-light/20 pr-3 pl-1.5 py-1.5 transition-all duration-200 shadow-soft-xs hover:shadow-soft"
               >
-                <Avatar className="h-8 w-8 border-2 border-violet-200">
-                  <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-sm font-semibold">
+                <Avatar className="h-9 w-9 border-2 border-primary/30 shadow-soft">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white text-sm font-semibold">
                     {getInitials()}
                   </AvatarFallback>
                 </Avatar>
-                <ChevronDown className="h-4 w-4 text-gray-600" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </motion.button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 bg-surface-1 border-border/50 shadow-soft-lg">
               <DropdownMenuLabel>
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">
+                  <p className="text-sm font-semibold leading-none text-foreground">
                     {user?.first_name} {user?.last_name}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
@@ -85,15 +86,15 @@ export default function TopNav() {
                   </p>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
+              <DropdownMenuSeparator className="bg-border/50" />
               <DropdownMenuItem asChild>
-                <Link to="/profile" className="cursor-pointer">
+                <Link to="/profile" className="cursor-pointer hover:bg-primary-light/20 transition-colors">
                   <User className="mr-2 h-4 w-4" />
                   <span>My Profile</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600">
+              <DropdownMenuSeparator className="bg-border/50" />
+              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-danger-hover hover:bg-danger-light/30 focus:bg-danger-light/30 transition-colors">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Logout</span>
               </DropdownMenuItem>

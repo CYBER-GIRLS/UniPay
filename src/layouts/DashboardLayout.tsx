@@ -12,7 +12,7 @@ export default function DashboardLayout() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50/50">
+    <div className="flex h-screen bg-gradient-to-br from-background via-surface-1 to-surface-2">
       <Sidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
@@ -22,8 +22,8 @@ export default function DashboardLayout() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="p-6 pb-24 md:pb-6"
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="p-8 pb-24 md:pb-8"
           >
             <Outlet />
           </motion.div>
