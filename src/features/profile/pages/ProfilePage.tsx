@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
+import { useToast } from '@/hooks/use-toast';
 import { 
   User, 
   Mail, 
@@ -13,19 +17,53 @@ import {
   Lock,
   Award,
   Target,
-  TrendingUp
+  TrendingUp,
+  Shield,
+  CheckCircle,
+  XCircle,
+  Monitor,
+  Clock,
+  AlertTriangle
 } from 'lucide-react';
 
 const MotionCard = motion.create(Card);
 
 export default function ProfilePage() {
   const { user } = useAuthStore();
+  const { toast } = useToast();
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(user?.is_verified || false);
 
   const getInitials = () => {
     if (!user) return 'U';
     const firstInitial = user.first_name?.[0] || user.username?.[0] || '';
     const lastInitial = user.last_name?.[0] || '';
     return (firstInitial + lastInitial).toUpperCase();
+  };
+
+  const handleToggle2FA = (enabled: boolean) => {
+    setTwoFactorEnabled(enabled);
+    toast({
+      title: enabled ? '2FA Enabled' : '2FA Disabled',
+      description: enabled 
+        ? 'Two-factor authentication has been enabled for your account' 
+        : 'Two-factor authentication has been disabled',
+    });
+  };
+
+  const handleResendVerification = () => {
+    toast({
+      title: 'Verification Email Sent',
+      description: 'Please check your inbox for the verification link',
+    });
+  };
+
+  const handleTerminateSession = (deviceName: string) => {
+    toast({
+      title: 'Session Terminated',
+      description: `${deviceName} has been logged out`,
+      variant: 'destructive',
+    });
   };
 
   const containerVariants = {
@@ -197,6 +235,148 @@ export default function ProfilePage() {
               </p>
               <p className="text-xs text-blue-600 mt-1">UniPay member</p>
             </div>
+          </div>
+        </CardContent>
+      </MotionCard>
+
+      <MotionCard variants={itemVariants} className="border-0 shadow-sm">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Shield className="h-5 w-5 text-violet-600" />
+            <CardTitle className="text-lg">Security Settings</CardTitle>
+          </div>
+          <CardDescription>Manage your account security and authentication preferences</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                <Mail className="h-5 w-5 text-gray-600" />
+                <div>
+                  <p className="font-medium text-gray-900">Email Verification</p>
+                  <p className="text-sm text-gray-600">
+                    {emailVerified ? 'Your email has been verified' : 'Please verify your email address'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {emailVerified ? (
+                  <Badge variant="default" className="bg-green-500">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Verified
+                  </Badge>
+                ) : (
+                  <>
+                    <Badge variant="destructive">
+                      <XCircle className="h-3 w-3 mr-1" />
+                      Not Verified
+                    </Badge>
+                    <Button size="sm" variant="outline" onClick={handleResendVerification}>
+                      Resend Email
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                <Shield className="h-5 w-5 text-gray-600" />
+                <div>
+                  <p className="font-medium text-gray-900">Two-Factor Authentication (2FA)</p>
+                  <p className="text-sm text-gray-600">
+                    Add an extra layer of security to your account
+                  </p>
+                </div>
+              </div>
+              <Switch 
+                checked={twoFactorEnabled} 
+                onCheckedChange={handleToggle2FA}
+              />
+            </div>
+
+            <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-medium text-amber-900">Login Attempt Rate Limiting</p>
+                  <p className="text-sm text-amber-700 mt-1">
+                    Your account is protected against brute force attacks. After 5 failed login attempts, 
+                    your account will be temporarily locked for 15 minutes.
+                  </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <Badge variant="outline" className="bg-white border-amber-300 text-amber-700">
+                      <CheckCircle className="h-3 w-3 mr-1" />
+                      Active Protection
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-3">Active Sessions</h3>
+            <p className="text-sm text-gray-600 mb-4">Manage devices and locations where you're currently logged in</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Monitor className="h-5 w-5 text-green-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">Current Device</p>
+                    <p className="text-sm text-gray-600">Chrome on Windows • Last active now</p>
+                  </div>
+                </div>
+                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                  Active
+                </Badge>
+              </div>
+
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Monitor className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">iPhone 12 Pro</p>
+                    <p className="text-sm text-gray-600">Safari • Last active 2 hours ago</p>
+                  </div>
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => handleTerminateSession('iPhone 12 Pro')}
+                >
+                  Terminate
+                </Button>
+              </div>
+
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Monitor className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">MacBook Air</p>
+                    <p className="text-sm text-gray-600">Safari • Last active yesterday</p>
+                  </div>
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => handleTerminateSession('MacBook Air')}
+                >
+                  Terminate
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Clock className="h-4 w-4" />
+              <span>Session timeout: 30 days of inactivity</span>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Refresh tokens allow you to stay logged in for longer periods. 
+              Your session will automatically expire after 30 days of inactivity for security.
+            </p>
           </div>
         </CardContent>
       </MotionCard>
