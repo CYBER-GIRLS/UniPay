@@ -28,6 +28,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { TrendingUp, Award, Flame, Download, Calendar } from 'lucide-react';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 interface SavingsReportWidgetProps {
   pocketId: number;
@@ -44,6 +45,7 @@ export function SavingsReportWidget({
   currentStreak,
   milestones = [100, 500, 1000, 2000, 5000],
 }: SavingsReportWidgetProps) {
+  const { selectedCurrency } = useCurrencyStore();
   const monthlySavingsRate = monthsSaving > 0 ? totalSaved / monthsSaving : 0;
   const completedMilestones = milestones.filter(m => totalSaved >= m);
   const nextMilestone = milestones.find(m => totalSaved < m) || milestones[milestones.length - 1];
@@ -79,9 +81,9 @@ export function SavingsReportWidget({
               <TrendingUp className="h-4 w-4 text-green-600" />
               <p className="text-xs font-semibold text-green-900">Total Saved</p>
             </div>
-            <p className="text-2xl font-bold text-green-600">${totalSaved.toFixed(2)}</p>
+            <p className="text-2xl font-bold text-green-600">{formatCurrency(totalSaved, selectedCurrency)}</p>
             <p className="text-xs text-green-700 mt-1">
-              ${monthlySavingsRate.toFixed(2)}/month average
+              {formatCurrency(monthlySavingsRate, selectedCurrency)}/month average
             </p>
           </div>
 
@@ -102,13 +104,13 @@ export function SavingsReportWidget({
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold flex items-center gap-2">
               <Award className="h-4 w-4 text-violet-600" />
-              Next Milestone: ${nextMilestone}
+              Next Milestone: {formatCurrency(nextMilestone, selectedCurrency)}
             </p>
             <span className="text-sm text-muted-foreground">{progressToNext}%</span>
           </div>
           <Progress value={Number(progressToNext)} className="h-2" />
           <p className="text-xs text-muted-foreground">
-            ${(nextMilestone - totalSaved).toFixed(2)} away from your next achievement
+            {formatCurrency(nextMilestone - totalSaved, selectedCurrency)} away from your next achievement
           </p>
         </div>
 
@@ -131,7 +133,7 @@ export function SavingsReportWidget({
                     {isUnlocked ? getMilestoneIcon(milestone) : '🔒'}
                   </div>
                   <p className={`text-xs font-semibold ${isUnlocked ? 'text-violet-900' : 'text-gray-500'}`}>
-                    ${milestone}
+                    {formatCurrency(milestone, selectedCurrency)}
                   </p>
                   {isUnlocked && (
                     <Badge variant="secondary" className="mt-1 text-xs bg-violet-100 text-violet-700">
@@ -150,7 +152,7 @@ export function SavingsReportWidget({
           <ul className="text-xs text-blue-800 space-y-1 ml-4 list-disc">
             <li>You've been saving for <strong>{monthsSaving} months</strong></li>
             <li>Current streak: <strong>{currentStreak} days</strong> without withdrawal</li>
-            <li>Average monthly savings: <strong>${monthlySavingsRate.toFixed(2)}</strong></li>
+            <li>Average monthly savings: <strong>{formatCurrency(monthlySavingsRate, selectedCurrency)}</strong></li>
             <li><strong>{completedMilestones.length}/{milestones.length}</strong> milestones achieved</li>
           </ul>
         </div>

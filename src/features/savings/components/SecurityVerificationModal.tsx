@@ -31,6 +31,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { AlertTriangle, Lock, Shield, Clock } from 'lucide-react';
 import { useState } from 'react';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 interface SecurityVerificationModalProps {
   open: boolean;
@@ -45,6 +46,7 @@ export function SecurityVerificationModal({
   onVerified,
   amount,
 }: SecurityVerificationModalProps) {
+  const { selectedCurrency } = useCurrencyStore();
   const [step, setStep] = useState(1);
   const [pin, setPin] = useState('');
   const [password, setPassword] = useState('');
@@ -94,7 +96,7 @@ export function SecurityVerificationModal({
             Emergency Withdrawal Verification
           </DialogTitle>
           <DialogDescription>
-            Withdrawing ${amount.toFixed(2)} from DarkDays Pocket
+            Withdrawing {formatCurrency(amount, selectedCurrency)} from DarkDays Pocket
           </DialogDescription>
         </DialogHeader>
 

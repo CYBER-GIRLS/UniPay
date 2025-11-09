@@ -30,6 +30,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertTriangle, Heart, Plane, Users, Flame } from 'lucide-react';
 import { useState } from 'react';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 interface EmergencyUnlockDialogProps {
   open: boolean;
@@ -51,6 +52,7 @@ export function EmergencyUnlockDialog({
   onProceed,
   pocketBalance,
 }: EmergencyUnlockDialogProps) {
+  const { selectedCurrency } = useCurrencyStore();
   const [category, setCategory] = useState('');
   const [reason, setReason] = useState('');
 
@@ -74,7 +76,7 @@ export function EmergencyUnlockDialog({
             Emergency Access Request
           </DialogTitle>
           <DialogDescription>
-            Available balance: ${pocketBalance.toFixed(2)}
+            Available balance: {formatCurrency(pocketBalance, selectedCurrency)}
           </DialogDescription>
         </DialogHeader>
 

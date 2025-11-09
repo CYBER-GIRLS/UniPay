@@ -33,6 +33,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Settings, FileText } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCurrencyStore, formatCurrency, convertToUSD, getCurrencySymbol } from '@/stores/currencyStore';
 
 import { DarkDaysCard } from '../components/DarkDaysCard';
 import { SecurityVerificationModal } from '../components/SecurityVerificationModal';
@@ -41,6 +42,7 @@ import { EmergencyUnlockDialog } from '../components/EmergencyUnlockDialog';
 import { SavingsReportWidget } from '../components/SavingsReportWidget';
 
 export default function DarkDaysPocketPage() {
+  const { selectedCurrency } = useCurrencyStore();
   const queryClient = useQueryClient();
   
   // Dialog states
@@ -88,10 +90,10 @@ export default function DarkDaysPocketPage() {
   const depositMutation = useMutation({
     mutationFn: ({ pocketId, amount, pin }: any) => 
       savingsAPI.depositToPocket(pocketId, { amount, pin }),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['savings-pockets'] });
       setDepositDialogOpen(false);
-      toast.success('Deposit successful!');
+      toast.success(`Deposit of ${formatCurrency(variables.amount, selectedCurrency)} successful!`);
       setDepositAmount('');
       setDepositPin('');
     },
@@ -314,7 +316,7 @@ export default function DarkDaysPocketPage() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="deposit-amount">Amount ($)</Label>
+              <Label htmlFor="deposit-amount">Amount ({getCurrencySymbol(selectedCurrency)})</Label>
               <Input
                 id="deposit-amount"
                 type="number"
@@ -337,14 +339,16 @@ export default function DarkDaysPocketPage() {
               />
             </div>
             <Button
-              onClick={() =>
-                selectedPocket &&
-                depositMutation.mutate({
-                  pocketId: selectedPocket.id,
-                  amount: Number(depositAmount),
-                  pin: depositPin,
-                })
-              }
+              onClick={() => {
+                if (selectedPocket && depositAmount) {
+                  const amountInUSD = convertToUSD(Number(depositAmount), selectedCurrency);
+                  depositMutation.mutate({
+                    pocketId: selectedPocket.id,
+                    amount: amountInUSD,
+                    pin: depositPin,
+                  });
+                }
+              }}
               disabled={depositMutation.isPending || !depositAmount || !depositPin}
               className="w-full bg-gradient-to-r from-green-600 to-emerald-600"
             >

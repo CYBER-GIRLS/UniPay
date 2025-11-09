@@ -29,6 +29,7 @@ import { Button } from '@/components/ui/button';
 import { Lock, ShieldCheck, Plus, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 interface DarkDaysCardProps {
   pocket: {
@@ -43,6 +44,7 @@ interface DarkDaysCardProps {
 }
 
 export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysCardProps) {
+  const { selectedCurrency } = useCurrencyStore();
   const [balanceHidden, setBalanceHidden] = useState(false);
 
   return (
@@ -99,7 +101,7 @@ export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysC
               transition={{ duration: 0.2 }}
             >
               <p className="text-4xl font-bold text-white mb-1">
-                ${pocket.balance.toFixed(2)}
+                {formatCurrency(pocket.balance, selectedCurrency)}
               </p>
             </motion.div>
             <div className="flex items-center gap-2 mt-2">
