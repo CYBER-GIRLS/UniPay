@@ -8,11 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowUpRight, ArrowDownLeft, Send, Users } from 'lucide-react';
 import { walletAPI, transactionsAPI } from '@/lib/api';
+import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
 
 const MotionCard = motion.create(Card);
 
 export default function TransfersPage() {
+  const { user } = useAuthStore();
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
   const [recipientUsername, setRecipientUsername] = useState('');
   const [amount, setAmount] = useState('');
@@ -62,7 +64,7 @@ export default function TransfersPage() {
   };
 
   const recentTransfers = transactionsData?.transactions?.filter(
-    (tx: any) => tx.type === 'transfer_sent' || tx.type === 'transfer_received'
+    (tx: any) => tx.transaction_type === 'transfer'
   ).slice(0, 10) || [];
 
   const containerVariants = {
@@ -134,7 +136,7 @@ export default function TransfersPage() {
           <CardContent className="pt-6">
             <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Share your username:</p>
-              <p className="text-xl font-bold text-violet-600">@{walletData?.username || 'loading...'}</p>
+              <p className="text-xl font-bold text-violet-600">@{user?.username || 'loading...'}</p>
             </div>
             <p className="text-sm text-gray-500 mt-4">
               Others can send you money using this username
@@ -159,40 +161,43 @@ export default function TransfersPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {recentTransfers.map((transfer: any) => (
-                <div
-                  key={transfer.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-full ${
-                      transfer.type === 'transfer_sent' 
-                        ? 'bg-red-100 dark:bg-red-900' 
-                        : 'bg-green-100 dark:bg-green-900'
+              {recentTransfers.map((transfer: any) => {
+                const isSent = transfer.user_id === transfer.sender_id;
+                return (
+                  <div
+                    key={transfer.id}
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2 rounded-full ${
+                        isSent 
+                          ? 'bg-red-100 dark:bg-red-900' 
+                          : 'bg-green-100 dark:bg-green-900'
+                      }`}>
+                        {isSent ? (
+                          <ArrowUpRight className="h-4 w-4 text-red-600 dark:text-red-400" />
+                        ) : (
+                          <ArrowDownLeft className="h-4 w-4 text-green-600 dark:text-green-400" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium">
+                          {isSent ? 'Sent to' : 'Received from'}{' '}
+                          <span className="text-violet-600">@{transfer.description?.split(' ')[2] || 'user'}</span>
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {new Date(transfer.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <p className={`font-bold ${
+                      isSent ? 'text-red-600' : 'text-green-600'
                     }`}>
-                      {transfer.type === 'transfer_sent' ? (
-                        <ArrowUpRight className="h-4 w-4 text-red-600 dark:text-red-400" />
-                      ) : (
-                        <ArrowDownLeft className="h-4 w-4 text-green-600 dark:text-green-400" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium">
-                        {transfer.type === 'transfer_sent' ? 'Sent to' : 'Received from'}{' '}
-                        <span className="text-violet-600">@{transfer.description?.split(' ')[2] || 'user'}</span>
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(transfer.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
+                      {isSent ? '-' : '+'}${transfer.amount.toFixed(2)}
+                    </p>
                   </div>
-                  <p className={`font-bold ${
-                    transfer.type === 'transfer_sent' ? 'text-red-600' : 'text-green-600'
-                  }`}>
-                    {transfer.type === 'transfer_sent' ? '-' : '+'}${transfer.amount.toFixed(2)}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
