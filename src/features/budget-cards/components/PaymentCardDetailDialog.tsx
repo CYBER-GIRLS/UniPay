@@ -69,8 +69,8 @@ export function PaymentCardDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl flex flex-col max-h-[90vh]">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
             {card.card_name}
           </DialogTitle>
@@ -79,7 +79,7 @@ export function PaymentCardDetailDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 mt-4">
+        <div className="space-y-6 mt-4 overflow-y-auto flex-1 pr-2">
           {/* Virtual Card Display */}
           <Card className="bg-gradient-to-br from-violet-600 via-indigo-600 to-purple-700 text-white overflow-hidden relative">
             <CardContent className="pt-6 pb-8 px-6">

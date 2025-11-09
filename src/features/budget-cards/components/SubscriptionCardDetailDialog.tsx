@@ -233,8 +233,8 @@ export function SubscriptionCardDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl flex flex-col max-h-[90vh]">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
             My Subscriptions
           </DialogTitle>
@@ -243,7 +243,8 @@ export function SubscriptionCardDetailDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
+        <div className="mt-4 overflow-y-auto flex-1 pr-2">
+          <div className="grid grid-cols-2 gap-4">
           <Card>
             <CardContent className="pt-6">
               <div className="text-sm text-muted-foreground">Active Subscriptions</div>
@@ -633,6 +634,7 @@ export function SubscriptionCardDetailDialog({
             )}
           </TabsContent>
         </Tabs>
+        </div>
       </DialogContent>
     </Dialog>
   );

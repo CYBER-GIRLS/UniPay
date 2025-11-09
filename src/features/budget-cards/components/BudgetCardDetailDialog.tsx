@@ -59,8 +59,8 @@ export function BudgetCardDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
+      <DialogContent className="max-w-2xl flex flex-col max-h-[90vh]">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
             {card.card_name}
           </DialogTitle>
@@ -69,7 +69,7 @@ export function BudgetCardDetailDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 mt-4">
+        <div className="space-y-6 mt-4 overflow-y-auto flex-1 pr-2">
           {/* Budget Card Display */}
           <Card 
             className="text-white overflow-hidden relative"

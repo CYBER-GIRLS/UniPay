@@ -13,6 +13,12 @@ UniPay is structured as a single-page application (SPA) with a clear separation 
 ### UI/UX Decisions
 The frontend features a modern, Revolut-inspired interface, built with `shadcn/ui` (Radix UI, Tailwind CSS). Key design elements include a fixed top navigation, responsive navigation (desktop sidebar, mobile bottom nav), a modern color palette with violet/indigo gradients and pastel accents, card-based layouts with shadows and rounded corners, Framer Motion for animations, and a gradient balance card with quick action buttons. `DashboardLayout` is used for authenticated users and `AuthLayout` for unauthenticated users.
 
+**Dialog/Popup Scrolling Pattern:** All dialogs and popups use a standardized scrollable pattern to ensure proper viewport fitting:
+- `DialogContent`: `flex flex-col max-h-[90vh]` - Sets max height at 90% viewport and flex layout
+- `DialogHeader`: `flex-shrink-0` - Fixed header that doesn't scroll
+- Content wrapper: `overflow-y-auto flex-1 pr-2` - Scrollable content area with right padding for scrollbar
+- Applied to: EmergencyUnlockDialog, BudgetCardDetailDialog, PaymentCardDetailDialog, SubscriptionCardDetailDialog
+
 ### Technical Implementations
 
 *   **Backend:** Developed using Flask (Python), employing SQLAlchemy for ORM (PostgreSQL), Flask-JWT-Extended for authentication, and Flask-SocketIO for real-time features. It utilizes an Application Factory Pattern and Flask Blueprints for modularity, incorporating security measures like JWT, password hashing, PIN protection, and CORS.
