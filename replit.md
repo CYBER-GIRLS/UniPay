@@ -58,6 +58,14 @@ The frontend features a Revolut-inspired modern interface using `shadcn/ui` (Rad
 *   **Form Management & Validation:** React Hook Form, Zod
 *   **Animations:** Framer Motion## Recent Changes
 
+**November 9, 2025 (Data Synchronization Fix - Activity Page):**
+- ✅ **Backend Stats Enhancement** - Fixed stats endpoint to calculate income/expenses for ALL transaction types (topup, income, refund, payment, purchase, transfers)
+- ✅ **Accurate All-Time Totals** - Summary cards now show accurate totals from entire transaction history (no 1000-record limit)
+- ✅ **Unified Data Source** - Transaction list and calendar now use the same 1000-transaction query for consistency
+- ✅ **Proper Income/Expense Classification** - Backend correctly identifies incoming vs outgoing transfers using sender_id/receiver_id comparison
+- ✅ **Hybrid Architecture** - Backend aggregation for accurate stats, frontend pagination for display performance
+- ✅ **Eliminated Mismatch** - Fixed issue where summary showed all-time totals but list only showed 5 recent transactions
+
 **November 8, 2025 (Collapsible Filterable Transaction List):**
 - ✅ **CollapsibleTransactionList Component** - New accordion-style component with smooth expand/collapse animations
 - ✅ **Transaction Filtering** - Three filter tabs: All, Income (green), Expenses (red) with transaction counts
