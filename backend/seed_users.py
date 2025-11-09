@@ -7,13 +7,14 @@ Usage:
     python backend/seed_users.py
 
 Test Credentials:
-    - Email: admin@test.com     | Password: admin123
-    - Email: student@test.com   | Password: student123
-    - Email: demo@test.com      | Password: demo123
+    - Email: admin@test.com     | Password: admin123 | PIN: 1234
+    - Email: student@test.com   | Password: student123 | PIN: 1234
+    - Email: demo@test.com      | Password: demo123 | PIN: 1234
 
 The script will:
 - Create new users if they don't exist
-- Update passwords for existing users with matching email/username
+- Update passwords and PINs for existing users with matching email/username
+- Set default PIN '1234' for all test users
 - Create a wallet for each new user
 - Roll back changes if any error occurs
 """
@@ -74,11 +75,13 @@ def seed_test_users():
                     for key, value in user_data.items():
                         setattr(existing_user, key, value)
                     existing_user.set_password(password)
+                    existing_user.set_pin('1234')
                     updated_count += 1
-                    print(f"✅ User updated: {user_data['email']}")
+                    print(f"✅ User updated: {user_data['email']} with PIN: 1234")
                 else:
                     user = User(**user_data)
                     user.set_password(password)
+                    user.set_pin('1234')
                     db.session.add(user)
                     db.session.flush()
                     
@@ -86,7 +89,7 @@ def seed_test_users():
                     db.session.add(wallet)
                     
                     created_count += 1
-                    print(f"✅ Created user: {user.email} with password: {password}")
+                    print(f"✅ Created user: {user.email} with password: {password} and PIN: 1234")
             
             db.session.commit()
             
@@ -98,9 +101,12 @@ def seed_test_users():
             print("\n" + "="*60)
             print("TEST CREDENTIALS:")
             print("="*60)
-            print("1. Email: admin@test.com     | Password: admin123")
-            print("2. Email: student@test.com   | Password: student123")
-            print("3. Email: demo@test.com      | Password: demo123")
+            print("1. Email: admin@test.com     | Password: admin123 | PIN: 1234")
+            print("2. Email: student@test.com   | Password: student123 | PIN: 1234")
+            print("3. Email: demo@test.com      | Password: demo123 | PIN: 1234")
+            print("="*60)
+            print("\n💡 All users have default PIN: 1234")
+            print("   Users should change their PIN from Profile > Security settings")
             print("="*60)
             
         except Exception as e:
