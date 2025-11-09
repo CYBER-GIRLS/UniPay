@@ -17,7 +17,7 @@ export default function TransactionsPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
 
-  // Fetch ALL transactions (increased limit for complete data)
+  // Fetch transactions for display (list & calendar)
   const { data: transactionsData } = useQuery({
     queryKey: ['all-transactions'],
     queryFn: async () => {
@@ -26,41 +26,21 @@ export default function TransactionsPage() {
     },
   });
 
+  // Fetch accurate stats from backend (calculated from ALL transactions in DB)
+  const { data: statsData } = useQuery({
+    queryKey: ['transaction-stats'],
+    queryFn: async () => {
+      const response = await transactionsAPI.getStats();
+      return response.data;
+    },
+  });
+
   const transactions = transactionsData?.transactions || [];
-
-  // Calculate stats from the same transaction list for consistency
-  const calculateStats = () => {
-    const income = transactions.filter((t: any) => {
-      if (t.transaction_type === 'topup' || t.transaction_type === 'income' || t.transaction_type === 'refund') {
-        return true;
-      }
-      if (t.transaction_type === 'transfer' && t.receiver_id === t.user_id) {
-        return true;
-      }
-      return false;
-    });
-
-    const expenses = transactions.filter((t: any) => {
-      if (t.transaction_type === 'payment' || t.transaction_type === 'purchase') {
-        return true;
-      }
-      if (t.transaction_type === 'transfer' && t.sender_id === t.user_id) {
-        return true;
-      }
-      return false;
-    });
-
-    const totalIncome = income.reduce((sum: number, t: any) => sum + t.amount, 0);
-    const totalExpenses = expenses.reduce((sum: number, t: any) => sum + t.amount, 0);
-
-    return {
-      total_income: totalIncome,
-      total_expenses: totalExpenses,
-      transaction_count: transactions.length,
-    };
+  const stats = {
+    total_income: statsData?.total_income || 0,
+    total_expenses: statsData?.total_expenses || 0,
+    transaction_count: transactionsData?.total || 0,
   };
-
-  const stats = calculateStats();
 
   const groupTransactionsByDate = () => {
     const grouped: Record<string, any[]> = {};

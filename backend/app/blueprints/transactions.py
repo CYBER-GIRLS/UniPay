@@ -51,19 +51,31 @@ def get_transaction(transaction_id):
 def get_transaction_stats():
     user_id = int(get_jwt_identity())
     
-    from sqlalchemy import func
+    from sqlalchemy import func, or_
     from app.extensions import db
     
+    # Calculate total income: topup, income, refund, and received transfers
     total_income = db.session.query(func.sum(Transaction.amount)).filter(
         Transaction.user_id == user_id,
-        Transaction.transaction_type.in_(['topup', 'transfer']),
-        Transaction.receiver_id == user_id
+        or_(
+            Transaction.transaction_type.in_(['topup', 'income', 'refund']),
+            db.and_(
+                Transaction.transaction_type == 'transfer',
+                Transaction.receiver_id == user_id
+            )
+        )
     ).scalar() or 0
     
+    # Calculate total expenses: payment, purchase, and sent transfers
     total_expenses = db.session.query(func.sum(Transaction.amount)).filter(
         Transaction.user_id == user_id,
-        Transaction.transaction_type == 'transfer',
-        Transaction.sender_id == user_id
+        or_(
+            Transaction.transaction_type.in_(['payment', 'purchase']),
+            db.and_(
+                Transaction.transaction_type == 'transfer',
+                Transaction.sender_id == user_id
+            )
+        )
     ).scalar() or 0
     
     recent_transactions = Transaction.query.filter_by(user_id=user_id).order_by(
