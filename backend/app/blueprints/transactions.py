@@ -55,19 +55,23 @@ def get_transaction_stats():
     from app.extensions import db
     from app.models import Wallet
     
-    # Calculate total income: topup, income, refund, transfer_received, loan_repayment, savings_withdrawal
+    # Calculate total income: topup, income, refund, transfer_received, loan_repayment_received, loan_received, savings_withdrawal, sale, budget_withdrawal
     total_income = db.session.query(func.sum(Transaction.amount)).filter(
         Transaction.user_id == user_id,
         Transaction.transaction_type.in_([
-            'topup', 'income', 'refund', 'transfer_received', 'loan_repayment', 'savings_withdrawal'
+            'topup', 'income', 'refund', 'transfer_received', 
+            'loan_repayment_received', 'loan_received', 'savings_withdrawal',
+            'sale', 'budget_withdrawal'
         ])
     ).scalar() or 0
     
-    # Calculate total expenses: payment, purchase, transfer_sent, card_payment, loan_given, savings_deposit
+    # Calculate total expenses: payment, purchase, transfer_sent, card_payment, loan_disbursement, loan_repayment, savings_deposit, budget_allocation, budget_expense
     total_expenses = db.session.query(func.sum(Transaction.amount)).filter(
         Transaction.user_id == user_id,
         Transaction.transaction_type.in_([
-            'payment', 'purchase', 'transfer_sent', 'card_payment', 'loan_given', 'savings_deposit'
+            'payment', 'purchase', 'transfer_sent', 'card_payment', 
+            'loan_disbursement', 'loan_repayment', 'savings_deposit',
+            'budget_allocation', 'budget_expense'
         ])
     ).scalar() or 0
     

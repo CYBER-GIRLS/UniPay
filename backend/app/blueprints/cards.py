@@ -546,6 +546,89 @@ def withdraw_from_card(card_id):
         db.session.rollback()
         return jsonify({'error': f'Transaction failed: {str(e)}'}), 500
 
+@cards_bp.route('/<int:card_id>/pay', methods=['POST'])
+@jwt_required()
+def process_payment(card_id):
+    """Process a payment using a payment card"""
+    user_id = int(get_jwt_identity())
+    data = request.get_json()
+    
+    if not data or not data.get('amount'):
+        return jsonify({'error': 'Amount is required'}), 400
+    
+    amount_decimal = VirtualCard.to_decimal(data['amount'])
+    merchant = data.get('merchant', 'Unknown Merchant')
+    description = data.get('description', f'Payment to {merchant}')
+    
+    if amount_decimal <= 0:
+        return jsonify({'error': 'Amount must be greater than 0'}), 400
+    
+    try:
+        # Lock card row
+        card = VirtualCard.query.filter_by(id=card_id, user_id=user_id).with_for_update().first()
+        if not card:
+            return jsonify({'error': 'Card not found'}), 404
+        
+        if card.card_purpose != 'payment':
+            return jsonify({'error': 'This endpoint is only for payment cards'}), 400
+        
+        # Check if card is frozen
+        if card.is_frozen:
+            return jsonify({'error': 'Card is frozen. Unfreeze it to make payments'}), 403
+        
+        # Lock wallet row
+        wallet = Wallet.query.filter_by(user_id=user_id).with_for_update().first()
+        if not wallet:
+            return jsonify({'error': 'Wallet not found'}), 404
+        
+        # Check wallet balance
+        if wallet.balance < amount_decimal:
+            return jsonify({'error': 'Insufficient wallet balance'}), 400
+        
+        # Check spending limit if set
+        if card.spending_limit is not None:
+            if card.spent_amount + amount_decimal > card.spending_limit:
+                return jsonify({
+                    'error': f'Payment exceeds spending limit. Available: ${float(card.spending_limit - card.spent_amount):.2f}'
+                }), 400
+        
+        # Process payment
+        wallet.balance -= amount_decimal
+        card.spent_amount = (card.spent_amount or VirtualCard.to_decimal(0)) + amount_decimal
+        card.updated_at = datetime.utcnow()
+        
+        # Create transaction record
+        transaction = Transaction(
+            user_id=user_id,
+            transaction_type='card_payment',
+            amount=float(amount_decimal),
+            status='completed',
+            description=description,
+            transaction_metadata={
+                'card_id': card.id,
+                'card_name': card.card_name,
+                'card_type': card.card_type,
+                'merchant': merchant
+            },
+            completed_at=datetime.utcnow()
+        )
+        db.session.add(transaction)
+        db.session.commit()
+        
+        return jsonify({
+            'message': f'Payment of ${amount_decimal:.2f} successful',
+            'card': card.to_dict(),
+            'wallet_balance': float(wallet.balance),
+            'transaction': transaction.to_dict()
+        }), 200
+        
+    except ValueError as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Payment failed: {str(e)}'}), 500
+
 @cards_bp.route('/categories', methods=['GET'])
 @jwt_required()
 def get_categories():
