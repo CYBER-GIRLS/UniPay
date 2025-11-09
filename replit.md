@@ -54,6 +54,30 @@ The frontend adopts a modern, Revolut-inspired interface utilizing `shadcn/ui` (
 
 ## Recent Changes
 
+**November 9, 2025 (Demo Authentication Features - Visual Enhancements):**
+- ✅ **Forgot Password Modal** - Added visual-only password reset feature to LoginPage
+  - "Forgot password?" link opens modal dialog
+  - Email input field with reset button
+  - Toast notification confirms email sent (demo only - no backend)
+  - Proper styling with shadcn/ui components
+- ✅ **Social Login Buttons** - Google and Facebook login options on LoginPage and RegisterPage
+  - Branded buttons with official logos (Google 4-color, Facebook blue)
+  - "Or continue with" divider for clean visual separation
+  - Toast notifications confirm provider selection (demo only - no OAuth integration)
+  - Type="button" prevents form submission interference
+- ✅ **Security Settings Section** - Comprehensive security management in ProfilePage
+  - Email Verification: Status badge (verified/not verified) with resend button
+  - Two-Factor Authentication: Interactive toggle switch with state management
+  - Active Sessions: Table displaying current and past device sessions with terminate buttons
+  - Rate Limiting: Informational banner explaining brute force protection (5 attempts, 15min lockout)
+  - Session Timeout: Visual indicator showing 30-day inactivity expiration
+  - All features use local state + toast notifications (no backend integration)
+- ✅ **Code Quality & Architecture** - Clean implementation following best practices
+  - All demo features properly scoped as visual-only (no API calls)
+  - No interference with existing authentication flow
+  - Responsive design with proper mobile support
+  - Consistent with shadcn/ui component library styling
+
 **November 9, 2025 (Authentication Feature Enhancement - Full Specification Compliance):**
 - ✅ **React Hook Form + Zod Validation** - Implemented comprehensive form validation for authentication
   - LoginPage: Email format validation, password minimum 6 characters
