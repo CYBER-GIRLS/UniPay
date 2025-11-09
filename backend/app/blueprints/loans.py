@@ -30,21 +30,41 @@ def get_loans():
     from sqlalchemy import func
     user_id = int(get_jwt_identity())
     
+    # Pending requests I received (I'm the lender, someone is asking to borrow from me)
+    pending_requests_received = Loan.query.options(
+        joinedload(Loan.borrower)
+    ).filter_by(lender_id=user_id, status='pending').all()
+    
+    # Pending requests I sent (I'm the borrower, I'm asking to borrow)
+    pending_requests_sent = Loan.query.options(
+        joinedload(Loan.lender)
+    ).filter_by(borrower_id=user_id, status='pending').all()
+    
+    # Active loans where I'm the lender (approved, not fully repaid)
     loans_given = Loan.query.options(
         joinedload(Loan.borrower)
-    ).filter_by(lender_id=user_id).all()
+    ).filter(
+        Loan.lender_id == user_id,
+        Loan.status.in_(['active', 'repaid']),
+        Loan.status != 'cancelled'
+    ).all()
     
+    # Active loans where I'm the borrower (approved, not fully repaid)
     loans_taken = Loan.query.options(
         joinedload(Loan.lender)
-    ).filter_by(borrower_id=user_id).all()
+    ).filter(
+        Loan.borrower_id == user_id,
+        Loan.status.in_(['active', 'repaid']),
+        Loan.status != 'cancelled'
+    ).all()
     
-    # Calculate summary statistics (exclude cancelled loans)
+    # Calculate summary statistics (only active loans, exclude pending/cancelled/declined)
     owed_to_me = db.session.query(
         func.sum(Loan.amount - Loan.amount_repaid)
     ).filter(
         Loan.lender_id == user_id,
         Loan.is_fully_repaid == False,
-        Loan.status != 'cancelled'
+        Loan.status == 'active'
     ).scalar() or 0
     
     i_owe = db.session.query(
@@ -52,28 +72,33 @@ def get_loans():
     ).filter(
         Loan.borrower_id == user_id,
         Loan.is_fully_repaid == False,
-        Loan.status != 'cancelled'
+        Loan.status == 'active'
     ).scalar() or 0
     
     net_balance = float(owed_to_me) - float(i_owe)
     
     return jsonify({
+        'pending_requests_received': [loan.to_dict() for loan in pending_requests_received],
+        'pending_requests_sent': [loan.to_dict() for loan in pending_requests_sent],
         'loans_given': [loan.to_dict() for loan in loans_given],
         'loans_taken': [loan.to_dict() for loan in loans_taken],
         'summary': {
             'owed_to_me': float(owed_to_me),
             'i_owe': float(i_owe),
-            'net_balance': net_balance
+            'net_balance': net_balance,
+            'pending_received_count': len(pending_requests_received),
+            'pending_sent_count': len(pending_requests_sent)
         }
     }), 200
 
 @loans_bp.route('', methods=['POST'])
 @jwt_required()
-def create_loan():
-    lender_id = int(get_jwt_identity())
+def create_loan_request():
+    """Create a loan request (borrower requests money from lender)"""
+    borrower_id = int(get_jwt_identity())
     data = request.get_json()
     
-    borrower_username = data.get('borrower_username')
+    lender_username = data.get('lender_username')
     
     # Validate amount before conversion
     if not data.get('amount'):
@@ -87,93 +112,36 @@ def create_loan():
     if amount_decimal <= 0:
         return jsonify({'error': 'Amount must be greater than 0'}), 400
     
-    borrower = User.query.filter_by(username=borrower_username).first()
-    if not borrower:
-        return jsonify({'error': 'Borrower not found'}), 404
+    lender = User.query.filter_by(username=lender_username).first()
+    if not lender:
+        return jsonify({'error': 'Lender not found'}), 404
     
-    # Prevent lending to self
-    if borrower.id == lender_id:
-        return jsonify({'error': 'Cannot lend to yourself'}), 400
+    # Prevent requesting from self
+    if lender.id == borrower_id:
+        return jsonify({'error': 'Cannot request loan from yourself'}), 400
     
     try:
-        # Lock lender wallet
-        lender_wallet = Wallet.query.filter_by(user_id=lender_id).with_for_update().first()
-        if not lender_wallet:
-            return jsonify({'error': 'Wallet not found'}), 404
-        
-        # Check lender balance
-        if lender_wallet.balance < amount_decimal:
-            return jsonify({'error': 'Insufficient wallet balance to lend this amount'}), 400
-        
-        # Lock borrower wallet
-        borrower_wallet = Wallet.query.filter_by(user_id=borrower.id).with_for_update().first()
-        if not borrower_wallet:
-            return jsonify({'error': 'Borrower wallet not found'}), 404
-        
-        # Deduct from lender wallet
-        lender_wallet.balance -= amount_decimal
-        
-        # Credit borrower wallet
-        borrower_wallet.balance += amount_decimal
-        
-        # Create loan record
+        # Create loan request (no money transfer yet)
         loan = Loan(
-            lender_id=lender_id,
-            borrower_id=borrower.id,
+            lender_id=lender.id,
+            borrower_id=borrower_id,
             amount=amount_decimal,
             description=data.get('description'),
             due_date=datetime.fromisoformat(data['due_date']).date() if data.get('due_date') else None,
             interest_rate=data.get('interest_rate', 0.00),
-            status='active'
+            status='pending'
         )
         db.session.add(loan)
-        db.session.flush()  # Get loan ID
-        
-        # Create transaction for lender (money out)
-        lender_transaction = Transaction(
-            user_id=lender_id,
-            transaction_type='loan_disbursement',
-            amount=float(amount_decimal),
-            status='completed',
-            description=f'Loan given to {borrower.username}',
-            transaction_metadata={
-                'loan_id': loan.id,
-                'borrower_id': borrower.id,
-                'borrower_username': borrower.username,
-                'due_date': data.get('due_date')
-            },
-            completed_at=datetime.utcnow()
-        )
-        db.session.add(lender_transaction)
-        
-        # Create transaction for borrower (money in)
-        borrower_transaction = Transaction(
-            user_id=borrower.id,
-            transaction_type='loan_received',
-            amount=float(amount_decimal),
-            status='completed',
-            description=f'Loan received from {User.query.get(lender_id).username}',
-            transaction_metadata={
-                'loan_id': loan.id,
-                'lender_id': lender_id,
-                'due_date': data.get('due_date')
-            },
-            completed_at=datetime.utcnow()
-        )
-        db.session.add(borrower_transaction)
-        
         db.session.commit()
         
         return jsonify({
-            'message': 'Loan disbursed successfully',
-            'loan': loan.to_dict(),
-            'transaction': lender_transaction.to_dict(),
-            'wallet_balance': float(lender_wallet.balance)
+            'message': 'Loan request created successfully',
+            'loan': loan.to_dict()
         }), 201
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': f'Loan creation failed: {str(e)}'}), 500
+        return jsonify({'error': f'Loan request creation failed: {str(e)}'}), 500
 
 @loans_bp.route('/<int:loan_id>/repay', methods=['POST'])
 @jwt_required()
@@ -296,6 +264,129 @@ def repay_loan(loan_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f'Repayment failed: {str(e)}'}), 500
+
+@loans_bp.route('/<int:loan_id>/approve', methods=['POST'])
+@jwt_required()
+def approve_loan_request(loan_id):
+    """Lender approves a pending loan request and transfers money"""
+    lender_id = int(get_jwt_identity())
+    
+    # Lock loan record
+    loan = Loan.query.filter_by(id=loan_id).with_for_update().first()
+    
+    if not loan:
+        return jsonify({'error': 'Loan request not found'}), 404
+    
+    # Only lender can approve
+    if loan.lender_id != lender_id:
+        return jsonify({'error': 'Only the lender can approve this request'}), 403
+    
+    # Can only approve pending loans
+    if loan.status != 'pending':
+        return jsonify({'error': f'Loan request is already {loan.status}'}), 400
+    
+    try:
+        # Lock lender wallet
+        lender_wallet = Wallet.query.filter_by(user_id=lender_id).with_for_update().first()
+        if not lender_wallet:
+            return jsonify({'error': 'Wallet not found'}), 404
+        
+        # Check lender balance
+        if lender_wallet.balance < loan.amount:
+            return jsonify({'error': 'Insufficient wallet balance to approve this loan'}), 400
+        
+        # Lock borrower wallet
+        borrower_wallet = Wallet.query.filter_by(user_id=loan.borrower_id).with_for_update().first()
+        if not borrower_wallet:
+            return jsonify({'error': 'Borrower wallet not found'}), 404
+        
+        # Transfer money
+        lender_wallet.balance -= loan.amount
+        borrower_wallet.balance += loan.amount
+        
+        # Update loan status
+        loan.status = 'active'
+        
+        # Create transaction for lender (money out)
+        lender_transaction = Transaction(
+            user_id=lender_id,
+            transaction_type='loan_disbursement',
+            amount=float(loan.amount),
+            status='completed',
+            description=f'Loan approved and given to {loan.borrower.username}',
+            transaction_metadata={
+                'loan_id': loan.id,
+                'borrower_id': loan.borrower_id,
+                'borrower_username': loan.borrower.username,
+                'due_date': loan.due_date.isoformat() if loan.due_date else None
+            },
+            completed_at=datetime.utcnow()
+        )
+        db.session.add(lender_transaction)
+        
+        # Create transaction for borrower (money in)
+        borrower_transaction = Transaction(
+            user_id=loan.borrower_id,
+            transaction_type='loan_received',
+            amount=float(loan.amount),
+            status='completed',
+            description=f'Loan request approved by {loan.lender.username}',
+            transaction_metadata={
+                'loan_id': loan.id,
+                'lender_id': lender_id,
+                'due_date': loan.due_date.isoformat() if loan.due_date else None
+            },
+            completed_at=datetime.utcnow()
+        )
+        db.session.add(borrower_transaction)
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Loan request approved successfully',
+            'loan': loan.to_dict(),
+            'transaction': lender_transaction.to_dict(),
+            'lender_wallet_balance': float(lender_wallet.balance)
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Loan approval failed: {str(e)}'}), 500
+
+@loans_bp.route('/<int:loan_id>/decline', methods=['POST'])
+@jwt_required()
+def decline_loan_request(loan_id):
+    """Lender declines a pending loan request"""
+    lender_id = int(get_jwt_identity())
+    
+    # Lock loan record
+    loan = Loan.query.filter_by(id=loan_id).with_for_update().first()
+    
+    if not loan:
+        return jsonify({'error': 'Loan request not found'}), 404
+    
+    # Only lender can decline
+    if loan.lender_id != lender_id:
+        return jsonify({'error': 'Only the lender can decline this request'}), 403
+    
+    # Can only decline pending loans
+    if loan.status != 'pending':
+        return jsonify({'error': f'Loan request is already {loan.status}'}), 400
+    
+    try:
+        # Update loan status
+        loan.status = 'declined'
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Loan request declined',
+            'loan': loan.to_dict()
+        }), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Decline failed: {str(e)}'}), 500
 
 @loans_bp.route('/<int:loan_id>/cancel', methods=['POST'])
 @jwt_required()
