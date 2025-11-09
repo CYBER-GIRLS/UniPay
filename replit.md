@@ -5,14 +5,14 @@ UniPay is a digital wallet application tailored for students, integrating financ
 
 ## Recent Changes
 
-### November 9, 2025 - Transaction System Completion
+### November 9, 2025 - Transaction System & Frontend Notifications Completion
 - **Balance Validation**: All payment operations now validate wallet balance before processing
 - **Race Condition Protection**: SQLAlchemy `.with_for_update()` row locking prevents concurrent overdrafts
 - **Comprehensive Transaction Recording**: All operations create detailed transaction records with metadata
-- **New Endpoints**:
+- **New Backend Endpoints**:
   - `POST /api/savings/pockets/<id>/withdraw`: Withdraw from savings with balance validation
   - `POST /api/cards/<id>/pay`: Process card payments with freeze/limit checks
-- **Updated Endpoints**:
+- **Updated Backend Endpoints**:
   - `POST /api/marketplace/orders`: Now validates buyer balance, creates dual transactions (purchase/sale), immediate escrow release
   - `POST /api/loans/`: Validates lender balance, creates dual transactions (disbursement/received), debits lender and credits borrower
   - `POST /api/loans/<id>/repay`: Validates borrower balance, creates dual transactions (repayment/repayment_received)
@@ -20,6 +20,14 @@ UniPay is a digital wallet application tailored for students, integrating financ
 - **Transaction Types**: Supports 15+ types including savings_deposit, savings_withdrawal, card_payment, purchase, sale, loan_disbursement, loan_received, loan_repayment, loan_repayment_received, budget_allocation, budget_expense, budget_withdrawal
 - **Error Handling**: Proper HTTP codes (400 for validation errors, 403 for authorization, 404 for not found, 500 for system errors)
 - **Transaction Metadata**: All transactions include contextual data (pocket_id, card_id, order_id, loan_id, merchant, etc.) for analytics and reconciliation
+- **Frontend Notifications**: Complete toast notification system for all features:
+  - `DarkDaysPocketPage`: Withdrawal mutation with success/error toasts, query invalidation for wallet/pockets
+  - Cards, Marketplace, Loans already have comprehensive toast notifications
+  - All mutations properly invalidate queries to keep UI synchronized
+- **Transaction Filters Enhanced**: `CollapsibleTransactionList` now categorizes all 15+ transaction types:
+  - **Income (9 types)**: topup, income, refund, transfer_received, loan_repayment_received, loan_received, savings_withdrawal, sale, budget_withdrawal
+  - **Expenses (9 types)**: payment, purchase, transfer_sent, card_payment, loan_disbursement, loan_repayment, savings_deposit, budget_allocation, budget_expense
+  - Maintains backward compatibility with legacy 'transfer' type
 
 ### November 9, 2025 - PIN Management Feature
 - **Default PIN System**: All user accounts now have default PIN '1234' (existing accounts migrated via `set_default_pins.py`)
