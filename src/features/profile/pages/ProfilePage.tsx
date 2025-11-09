@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
+import { authAPI } from '@/lib/api';
+import { ChangePinDialog } from '../components/ChangePinDialog';
 import { 
   User, 
   Mail, 
@@ -23,7 +25,8 @@ import {
   XCircle,
   Monitor,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Key
 } from 'lucide-react';
 
 const MotionCard = motion.create(Card);
@@ -33,12 +36,35 @@ export default function ProfilePage() {
   const { toast } = useToast();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [emailVerified, setEmailVerified] = useState(user?.is_verified || false);
+  const [isChangePinDialogOpen, setIsChangePinDialogOpen] = useState(false);
+  const [pinStatus, setPinStatus] = useState<{ hasPin: boolean; isDefaultPin: boolean } | null>(null);
+  const [isPinStatusLoading, setIsPinStatusLoading] = useState(true);
+
+  const fetchPinStatus = async () => {
+    try {
+      setIsPinStatusLoading(true);
+      const response = await authAPI.checkDefaultPin();
+      setPinStatus(response.data);
+    } catch (error) {
+      console.error('Failed to fetch PIN status:', error);
+    } finally {
+      setIsPinStatusLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPinStatus();
+  }, []);
 
   const getInitials = () => {
     if (!user) return 'U';
     const firstInitial = user.first_name?.[0] || user.username?.[0] || '';
     const lastInitial = user.last_name?.[0] || '';
     return (firstInitial + lastInitial).toUpperCase();
+  };
+
+  const handlePinChangeSuccess = () => {
+    fetchPinStatus();
   };
 
   const handleToggle2FA = (enabled: boolean) => {
@@ -116,7 +142,7 @@ export default function ProfilePage() {
                   </Button>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => setIsChangePinDialogOpen(true)}>
                     <Lock className="h-4 w-4 mr-2" />
                     Change PIN
                   </Button>
@@ -295,6 +321,49 @@ export default function ProfilePage() {
               />
             </div>
 
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Key className="h-5 w-5 text-gray-600" />
+                  <div>
+                    <p className="font-medium text-gray-900">Security PIN</p>
+                    <p className="text-sm text-gray-600">
+                      Required for sensitive operations like DarkDays Pocket deposits
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {!isPinStatusLoading && pinStatus?.hasPin && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-mono tracking-wider text-gray-400">••••</span>
+                      {pinStatus.isDefaultPin && (
+                        <Badge variant="destructive" className="animate-pulse">
+                          <AlertTriangle className="h-3 w-3 mr-1" />
+                          Default PIN
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                  <Button 
+                    size="sm" 
+                    variant={pinStatus?.isDefaultPin ? "default" : "outline"}
+                    onClick={() => setIsChangePinDialogOpen(true)}
+                    className={pinStatus?.isDefaultPin ? "bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700" : ""}
+                  >
+                    {pinStatus?.isDefaultPin ? 'Change Default PIN' : 'Change PIN'}
+                  </Button>
+                </div>
+              </div>
+              {pinStatus?.isDefaultPin && (
+                <div className="mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+                  <p className="text-sm text-amber-900">
+                    <strong>⚠️ Security Warning:</strong> You're using the default PIN (1234). 
+                    Please change it to a unique 4-digit PIN to secure your account.
+                  </p>
+                </div>
+              )}
+            </div>
+
             <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
@@ -380,6 +449,12 @@ export default function ProfilePage() {
           </div>
         </CardContent>
       </MotionCard>
+
+      <ChangePinDialog
+        open={isChangePinDialogOpen}
+        onClose={() => setIsChangePinDialogOpen(false)}
+        onSuccess={handlePinChangeSuccess}
+      />
     </motion.div>
   );
 }
