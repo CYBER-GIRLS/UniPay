@@ -11,7 +11,7 @@ import { ArrowUpRight, ArrowDownLeft, Send, Users, Calendar } from 'lucide-react
 import { walletAPI, transactionsAPI } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
-import { useCurrencyStore, formatCurrency, getCurrencySymbol } from '@/stores/currencyStore';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 const MotionCard = motion.create(Card);
 
@@ -146,9 +146,19 @@ export default function TransfersPage() {
             </div>
           </CardHeader>
           <CardContent className="pt-6">
-            <p className="text-gray-600 mb-4">
-              Available Balance: <span className="font-bold text-violet-600">${walletData?.balance?.toFixed(2) || '0.00'}</span>
-            </p>
+            <div className="mb-4">
+              <p className="text-gray-600 dark:text-gray-400">
+                Available Balance:{' '}
+                <span className="font-bold text-violet-600">
+                  {formatCurrency(walletData?.balance || 0, selectedCurrency)}
+                </span>
+              </p>
+              {selectedCurrency !== 'USD' && (
+                <p className="text-xs text-gray-500 mt-1">
+                  ${walletData?.balance?.toFixed(2) || '0.00'} USD (visual conversion)
+                </p>
+              )}
+            </div>
             <Button
               className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
               onClick={() => setSendDialogOpen(true)}
