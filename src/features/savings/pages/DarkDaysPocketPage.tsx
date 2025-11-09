@@ -38,6 +38,7 @@ import { useCurrencyStore, formatCurrency, convertToUSD, getCurrencySymbol } fro
 import { DarkDaysCard } from '../components/DarkDaysCard';
 import { SecurityVerificationModal } from '../components/SecurityVerificationModal';
 import { AutoSaveConfigPanel } from '../components/AutoSaveConfigPanel';
+import { SavingsGoalPanel } from '../components/SavingsGoalPanel';
 import { EmergencyUnlockDialog } from '../components/EmergencyUnlockDialog';
 import { SavingsReportWidget } from '../components/SavingsReportWidget';
 
@@ -135,6 +136,19 @@ export default function DarkDaysPocketPage() {
     },
   });
 
+  // Savings goal mutation
+  const savingsGoalMutation = useMutation({
+    mutationFn: ({ pocketId, goalAmount }: any) => 
+      savingsAPI.updateAutoSave(pocketId, { goal_amount: goalAmount }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['savings-pockets'] });
+      toast.success('Savings goal updated successfully!');
+    },
+    onError: (error: any) => {
+      toast.error(`Failed to update goal: ${error.response?.data?.error || error.message}`);
+    },
+  });
+
   // Handle emergency access initiation
   const handleEmergencyAccess = (pocket: any) => {
     setSelectedPocket(pocket);
@@ -188,6 +202,16 @@ export default function DarkDaysPocketPage() {
       autoSaveConfigMutation.mutate({
         pocketId: activePocket.id,
         config: config,
+      });
+    }
+  };
+
+  // Handle savings goal update
+  const handleSavingsGoal = (goalAmount: number) => {
+    if (activePocket) {
+      savingsGoalMutation.mutate({
+        pocketId: activePocket.id,
+        goalAmount,
       });
     }
   };
@@ -278,17 +302,25 @@ export default function DarkDaysPocketPage() {
           </TabsContent>
 
           <TabsContent value="settings">
-            <AutoSaveConfigPanel
-              pocketId={activePocket.id}
-              currentConfig={{
-                enabled: activePocket.auto_save_enabled,
-                percentage: activePocket.auto_save_percentage,
-                frequency: activePocket.auto_save_frequency || 'monthly',
-                goal_amount: activePocket.goal_amount,
-              }}
-              currentBalance={activePocket.balance}
-              onSave={handleAutoSaveConfig}
-            />
+            <div className="space-y-6">
+              {/* Standalone Savings Goal Panel */}
+              <SavingsGoalPanel
+                pocketId={activePocket.id}
+                currentBalance={activePocket.balance}
+                goalAmount={activePocket.goal_amount}
+                onSave={handleSavingsGoal}
+              />
+
+              {/* Auto-Save Configuration */}
+              <AutoSaveConfigPanel
+                currentConfig={{
+                  enabled: activePocket.auto_save_enabled,
+                  percentage: activePocket.auto_save_percentage,
+                  frequency: activePocket.auto_save_frequency || 'monthly',
+                }}
+                onSave={handleAutoSaveConfig}
+              />
+            </div>
           </TabsContent>
 
           <TabsContent value="reports">
