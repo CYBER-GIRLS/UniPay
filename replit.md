@@ -54,6 +54,31 @@ The frontend adopts a modern, Revolut-inspired interface utilizing `shadcn/ui` (
 
 ## Recent Changes
 
+**November 9, 2025 (Authentication Feature Enhancement - Full Specification Compliance):**
+- ✅ **React Hook Form + Zod Validation** - Implemented comprehensive form validation for authentication
+  - LoginPage: Email format validation, password minimum 6 characters
+  - RegisterPage: All fields validated, PIN fields with 4-digit numeric requirement
+  - Real-time error display for improved user experience
+- ✅ **PIN During Registration** - Users now set up their security PIN during account creation
+  - PIN input field (4 digits, numeric only, password-masked)
+  - Confirm PIN field with matching validation
+  - Backend enforcement: registration rejected without valid PIN
+- ✅ **Logout Endpoint Implementation** - Complete server-side logout flow
+  - POST /api/auth/logout endpoint with JWT protection
+  - AuthStore updated to call API before clearing local state
+  - TopNav component updated to use async logout method
+  - Proper logging of logout events for security audit trail
+- ✅ **Password Strength Validation** - Enforced minimum 6 character requirement
+  - Frontend: Zod schema validation with clear error messages
+  - Backend: Consistent validation (existing)
+- ✅ **Security Improvements** - Mandatory PIN requirement prevents bypassing critical security features
+  - All savings pocket operations require PIN
+  - Enhanced account security from registration onwards
+- ✅ **Code Quality** - Followed best practices throughout
+  - Proper error handling in async logout
+  - Validation order optimization (fail fast on invalid data)
+  - No security vulnerabilities introduced
+
 **November 9, 2025 (Interactive Expected Payments Feature - Full CRUD):**
 - ✅ **ExpectedPaymentModal Component** - Complete modal form for adding/editing expected payments
   - Form fields: Title, Amount, Date, Category (9 options), Frequency, Notes
