@@ -4,7 +4,7 @@ import { transactionsAPI } from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import { Receipt, Download, Filter, ArrowUpRight, ArrowDownLeft, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { Receipt, ArrowUpRight, ArrowDownLeft, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import CalendarGrid from '@/features/timeline/components/CalendarGrid';
 import CompactColorLegend from '@/features/timeline/components/CompactColorLegend';
 import DayDetailModal from '@/features/timeline/components/DayDetailModal';
@@ -98,21 +98,9 @@ export default function TransactionsPage() {
       animate="show"
       className="space-y-6 max-w-7xl mx-auto"
     >
-      <motion.div variants={itemVariants} className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Activity</h1>
-          <p className="text-gray-600 mt-1">View your transactions and spending timeline</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export
-          </Button>
-        </div>
+      <motion.div variants={itemVariants} className="text-center mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Activity</h1>
+        <p className="text-gray-600">Track your transactions and upcoming payments</p>
       </motion.div>
 
       <div className="grid md:grid-cols-3 gap-4">
