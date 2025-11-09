@@ -5,6 +5,23 @@ UniPay is a digital wallet application tailored for students, integrating financ
 
 ## Recent Changes
 
+### November 9, 2025 - Dynamic Milestone Progress Calculation
+- **Issue**: Progress percentage toward savings goal was fixed at 75%, not reflecting actual savings
+- **Root Cause**: DarkDaysCard component had hardcoded progress bar width and percentage text
+- **Fix Applied**:
+  - Added `goal_amount` optional field to DarkDaysCard pocket interface (defaults to $5000)
+  - Calculate dynamic progress: `Math.min((balance / goalAmount) * 100, 100)`
+  - Progress bar width animates to actual percentage: `animate={{ width: ${progressPercentage}% }}`
+  - Percentage text updates dynamically: `{progressPercentage.toFixed(0)}% to goal`
+  - Added goal and remaining amount display below progress bar
+  - Remaining amount calculation: `Math.max(goalAmount - balance, 0)`
+- **Impact**: Progress now accurately reflects actual savings vs target in real-time
+- **User Experience**: 
+  - Users see accurate progress (e.g., $250 saved toward $5000 goal shows 5%, not 75%)
+  - Progress updates immediately after deposits or withdrawals
+  - Goal and remaining amounts visible for better financial planning
+  - Progress bar fills to 100% when goal is reached
+
 ### November 9, 2025 - DarkDays Pocket Dialog Scrolling Fix
 - **Issue**: Emergency Access and Security Verification dialogs content overflowing on smaller screens or when content is tall
 - **Root Cause**: Dialogs had no max-height constraint and overflow handling, causing content to be cut off beyond viewport

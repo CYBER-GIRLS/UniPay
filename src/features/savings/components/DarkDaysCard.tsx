@@ -38,6 +38,7 @@ interface DarkDaysCardProps {
     balance: number;
     auto_save_percentage: number;
     is_locked: boolean;
+    goal_amount?: number;
   };
   onDeposit?: () => void;
   onEmergencyAccess?: () => void;
@@ -46,6 +47,11 @@ interface DarkDaysCardProps {
 export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysCardProps) {
   const { selectedCurrency } = useCurrencyStore();
   const [balanceHidden, setBalanceHidden] = useState(false);
+
+  // Calculate dynamic progress toward goal
+  const goalAmount = pocket.goal_amount || 5000; // Default goal: $5000 emergency fund
+  const progressPercentage = Math.min((pocket.balance / goalAmount) * 100, 100);
+  const remainingAmount = Math.max(goalAmount - pocket.balance, 0);
 
   return (
     <motion.div
@@ -109,11 +115,16 @@ export function DarkDaysCard({ pocket, onDeposit, onEmergencyAccess }: DarkDaysC
                 <motion.div
                   className="h-full bg-gradient-to-r from-amber-400 to-yellow-500"
                   initial={{ width: 0 }}
-                  animate={{ width: '75%' }}
+                  animate={{ width: `${progressPercentage}%` }}
                   transition={{ duration: 1, delay: 0.5 }}
                 />
               </div>
-              <p className="text-xs text-gray-400">75% to goal</p>
+              <p className="text-xs text-gray-400">{progressPercentage.toFixed(0)}% to goal</p>
+            </div>
+            <div className="mt-1">
+              <p className="text-xs text-gray-500">
+                Goal: {formatCurrency(goalAmount, selectedCurrency)} • Remaining: {formatCurrency(remainingAmount, selectedCurrency)}
+              </p>
             </div>
           </div>
 
