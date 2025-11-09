@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ArrowUpCircle, ArrowDownCircle, DollarSign, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ArrowUpCircle, ArrowDownCircle, DollarSign, Calendar, Plus, Edit } from 'lucide-react';
 import { motion } from 'framer-motion';
+import ExpectedPaymentModal from './ExpectedPaymentModal';
 
 interface DayDetailModalProps {
   date: Date;
@@ -12,6 +15,8 @@ interface DayDetailModalProps {
 }
 
 export default function DayDetailModal({ date, transactions, open, onClose }: DayDetailModalProps) {
+  const [showExpectedPaymentModal, setShowExpectedPaymentModal] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<any>(null);
   const formattedDate = date.toLocaleDateString('en-US', {
     weekday: 'long',
     year: 'numeric',
@@ -41,14 +46,29 @@ export default function DayDetailModal({ date, transactions, open, onClose }: Da
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] p-0">
-        <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-violet-600" />
-            {formattedDate}
-          </DialogTitle>
-           <DialogDescription>
-            View all transactions and financial activity for this day
-          </DialogDescription>
+        <DialogHeader className="p-6 pb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-violet-600" />
+                {formattedDate}
+              </DialogTitle>
+              <DialogDescription>
+                View all transactions and financial activity for this day
+              </DialogDescription>
+            </div>
+            <Button
+              onClick={() => {
+                setSelectedPayment(null);
+                setShowExpectedPaymentModal(true);
+              }}
+              size="sm"
+              className="bg-violet-600 hover:bg-violet-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Expected Payment
+            </Button>
+          </div>
         </DialogHeader>
 
         <ScrollArea className="max-h-[calc(90vh-100px)] p-6">
@@ -100,6 +120,8 @@ export default function DayDetailModal({ date, transactions, open, onClose }: Da
                     transaction.transaction_type === 'income' || 
                     transaction.transaction_type === 'refund';
                   
+                  const isScheduled = transaction.status === 'scheduled';
+                  
                   return (
                     <motion.div
                       key={transaction.id || index}
@@ -107,41 +129,68 @@ export default function DayDetailModal({ date, transactions, open, onClose }: Da
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.05 }}
                     >
-                      <Card className="border-0 shadow-sm hover:shadow-md transition-shadow">
+                      <Card className={`border-0 shadow-sm hover:shadow-md transition-shadow ${isScheduled ? 'bg-yellow-50' : ''}`}>
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 flex-1">
                               <div className={`
                                 h-10 w-10 rounded-full flex items-center justify-center
-                                ${isIncome ? 'bg-green-100' : 'bg-red-100'}
+                                ${isScheduled ? 'bg-yellow-100' : isIncome ? 'bg-green-100' : 'bg-red-100'}
                               `}>
                                 {isIncome ? (
-                                  <ArrowUpCircle className="h-5 w-5 text-green-600" />
+                                  <ArrowUpCircle className={`h-5 w-5 ${isScheduled ? 'text-yellow-600' : 'text-green-600'}`} />
                                 ) : (
-                                  <ArrowDownCircle className="h-5 w-5 text-red-600" />
+                                  <ArrowDownCircle className={`h-5 w-5 ${isScheduled ? 'text-yellow-600' : 'text-red-600'}`} />
                                 )}
                               </div>
-                              <div>
-                                <p className="font-semibold text-gray-900">
-                                  {transaction.description || transaction.transaction_type}
-                                </p>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <p className="font-semibold text-gray-900">
+                                    {transaction.description || transaction.transaction_type}
+                                  </p>
+                                  {isScheduled && (
+                                    <span className="text-xs px-2 py-0.5 bg-yellow-200 text-yellow-800 rounded-full font-medium">
+                                      Expected
+                                    </span>
+                                  )}
+                                </div>
                                 <p className="text-xs text-gray-500">
                                   {new Date(transaction.created_at).toLocaleTimeString('en-US', {
                                     hour: '2-digit',
                                     minute: '2-digit',
                                   })}
+                                  {transaction.metadata?.frequency && transaction.metadata.frequency !== 'one-time' && (
+                                    <span className="ml-2 text-xs text-gray-400">
+                                      • {transaction.metadata.frequency === 'monthly' ? '📅 Monthly' : '📆 Weekly'}
+                                    </span>
+                                  )}
                                 </p>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <p className={`
-                                text-lg font-bold
-                                ${isIncome ? 'text-green-600' : 'text-red-600'}
-                              `}>
-                                {isIncome ? '+' : '-'}${parseFloat(transaction.amount || 0).toFixed(2)}
-                              </p>
-                              {transaction.category && (
-                                <p className="text-xs text-gray-500 capitalize">{transaction.category}</p>
+                            <div className="flex items-center gap-3">
+                              <div className="text-right">
+                                <p className={`
+                                  text-lg font-bold
+                                  ${isScheduled ? 'text-yellow-600' : isIncome ? 'text-green-600' : 'text-red-600'}
+                                `}>
+                                  {isIncome ? '+' : '-'}${parseFloat(transaction.amount || 0).toFixed(2)}
+                                </p>
+                                {transaction.metadata?.category && (
+                                  <p className="text-xs text-gray-500 capitalize">{transaction.metadata.category}</p>
+                                )}
+                              </div>
+                              {isScheduled && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    setSelectedPayment(transaction);
+                                    setShowExpectedPaymentModal(true);
+                                  }}
+                                  className="hover:bg-yellow-100"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
                               )}
                             </div>
                           </div>
@@ -165,6 +214,16 @@ export default function DayDetailModal({ date, transactions, open, onClose }: Da
           </div>
         </ScrollArea>
       </DialogContent>
+
+      <ExpectedPaymentModal
+        open={showExpectedPaymentModal}
+        onClose={() => {
+          setShowExpectedPaymentModal(false);
+          setSelectedPayment(null);
+        }}
+        selectedDate={date}
+        payment={selectedPayment}
+      />
     </Dialog>
   );
 }

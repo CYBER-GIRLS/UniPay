@@ -137,3 +137,10 @@ export const isicAPI = {
   getUploadedCardMetadata: () => api.get('/isic/metadata'),
 };
 
+export const expectedPaymentsAPI = {
+  create: (data: any) => api.post('/expected-payments', data),
+  update: (id: number, data: any) => api.put(`/expected-payments/${id}`, data),
+  delete: (id: number) => api.delete(`/expected-payments/${id}`),
+  generateRecurring: (paymentId: number, months: number = 3) => 
+    api.post('/expected-payments/generate-recurring', { payment_id: paymentId, months }),
+};
