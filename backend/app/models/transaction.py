@@ -7,7 +7,7 @@ class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     
-    transaction_type = db.Column(db.String(20), nullable=False)
+    transaction_type = db.Column(db.String(50), nullable=False)
     amount = db.Column(db.Numeric(10, 2), nullable=False)
     currency = db.Column(db.String(3), default='USD')
     
