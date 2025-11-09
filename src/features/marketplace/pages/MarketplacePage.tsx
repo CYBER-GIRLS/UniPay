@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 import { Store, Plus, Search, ShoppingBag, Layers } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCurrencyStore, formatCurrency, convertToUSD } from '@/stores/currencyStore';
 import AdvancedFilters from '../components/AdvancedFilters';
 import ListingDetailModal from '../components/ListingDetailModal';
 import CreateListingForm from '../components/CreateListingForm';
@@ -16,6 +17,7 @@ import EscrowStatusBadge from '../components/EscrowStatusBadge';
 const MotionCard = motion.create(Card);
 
 export default function EnhancedMarketplacePage() {
+  const { selectedCurrency } = useCurrencyStore();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [selectedListing, setSelectedListing] = useState<any>(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
@@ -80,6 +82,14 @@ export default function EnhancedMarketplacePage() {
   const handleViewDetails = (listing: any) => {
     setSelectedListing(listing);
     setDetailModalOpen(true);
+  };
+
+  const handleCreateListing = (data: any) => {
+    const priceInUSD = convertToUSD(Number(data.price), selectedCurrency);
+    createListingMutation.mutate({
+      ...data,
+      price: priceInUSD,
+    });
   };
 
   const handleBuyListing = () => {
@@ -154,7 +164,7 @@ export default function EnhancedMarketplacePage() {
                 <DialogTitle>Create Marketplace Listing</DialogTitle>
               </DialogHeader>
               <CreateListingForm
-                onSubmit={createListingMutation.mutate}
+                onSubmit={handleCreateListing}
                 isLoading={createListingMutation.isPending}
               />
             </DialogContent>
@@ -216,7 +226,7 @@ export default function EnhancedMarketplacePage() {
                   <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">{listing.title}</h3>
                   <p className="text-sm text-gray-600 mb-2 line-clamp-2">{listing.description}</p>
                   <div className="flex items-center justify-between mb-3">
-                    <p className="text-xl font-bold text-violet-600">${listing.price}</p>
+                    <p className="text-xl font-bold text-violet-600">{formatCurrency(listing.price, selectedCurrency)}</p>
                     <span className="text-[10px] bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-medium">
                       {listing.category}
                     </span>

@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { PiggyBank, Target, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
+import { useCurrencyStore, formatCurrency, convertToUSD } from '@/stores/currencyStore';
 
 export default function SavingsPage() {
   const { selectedCurrency } = useCurrencyStore();
@@ -250,11 +250,14 @@ export default function SavingsPage() {
                   </div>
                   <Button
                     className="w-full bg-gradient-to-r from-green-600 to-emerald-600"
-                    onClick={() => createGoalMutation.mutate({
-                      title: goalTitle,
-                      target_amount: Number(goalAmount),
-                      description: goalDescription,
-                    })}
+                    onClick={() => {
+                      const targetAmountInUSD = convertToUSD(Number(goalAmount), selectedCurrency);
+                      createGoalMutation.mutate({
+                        title: goalTitle,
+                        target_amount: targetAmountInUSD,
+                        description: goalDescription,
+                      });
+                    }}
                     disabled={createGoalMutation.isPending || !goalTitle || !goalAmount}
                   >
                     {createGoalMutation.isPending ? 'Creating...' : 'Create Goal'}
@@ -346,9 +349,10 @@ export default function SavingsPage() {
               className="w-full bg-gradient-to-r from-green-600 to-emerald-600"
               onClick={() => {
                 if (selectedGoal && contributionAmount && Number(contributionAmount) > 0) {
+                  const amountInUSD = convertToUSD(Number(contributionAmount), selectedCurrency);
                   contributeMutation.mutate({
                     goalId: selectedGoal.id,
-                    amount: Number(contributionAmount),
+                    amount: amountInUSD,
                   });
                 }
               }}

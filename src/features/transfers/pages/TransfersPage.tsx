@@ -11,7 +11,7 @@ import { ArrowUpRight, ArrowDownLeft, Send, Users, Calendar } from 'lucide-react
 import { walletAPI, transactionsAPI } from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'sonner';
-import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
+import { useCurrencyStore, formatCurrency, convertToUSD } from '@/stores/currencyStore';
 
 const MotionCard = motion.create(Card);
 
@@ -72,6 +72,8 @@ export default function TransfersPage() {
       return;
     }
 
+    const amountInUSD = convertToUSD(Number(amount), selectedCurrency);
+
     if (isScheduled) {
       if (!scheduledDate) {
         toast.error('Please select a date for scheduled transfer');
@@ -81,7 +83,7 @@ export default function TransfersPage() {
       const newScheduledTransfer: ScheduledTransfer = {
         id: Date.now().toString(),
         recipient: recipientUsername,
-        amount: Number(amount),
+        amount: amountInUSD,
         scheduledDate,
         createdAt: new Date().toISOString(),
       };
@@ -96,7 +98,7 @@ export default function TransfersPage() {
     } else {
       transferMutation.mutate({
         recipient: recipientUsername,
-        amount: Number(amount),
+        amount: amountInUSD,
       });
     }
   };

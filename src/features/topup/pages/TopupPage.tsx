@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { CreditCard, Banknote, QrCode, Wallet } from 'lucide-react';
 import { walletAPI } from '@/lib/api';
 import { toast } from 'sonner';
-import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
+import { useCurrencyStore, formatCurrency, convertCurrency, convertToUSD } from '@/stores/currencyStore';
 
 const MotionCard = motion.create(Card);
 
@@ -44,8 +44,9 @@ export default function TopupPage() {
       toast.error('Please enter a valid amount');
       return;
     }
+    const amountInUSD = convertToUSD(Number(amount), selectedCurrency);
     topupMutation.mutate({
-      amount: Number(amount),
+      amount: amountInUSD,
       method: selectedMethod,
     });
   };
@@ -170,7 +171,7 @@ export default function TopupPage() {
                     key={quickAmount}
                     variant="outline"
                     size="sm"
-                    onClick={() => setAmount(quickAmount.toString())}
+                    onClick={() => setAmount(convertCurrency(quickAmount, selectedCurrency).toString())}
                   >
                     {formatCurrency(quickAmount, selectedCurrency)}
                   </Button>
@@ -183,7 +184,7 @@ export default function TopupPage() {
               onClick={handleTopup}
               disabled={topupMutation.isPending || !amount || Number(amount) <= 0}
             >
-              {topupMutation.isPending ? 'Processing...' : `Top Up $${amount || '0.00'}`}
+              {topupMutation.isPending ? 'Processing...' : `Top Up ${amount ? formatCurrency(convertToUSD(Number(amount), selectedCurrency), selectedCurrency) : formatCurrency(0, selectedCurrency)}`}
             </Button>
 
             <p className="text-sm text-gray-500 text-center">

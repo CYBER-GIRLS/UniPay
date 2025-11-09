@@ -20,6 +20,12 @@ const CURRENCY_NAMES: Record<Currency, string> = {
   BGN: 'Bulgarian Lev',
 };
 
+const EXCHANGE_RATES: Record<Currency, number> = {
+  USD: 1.0,
+  EUR: 0.93,
+  BGN: 1.80,
+};
+
 export const useCurrencyStore = create<CurrencyState>()(
   persist(
     (set) => ({
@@ -32,14 +38,32 @@ export const useCurrencyStore = create<CurrencyState>()(
   )
 );
 
-export const formatCurrency = (amount: number, currency: Currency): string => {
+const roundToTwoDecimals = (value: number): number => {
+  return Math.round(value * 100) / 100;
+};
+
+export const convertCurrency = (amountInUSD: number, targetCurrency: Currency): number => {
+  return roundToTwoDecimals(amountInUSD * EXCHANGE_RATES[targetCurrency]);
+};
+
+export const convertToUSD = (amount: number, fromCurrency: Currency): number => {
+  return roundToTwoDecimals(amount / EXCHANGE_RATES[fromCurrency]);
+};
+
+export const formatCurrency = (amountInUSD: number, currency: Currency): string => {
+  const convertedAmount = convertCurrency(amountInUSD, currency);
   const symbol = CURRENCY_SYMBOLS[currency];
   
+  const formatted = convertedAmount.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  
   if (currency === 'BGN') {
-    return `${amount.toFixed(2)} ${symbol}`;
+    return `${formatted} ${symbol}`;
   }
   
-  return `${symbol}${amount.toFixed(2)}`;
+  return `${symbol}${formatted}`;
 };
 
 export const getCurrencySymbol = (currency: Currency): string => {
