@@ -44,6 +44,9 @@ export const authAPI = {
   getCurrentUser: () => api.get('/auth/me'),
   setPin: (pin: string) => api.post('/auth/set-pin', { pin }),
   verifyPin: (pin: string) => api.post('/auth/verify-pin', { pin }),
+  changePin: (password: string, new_pin: string, confirm_pin: string) => 
+    api.post('/auth/change-pin', { password, new_pin, confirm_pin }),
+  checkDefaultPin: () => api.get('/auth/check-default-pin'),
 };
 
 export const walletAPI = {
