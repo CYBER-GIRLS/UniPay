@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Receipt, Download, Filter, ArrowUpRight, ArrowDownLeft, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import CalendarGrid from '@/features/timeline/components/CalendarGrid';
-import ColorLegend from '@/features/timeline/components/ColorLegend';
+import CompactColorLegend from '@/features/timeline/components/CompactColorLegend';
 import DayDetailModal from '@/features/timeline/components/DayDetailModal';
 import CollapsibleTransactionList from '@/features/transactions/components/CollapsibleTransactionList';
 
@@ -165,31 +165,17 @@ export default function TransactionsPage() {
         </MotionCard>
       </div>
 
-      <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-visible">
-        <CardContent className="p-0">
-          {transactions.length > 0 ? (
-            <CollapsibleTransactionList transactions={transactions} />
-          ) : (
-            <div className="p-6 text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                <Receipt className="h-8 w-8 text-gray-400" />
-              </div>
-              <p className="text-gray-500">No transactions yet</p>
-            </div>
-          )}
-        </CardContent>
-      </MotionCard>
-
       <motion.div
         variants={itemVariants}
         className="space-y-4"
       >
-        <div className="flex items-center gap-2">
-          <CalendarIcon className="h-6 w-6 text-violet-600" />
-          <h2 className="text-xl font-bold text-gray-900">Finance Timeline</h2>
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-2">
+            <CalendarIcon className="h-6 w-6 text-violet-600" />
+            <h2 className="text-xl font-bold text-gray-900">Finance Timeline</h2>
+          </div>
+          <CompactColorLegend />
         </div>
-        
-        <ColorLegend />
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="border-b bg-gradient-to-r from-violet-50 to-indigo-50">
@@ -224,6 +210,21 @@ export default function TransactionsPage() {
           </CardContent>
         </Card>
       </motion.div>
+
+      <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-visible">
+        <CardContent className="p-0">
+          {transactions.length > 0 ? (
+            <CollapsibleTransactionList transactions={transactions} />
+          ) : (
+            <div className="p-6 text-center py-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                <Receipt className="h-8 w-8 text-gray-400" />
+              </div>
+              <p className="text-gray-500">No transactions yet</p>
+            </div>
+          )}
+        </CardContent>
+      </MotionCard>
 
       {selectedDate && (
         <DayDetailModal

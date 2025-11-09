@@ -22,7 +22,7 @@ interface CollapsibleTransactionListProps {
 type FilterType = 'all' | 'income' | 'expenses';
 
 export default function CollapsibleTransactionList({ transactions }: CollapsibleTransactionListProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
 
   // Helper to determine if transaction is income
