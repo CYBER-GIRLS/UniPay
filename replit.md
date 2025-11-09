@@ -5,6 +5,16 @@ UniPay is a digital wallet application tailored for students, integrating financ
 
 ## Recent Changes
 
+### November 9, 2025 - DarkDays Pocket Complete Feature Implementation
+- **Withdrawal Amount Input Dialog**: Added gated withdrawal flow requiring amount input before security verification
+- **Auto-Save Backend Integration**: Connected frontend auto-save configuration panel to `/api/savings/pockets/<id>/auto-save` endpoint
+- **Emergency Metadata Tracking**: Withdrawal transactions now store emergency category, reason, and `is_emergency_withdrawal` flag in metadata
+- **Currency Display Fix**: Toast notifications now correctly display original user-entered amounts (e.g., €100) instead of USD-converted values (e.g., €110)
+- **Complete Withdrawal Flow**: Emergency category → Amount input (with validation) → Security verification (PIN + Password + Confirmation) → Backend processing with metadata
+- **Transaction Audit Trail**: All emergency withdrawals marked in transaction metadata with category (medical/travel/family/crisis) and user-provided reason
+- **Backend Emergency Support**: `/api/savings/pockets/<id>/withdraw` accepts optional `emergencyData` parameter and stores in transaction metadata
+- **API Type Updates**: TypeScript signatures updated to support `emergencyData?: any` parameter in withdrawal operations
+
 ### November 9, 2025 - Budget Card Error Notification Fix
 - **Issue**: Budget card spending errors (insufficient funds) were silently failing without displaying error messages to users
 - **Root Cause**: App.tsx was using the wrong Toaster component (shadcn's hook-based system) while all pages used Sonner's function-based toast calls
