@@ -49,28 +49,35 @@ export default function CalendarGrid({
 
     if (dayTransactions.length === 0) return '';
 
+    const hasUpcoming = dayTransactions.some((t: any) => 
+      t.status === 'scheduled' || 
+      (t.transaction_metadata && t.transaction_metadata.upcoming === true)
+    );
     const hasIncome = dayTransactions.some((t: any) => 
-      t.transaction_type === 'topup' || t.transaction_type === 'income' || t.transaction_type === 'refund'
+      (t.transaction_type === 'topup' || t.transaction_type === 'income' || t.transaction_type === 'refund') &&
+      t.status !== 'scheduled'
     );
     const hasExpense = dayTransactions.some((t: any) => 
-      t.transaction_type === 'transfer' || t.transaction_type === 'payment' || 
-      t.transaction_type === 'withdrawal' || t.transaction_type === 'purchase'
-    );
-    const hasUpcoming = dayTransactions.some((t: any) => 
-      t.transaction_type === 'upcoming' || t.status === 'pending'
+      (t.transaction_type === 'transfer' || t.transaction_type === 'payment' || 
+      t.transaction_type === 'withdrawal' || t.transaction_type === 'purchase') &&
+      t.status !== 'scheduled'
     );
 
+    // Prioritize upcoming payments (show yellow)
+    if (hasUpcoming) {
+      return 'bg-yellow-50 hover:bg-yellow-100 border-yellow-200';
+    }
+    // Then mixed days
     if (hasExpense && hasIncome) {
       return 'bg-gradient-to-br from-red-100 to-green-100';
     }
+    // Then expenses
     if (hasExpense) {
       return 'bg-red-50 hover:bg-red-100';
     }
+    // Then income
     if (hasIncome) {
       return 'bg-green-50 hover:bg-green-100';
-    }
-    if (hasUpcoming) {
-      return 'bg-yellow-50 hover:bg-yellow-100';
     }
 
     return '';
