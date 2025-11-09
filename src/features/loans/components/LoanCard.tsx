@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CircularProgress } from './CircularProgress';
-import { Calendar, Clock, AlertCircle, Bell, DollarSign, Eye, XCircle } from 'lucide-react';
+import { Calendar, Clock, AlertCircle, Bell, DollarSign, Eye, XCircle, Check, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { motion } from 'framer-motion';
 
@@ -13,8 +13,12 @@ interface LoanCardProps {
   onSendReminder?: (loan: any) => void;
   onViewDetails?: (loan: any) => void;
   onCancel?: (loan: any) => void;
+  onApprove?: (loan: any) => void;
+  onDecline?: (loan: any) => void;
   isRepaying?: boolean;
   isCancelling?: boolean;
+  isApproving?: boolean;
+  isDeclining?: boolean;
 }
 
 export function LoanCard({ 
@@ -24,14 +28,34 @@ export function LoanCard({
   onSendReminder,
   onViewDetails,
   onCancel,
+  onApprove,
+  onDecline,
   isRepaying = false,
-  isCancelling = false
+  isCancelling = false,
+  isApproving = false,
+  isDeclining = false
 }: LoanCardProps) {
   const otherParty = isLender ? loan.borrower : loan.lender;
   const progress = (loan.amount_repaid / loan.amount) * 100;
   const formatCurrency = (amount: number) => `$${amount.toFixed(2)}`;
 
   const getLoanStatusBadge = () => {
+    if (loan.status === 'pending') {
+      return (
+        <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-xs flex items-center gap-1">
+          <Clock className="h-3 w-3" />
+          Pending
+        </Badge>
+      );
+    }
+    if (loan.status === 'declined') {
+      return (
+        <Badge variant="secondary" className="bg-red-100 text-red-800 text-xs flex items-center gap-1">
+          <X className="h-3 w-3" />
+          Declined
+        </Badge>
+      );
+    }
     if (loan.status === 'cancelled') {
       return (
         <Badge variant="secondary" className="bg-gray-200 text-gray-800 text-xs flex items-center gap-1">
@@ -132,7 +156,40 @@ export function LoanCard({
           </div>
 
           <div className="mt-auto space-y-2">
-            {loan.status !== 'cancelled' && !loan.is_fully_repaid && !isLender && (
+            {/* Pending request - lender can approve or decline */}
+            {loan.status === 'pending' && isLender && (
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700"
+                  onClick={() => onApprove?.(loan)}
+                  disabled={isApproving}
+                >
+                  {isApproving ? 'Approving...' : (
+                    <>
+                      <Check className="h-3 w-3 mr-1" />
+                      Approve
+                    </>
+                  )}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => onDecline?.(loan)}
+                  disabled={isDeclining}
+                >
+                  {isDeclining ? 'Declining...' : (
+                    <>
+                      <X className="h-3 w-3 mr-1" />
+                      Decline
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+            
+            {/* Active loan - borrower can repay */}
+            {loan.status === 'active' && !loan.is_fully_repaid && !isLender && (
               <Button
                 size="sm"
                 className="w-full bg-gradient-to-r from-violet-600 to-indigo-600"
@@ -143,7 +200,8 @@ export function LoanCard({
               </Button>
             )}
             
-            {loan.status !== 'cancelled' && isLender && !loan.is_fully_repaid && loan.amount_repaid === 0 && (
+            {/* Active loan - lender can cancel if no repayments */}
+            {loan.status === 'active' && isLender && !loan.is_fully_repaid && loan.amount_repaid === 0 && (
               <Button
                 size="sm"
                 variant="destructive"
@@ -156,7 +214,7 @@ export function LoanCard({
             )}
             
             <div className="grid grid-cols-2 gap-2">
-              {loan.status !== 'cancelled' && isLender && !loan.is_fully_repaid && (
+              {loan.status === 'active' && isLender && !loan.is_fully_repaid && (
                 <Button
                   size="sm"
                   variant="outline"
@@ -170,7 +228,7 @@ export function LoanCard({
               <Button
                 size="sm"
                 variant="outline"
-                className={`text-xs ${loan.status !== 'cancelled' && isLender && !loan.is_fully_repaid ? '' : 'col-span-2'}`}
+                className={`text-xs ${loan.status === 'active' && isLender && !loan.is_fully_repaid ? '' : 'col-span-2'}`}
                 onClick={() => onViewDetails?.(loan)}
               >
                 <Eye className="h-3 w-3 mr-1" />

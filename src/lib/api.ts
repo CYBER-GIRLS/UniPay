@@ -114,7 +114,9 @@ export const marketplaceAPI = {
 export const loansAPI = {
   getLoans: () => api.get('/loans'),
   getAvailableUsers: () => api.get('/loans/available-users'),
-  createLoan: (data: any) => api.post('/loans', data),
+  createLoanRequest: (data: any) => api.post('/loans', data),
+  approveLoan: (loanId: number) => api.post(`/loans/${loanId}/approve`),
+  declineLoan: (loanId: number) => api.post(`/loans/${loanId}/decline`),
   repayLoan: (loanId: number, amount: number) => api.post(`/loans/${loanId}/repay`, { amount }),
   cancelLoan: (loanId: number) => api.post(`/loans/${loanId}/cancel`),
 };

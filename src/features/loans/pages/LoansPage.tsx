@@ -24,6 +24,8 @@ export default function LoansPage() {
   const [selectedLoan, setSelectedLoan] = useState<any>(null);
   const [repayingLoanIds, setRepayingLoanIds] = useState<Set<number>>(new Set());
   const [cancellingLoanIds, setCancellingLoanIds] = useState<Set<number>>(new Set());
+  const [approvingLoanIds, setApprovingLoanIds] = useState<Set<number>>(new Set());
+  const [decliningLoanIds, setDecliningLoanIds] = useState<Set<number>>(new Set());
   
   const [selectedUserId, setSelectedUserId] = useState('');
   const [loanAmount, setLoanAmount] = useState('');
@@ -50,19 +52,21 @@ export default function LoansPage() {
   });
 
   const createLoanMutation = useMutation({
-    mutationFn: (data: any) => loansAPI.createLoan(data),
+    mutationFn: (data: any) => loansAPI.createLoanRequest(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['loans'] });
       queryClient.invalidateQueries({ queryKey: ['wallet'] });
       setLoanDialogOpen(false);
-      toast.success('Loan disbursed successfully!');
+      toast.success('Loan request sent successfully!', {
+        description: 'The lender will be notified and can approve or decline your request.',
+      });
       setSelectedUserId('');
       setLoanAmount('');
       setLoanDescription('');
       setDueDate('');
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || 'Failed to create loan');
+      toast.error(error.response?.data?.error || 'Failed to create loan request');
     },
   });
 
@@ -123,12 +127,12 @@ export default function LoansPage() {
   const handleCreateLoan = () => {
     const selectedUser = usersData?.users.find((u: any) => u.id === Number(selectedUserId));
     if (!selectedUser) {
-      toast.error('Please select a borrower');
+      toast.error('Please select a lender');
       return;
     }
 
     createLoanMutation.mutate({
-      borrower_username: selectedUser.username,
+      lender_username: selectedUser.username,
       amount: Number(loanAmount),
       description: loanDescription,
       due_date: dueDate || undefined,
@@ -147,13 +151,78 @@ export default function LoansPage() {
     });
   };
 
+  const approveLoanMutation = useMutation({
+    mutationFn: (loanId: number) => {
+      setApprovingLoanIds(prev => new Set(prev).add(loanId));
+      return loansAPI.approveLoan(loanId);
+    },
+    onSuccess: (_data, loanId) => {
+      queryClient.invalidateQueries({ queryKey: ['loans'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      toast.success('Loan request approved!', {
+        description: 'The money has been transferred to the borrower.',
+      });
+      setApprovingLoanIds(prev => {
+        const next = new Set(prev);
+        next.delete(loanId);
+        return next;
+      });
+    },
+    onError: (error: any, loanId) => {
+      toast.error(error.response?.data?.error || 'Failed to approve loan request');
+      setApprovingLoanIds(prev => {
+        const next = new Set(prev);
+        next.delete(loanId);
+        return next;
+      });
+    },
+  });
+
+  const declineLoanMutation = useMutation({
+    mutationFn: (loanId: number) => {
+      setDecliningLoanIds(prev => new Set(prev).add(loanId));
+      return loansAPI.declineLoan(loanId);
+    },
+    onSuccess: (_data, loanId) => {
+      queryClient.invalidateQueries({ queryKey: ['loans'] });
+      toast.success('Loan request declined');
+      setDecliningLoanIds(prev => {
+        const next = new Set(prev);
+        next.delete(loanId);
+        return next;
+      });
+    },
+    onError: (error: any, loanId) => {
+      toast.error(error.response?.data?.error || 'Failed to decline loan request');
+      setDecliningLoanIds(prev => {
+        const next = new Set(prev);
+        next.delete(loanId);
+        return next;
+      });
+    },
+  });
+
   const handleCancelLoan = (loan: any) => {
     if (confirm(`Are you sure you want to cancel this loan of $${loan.amount}? The funds will be returned immediately.`)) {
       cancelLoanMutation.mutate(loan.id);
     }
   };
 
-  const summary = loansData?.summary || { owed_to_me: 0, i_owe: 0, net_balance: 0 };
+  const handleApproveLoan = (loan: any) => {
+    if (confirm(`Approve this loan request for $${loan.amount}? The money will be transferred immediately.`)) {
+      approveLoanMutation.mutate(loan.id);
+    }
+  };
+
+  const handleDeclineLoan = (loan: any) => {
+    if (confirm(`Decline this loan request for $${loan.amount}?`)) {
+      declineLoanMutation.mutate(loan.id);
+    }
+  };
+
+  const summary = loansData?.summary || { owed_to_me: 0, i_owe: 0, net_balance: 0, pending_received_count: 0, pending_sent_count: 0 };
+  const pendingRequestsReceived = loansData?.pending_requests_received || [];
+  const pendingRequestsSent = loansData?.pending_requests_sent || [];
   const loansGiven = loansData?.loans_given || [];
   const loansTaken = loansData?.loans_taken || [];
 
@@ -174,19 +243,19 @@ export default function LoansPage() {
           <DialogTrigger asChild>
             <Button className="bg-gradient-to-r from-violet-600 to-indigo-600">
               <Plus className="h-4 w-4 mr-2" />
-              New Loan
+              Request Loan
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Create Loan</DialogTitle>
+              <DialogTitle>Request a Loan</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="borrower">Select Borrower</Label>
+                <Label htmlFor="lender">Who would you like to borrow from?</Label>
                 <Select value={selectedUserId} onValueChange={setSelectedUserId}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Choose a user..." />
+                    <SelectValue placeholder="Choose a lender..." />
                   </SelectTrigger>
                   <SelectContent>
                     {usersData?.users.map((user: any) => (
@@ -326,17 +395,73 @@ export default function LoansPage() {
         </MotionCard>
       </div>
 
-      <Tabs defaultValue="given" className="space-y-4">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="given">
-            Money Lent ({loansGiven.length})
+      <Tabs defaultValue="pending" className="space-y-4">
+        <TabsList className="grid w-full max-w-4xl grid-cols-4">
+          <TabsTrigger value="pending">
+            Pending Requests ({summary.pending_received_count})
           </TabsTrigger>
-          <TabsTrigger value="taken">
-            Money Borrowed ({loansTaken.length})
+          <TabsTrigger value="my-requests">
+            My Requests ({pendingRequestsSent.length})
+          </TabsTrigger>
+          <TabsTrigger value="i-owe">
+            I Owe ({loansTaken.length})
+          </TabsTrigger>
+          <TabsTrigger value="owed-to-me">
+            Owed to Me ({loansGiven.length})
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="given" className="space-y-4">
+        <TabsContent value="pending" className="space-y-4">
+          {pendingRequestsReceived.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {pendingRequestsReceived.map((loan: any) => (
+                <LoanCard
+                  key={loan.id}
+                  loan={loan}
+                  isLender={true}
+                  onApprove={handleApproveLoan}
+                  onDecline={handleDeclineLoan}
+                  onViewDetails={handleViewDetails}
+                  isApproving={approvingLoanIds.has(loan.id)}
+                  isDeclining={decliningLoanIds.has(loan.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-12 text-center">
+                <DollarSign className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 text-lg">No pending loan requests</p>
+                <p className="text-gray-500 text-sm mt-2">Requests from others will appear here</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="my-requests" className="space-y-4">
+          {pendingRequestsSent.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {pendingRequestsSent.map((loan: any) => (
+                <LoanCard
+                  key={loan.id}
+                  loan={loan}
+                  isLender={false}
+                  onViewDetails={handleViewDetails}
+                />
+              ))}
+            </div>
+          ) : (
+            <Card className="border-0 shadow-sm">
+              <CardContent className="p-12 text-center">
+                <DollarSign className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 text-lg">No pending requests</p>
+                <p className="text-gray-500 text-sm mt-2">Click "Request Loan" to create a new request</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="owed-to-me" className="space-y-4">
           {loansGiven.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {loansGiven.map((loan: any) => (
@@ -362,7 +487,7 @@ export default function LoansPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="taken" className="space-y-4">
+        <TabsContent value="i-owe" className="space-y-4">
           {loansTaken.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {loansTaken.map((loan: any) => (

@@ -403,13 +403,13 @@ def cancel_loan(loan_id):
     if loan.lender_id != user_id:
         return jsonify({'error': 'Only the lender can cancel this loan'}), 403
     
+    # Can only cancel active loans (not pending, declined, cancelled, or repaid)
+    if loan.status != 'active':
+        return jsonify({'error': f'Cannot cancel a {loan.status} loan. Only active loans can be cancelled.'}), 400
+    
     # Can only cancel if no repayments made
     if loan.amount_repaid > 0:
         return jsonify({'error': 'Cannot cancel loan with existing repayments. Use repayment feature instead.'}), 400
-    
-    # Can only cancel active loans
-    if loan.status in ['cancelled', 'repaid']:
-        return jsonify({'error': f'Loan is already {loan.status}'}), 400
     
     try:
         # Lock both wallets
