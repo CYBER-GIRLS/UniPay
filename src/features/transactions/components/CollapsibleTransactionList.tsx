@@ -29,23 +29,53 @@ export default function CollapsibleTransactionList({ transactions }: Collapsible
 
   // Helper to determine if transaction is income
   const isIncomeTransaction = (t: Transaction): boolean => {
-    if (t.transaction_type === 'topup' || t.transaction_type === 'income' || t.transaction_type === 'refund') {
+    const incomeTypes = [
+      'topup',
+      'income',
+      'refund',
+      'transfer_received',
+      'loan_repayment_received',
+      'loan_received',
+      'savings_withdrawal',
+      'sale',
+      'budget_withdrawal',
+    ];
+    
+    if (incomeTypes.includes(t.transaction_type)) {
       return true;
     }
+    
+    // Legacy transfer handling
     if (t.transaction_type === 'transfer') {
       return t.receiver_id === t.user_id;
     }
+    
     return false;
   };
 
   // Helper to determine if transaction is expense
   const isExpenseTransaction = (t: Transaction): boolean => {
-    if (t.transaction_type === 'payment' || t.transaction_type === 'purchase') {
+    const expenseTypes = [
+      'payment',
+      'purchase',
+      'transfer_sent',
+      'card_payment',
+      'loan_disbursement',
+      'loan_repayment',
+      'savings_deposit',
+      'budget_allocation',
+      'budget_expense',
+    ];
+    
+    if (expenseTypes.includes(t.transaction_type)) {
       return true;
     }
+    
+    // Legacy transfer handling
     if (t.transaction_type === 'transfer') {
       return t.sender_id === t.user_id;
     }
+    
     return false;
   };
 

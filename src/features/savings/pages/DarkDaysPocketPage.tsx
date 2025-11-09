@@ -56,7 +56,7 @@ export default function DarkDaysPocketPage() {
   const [autoSavePercentage, setAutoSavePercentage] = useState('20');
   const [depositAmount, setDepositAmount] = useState('');
   const [depositPin, setDepositPin] = useState('');
-  const [withdrawalAmount, setWithdrawalAmount] = useState(0);
+  const [withdrawalAmount, setWithdrawalAmount] = useState('');
   const [emergencyData, setEmergencyData] = useState<any>(null);
   
   // Selected pocket for operations
@@ -92,6 +92,7 @@ export default function DarkDaysPocketPage() {
       savingsAPI.depositToPocket(pocketId, { amount, pin }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['savings-pockets'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
       setDepositDialogOpen(false);
       toast.success(`Deposit of ${formatCurrency(variables.amount, selectedCurrency)} successful!`);
       setDepositAmount('');
@@ -99,6 +100,22 @@ export default function DarkDaysPocketPage() {
     },
     onError: (error: any) => {
       toast.error(`Deposit failed: ${error.response?.data?.error || error.message}`);
+    },
+  });
+
+  const withdrawalMutation = useMutation({
+    mutationFn: ({ pocketId, amount, pin }: any) => 
+      savingsAPI.withdrawFromPocket(pocketId, { amount, pin }),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['savings-pockets'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      setVerificationDialogOpen(false);
+      setEmergencyDialogOpen(false);
+      toast.success(`Withdrawal of ${formatCurrency(variables.amount, selectedCurrency)} successful!`);
+      setWithdrawalAmount('');
+    },
+    onError: (error: any) => {
+      toast.error(`Withdrawal failed: ${error.response?.data?.error || error.message}`);
     },
   });
 
@@ -117,15 +134,16 @@ export default function DarkDaysPocketPage() {
 
   // Handle security verification complete
   const handleVerificationComplete = (verificationData: any) => {
-    // This would call the withdrawal API endpoint
-    toast.info('Withdrawal functionality will be implemented with backend endpoint');
-    console.log('Emergency withdrawal request:', {
-      pocket: selectedPocket,
-      emergency: emergencyData,
-      verification: verificationData,
-      amount: withdrawalAmount,
+    if (!selectedPocket || !withdrawalAmount) {
+      toast.error('Missing pocket or withdrawal amount');
+      return;
+    }
+
+    withdrawalMutation.mutate({
+      pocketId: selectedPocket.id,
+      amount: parseFloat(withdrawalAmount),
+      pin: verificationData.pin,
     });
-    setVerificationDialogOpen(false);
   };
 
   // Handle deposit
