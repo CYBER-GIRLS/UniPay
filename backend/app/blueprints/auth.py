@@ -151,3 +151,56 @@ def verify_pin():
         return jsonify({'valid': True}), 200
     else:
         return jsonify({'valid': False}), 400
+
+@auth_bp.route('/change-pin', methods=['POST'])
+@jwt_required()
+def change_pin():
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    data = request.get_json()
+    current_password = data.get('password')
+    new_pin = data.get('new_pin')
+    confirm_pin = data.get('confirm_pin')
+    
+    if not current_password:
+        return jsonify({'error': 'Current password is required'}), 400
+    
+    if not user.check_password(current_password):
+        current_app.logger.warning(f"Failed PIN change attempt with invalid password for user: {user.email}")
+        return jsonify({'error': 'Invalid password'}), 401
+    
+    if not new_pin or len(str(new_pin)) != 4 or not str(new_pin).isdigit():
+        return jsonify({'error': 'New PIN must be exactly 4 digits'}), 400
+    
+    if new_pin != confirm_pin:
+        return jsonify({'error': 'PINs do not match'}), 400
+    
+    if new_pin == '1234':
+        return jsonify({'error': 'Please choose a PIN other than the default 1234', 'is_default_pin': True}), 400
+    
+    user.set_pin(new_pin)
+    db.session.commit()
+    
+    current_app.logger.info(f"PIN changed successfully for user: {user.email}")
+    return jsonify({'message': 'PIN changed successfully'}), 200
+
+@auth_bp.route('/check-default-pin', methods=['GET'])
+@jwt_required()
+def check_default_pin():
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    has_default_pin = user.check_pin('1234')
+    has_pin = user.pin_hash is not None
+    
+    return jsonify({
+        'has_pin': has_pin,
+        'is_default_pin': has_default_pin
+    }), 200
