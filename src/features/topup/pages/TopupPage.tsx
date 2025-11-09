@@ -29,9 +29,9 @@ export default function TopupPage() {
   const topupMutation = useMutation({
     mutationFn: ({ amount, method }: { amount: number; method: string }) =>
       walletAPI.topup(amount, method),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['wallet'] });
-      toast.success(`Successfully added $${amount} to your wallet!`);
+      toast.success(`Successfully added ${formatCurrency(variables.amount, selectedCurrency)} to your wallet!`);
       setAmount('');
     },
     onError: (error: any) => {
