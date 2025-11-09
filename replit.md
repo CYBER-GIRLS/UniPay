@@ -11,7 +11,15 @@ No specific user preferences recorded yet. This section will be updated as devel
 UniPay is structured as a single-page application (SPA) with a clear separation between its backend and frontend components.
 
 ### UI/UX Decisions
-The frontend features a modern, Revolut-inspired interface, built with `shadcn/ui` (Radix UI, Tailwind CSS). Key design elements include a fixed top navigation, responsive navigation (desktop sidebar, mobile bottom nav), a modern color palette with violet/indigo gradients and pastel accents, card-based layouts with shadows and rounded corners, Framer Motion for animations, and a gradient balance card with quick action buttons. `DashboardLayout` is used for authenticated users and `AuthLayout` for unauthenticated users.
+The frontend features a modern, Revolut-inspired interface, built with `shadcn/ui` (Radix UI, Tailwind CSS). Key design elements include a fixed top navigation with a wallet icon logo, a collapsible sidebar with smooth animations (desktop only; mobile uses bottom navigation), a modern color palette with violet/indigo gradients and pastel accents, card-based layouts with shadows and rounded corners, Framer Motion for animations, and a gradient balance card with quick action buttons. `DashboardLayout` is used for authenticated users and `AuthLayout` for unauthenticated users.
+
+**Collapsible Sidebar:** The desktop sidebar supports collapse/expand functionality with:
+- Toggle button with arrow icon (ChevronLeft/ChevronRight) for collapsing/expanding
+- Collapsed state (5rem width): Shows only icons with tooltips on hover
+- Expanded state (16rem width): Shows both icons and section labels
+- Smooth Framer Motion animations for width transitions and label reveal
+- Persistent state across navigation using Zustand store
+- All navigation sections accessible in both states
 
 **Dialog/Popup Scrolling Pattern:** All dialogs and popups use a standardized scrollable pattern to ensure proper viewport fitting:
 - `DialogContent`: `flex flex-col max-h-[90vh]` - Sets max height at 90% viewport and flex layout
@@ -22,7 +30,7 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 ### Technical Implementations
 
 *   **Backend:** Developed using Flask (Python), employing SQLAlchemy for ORM (PostgreSQL), Flask-JWT-Extended for authentication, and Flask-SocketIO for real-time features. It utilizes an Application Factory Pattern and Flask Blueprints for modularity, incorporating security measures like JWT, password hashing, PIN protection, and CORS.
-*   **Frontend:** Built with React 18 and Vite. State management is handled by Zustand (client-side, authentication) and TanStack Query (server-side data). Axios manages HTTP requests with JWT interceptors, and React Router DOM handles navigation.
+*   **Frontend:** Built with React 18 and Vite. State management is handled by Zustand (client-side stores: authentication, sidebar state, currency) and TanStack Query (server-side data). Axios manages HTTP requests with JWT interceptors, and React Router DOM handles navigation.
 *   **Feature Specifications:**
     *   **Authentication:** User registration, login, JWT token management, PIN setup, and visual-only forgot password and social login features. Includes default PIN system with secure change functionality and security warnings for default PIN usage.
     *   **Wallet:** Balance display, top-up functionality, peer-to-peer transfers, and visual multi-currency support with transfer scheduling.
