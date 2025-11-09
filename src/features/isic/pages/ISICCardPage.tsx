@@ -14,11 +14,13 @@ import { UploadedISICCardView } from '@/features/cards/components/UploadedISICCa
 import { CreditCard, Store, History, TrendingDown, AlertCircle, Upload } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { useCurrencyStore, formatCurrency } from '@/stores/currencyStore';
 
 const MotionCard = motion.create(Card);
 
 export default function ISICCardPage() {
   const { isAuthenticated } = useAuthStore();
+  const { selectedCurrency } = useCurrencyStore();
   const [showSetup, setShowSetup] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const queryClient = useQueryClient();
@@ -176,7 +178,7 @@ export default function ISICCardPage() {
               <div>
                 <p className="text-sm text-gray-600">Total Savings</p>
                 <p className="text-2xl font-bold text-green-600">
-                  ${savingsData?.total_savings?.toFixed(2) || '0.00'}
+                  {formatCurrency(savingsData?.total_savings || 0, selectedCurrency)}
                 </p>
               </div>
               <div className="p-3 bg-green-100 rounded-full">

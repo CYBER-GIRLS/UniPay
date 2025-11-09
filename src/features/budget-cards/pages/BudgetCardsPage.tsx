@@ -13,6 +13,7 @@ import { CreditCard, Plus, Lock, Unlock, ArrowUpCircle, MinusCircle, Calendar, P
 import { toast } from 'sonner';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
+import { useCurrencyStore, formatCurrency, convertToUSD } from '@/stores/currencyStore';
 import { SubscriptionCardDetailDialog } from '../components/SubscriptionCardDetailDialog';
 import { PaymentCardDetailDialog } from '../components/PaymentCardDetailDialog';
 import { BudgetCardDetailDialog } from '../components/BudgetCardDetailDialog';
@@ -20,6 +21,7 @@ import { BudgetCardDetailDialog } from '../components/BudgetCardDetailDialog';
 const MotionCard = motion.create(Card);
 
 export default function BudgetCardsPage() {
+  const { selectedCurrency } = useCurrencyStore();
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [cardPurpose, setCardPurpose] = useState<'payment' | 'budget' | 'subscription'>('payment');
   const [cardName, setCardName] = useState('');
@@ -195,11 +197,12 @@ export default function BudgetCardsPage() {
 
   const handleCreateCard = () => {
     if (cardPurpose === 'payment') {
+      const limitInUSD = spendingLimit ? convertToUSD(Number(spendingLimit), selectedCurrency) : undefined;
       createMutation.mutate({
         card_purpose: 'payment',
         card_name: cardName || 'Virtual Card',
         card_type: 'standard',
-        spending_limit: spendingLimit ? Number(spendingLimit) : undefined,
+        spending_limit: limitInUSD,
       });
     } else if (cardPurpose === 'budget') {
       createMutation.mutate({
@@ -218,12 +221,13 @@ export default function BudgetCardsPage() {
 
   const handleAddSubscription = () => {
     if (selectedCardId && subscriptionFormData.service_name && subscriptionFormData.amount) {
+      const amountInUSD = convertToUSD(Number(subscriptionFormData.amount), selectedCurrency);
       addSubscriptionMutation.mutate({
         cardId: selectedCardId,
         data: {
           service_name: subscriptionFormData.service_name,
           service_category: subscriptionFormData.service_category,
-          amount: Number(subscriptionFormData.amount),
+          amount: amountInUSD,
           billing_cycle: subscriptionFormData.billing_cycle,
           next_billing_date: subscriptionFormData.next_billing_date || undefined,
         },
@@ -233,18 +237,20 @@ export default function BudgetCardsPage() {
 
   const handleAllocate = () => {
     if (selectedCardId && allocateAmount) {
+      const amountInUSD = convertToUSD(Number(allocateAmount), selectedCurrency);
       allocateMutation.mutate({
         cardId: selectedCardId,
-        amount: Number(allocateAmount),
+        amount: amountInUSD,
       });
     }
   };
 
   const handleSpend = () => {
     if (selectedCardId && spendAmount) {
+      const amountInUSD = convertToUSD(Number(spendAmount), selectedCurrency);
       spendMutation.mutate({
         cardId: selectedCardId,
-        amount: Number(spendAmount),
+        amount: amountInUSD,
       });
     }
   };
@@ -349,7 +355,7 @@ export default function BudgetCardsPage() {
             <CardContent className="pt-6">
               <p className="text-sm text-gray-600">Total Allocated</p>
               <p className="text-2xl font-bold text-violet-600">
-                ${cardsData?.summary?.total_allocated?.toFixed(2) || '0.00'}
+                {formatCurrency(cardsData?.summary?.total_allocated || 0, selectedCurrency)}
               </p>
             </CardContent>
           </Card>
@@ -357,7 +363,7 @@ export default function BudgetCardsPage() {
             <CardContent className="pt-6">
               <p className="text-sm text-gray-600">Total Spent</p>
               <p className="text-2xl font-bold text-red-600">
-                ${cardsData?.summary?.total_spent?.toFixed(2) || '0.00'}
+                {formatCurrency(cardsData?.summary?.total_spent || 0, selectedCurrency)}
               </p>
             </CardContent>
           </Card>
@@ -365,7 +371,7 @@ export default function BudgetCardsPage() {
             <CardContent className="pt-6">
               <p className="text-sm text-gray-600">Remaining</p>
               <p className="text-2xl font-bold text-green-600">
-                ${cardsData?.summary?.total_remaining?.toFixed(2) || '0.00'}
+                {formatCurrency(cardsData?.summary?.total_remaining || 0, selectedCurrency)}
               </p>
             </CardContent>
           </Card>
@@ -435,8 +441,8 @@ export default function BudgetCardsPage() {
                     <>
                       <div className="space-y-2 mb-4">
                         <div className="flex justify-between text-sm">
-                          <span>Allocated: ${card.allocated_amount?.toFixed(2)}</span>
-                          <span>Spent: ${card.spent_amount?.toFixed(2)}</span>
+                          <span>Allocated: {formatCurrency(card.allocated_amount || 0, selectedCurrency)}</span>
+                          <span>Spent: {formatCurrency(card.spent_amount || 0, selectedCurrency)}</span>
                         </div>
                         <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                           <div
@@ -445,7 +451,7 @@ export default function BudgetCardsPage() {
                           />
                         </div>
                         <div className="flex justify-between text-xs text-gray-500">
-                          <span>Remaining: ${card.remaining_balance?.toFixed(2)}</span>
+                          <span>Remaining: {formatCurrency(card.remaining_balance || 0, selectedCurrency)}</span>
                           <span>{card.spent_percentage?.toFixed(0)}%</span>
                         </div>
                       </div>

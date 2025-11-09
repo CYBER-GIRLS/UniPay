@@ -7,11 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, Plus, ArrowDownRight, ArrowUpRight, TrendingUp, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { useCurrencyStore, formatCurrency, convertToUSD } from '@/stores/currencyStore';
 import DebtCard from '../components/DebtCard';
 import LoanRequestModal from '../components/LoanRequestModal';
 import LoanHistoryList from '../components/LoanHistoryList';
 
 export default function EnhancedLoansPage() {
+  const { selectedCurrency } = useCurrencyStore();
   const [activeTab, setActiveTab] = useState('owed-to-me');
   const [requestModalOpen, setRequestModalOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -80,7 +82,11 @@ export default function EnhancedLoansPage() {
   }).length;
 
   const handleCreateLoanRequest = (requestData: any) => {
-    createLoanMutation.mutate(requestData);
+    const amountInUSD = convertToUSD(requestData.amount, selectedCurrency);
+    createLoanMutation.mutate({
+      ...requestData,
+      amount: amountInUSD,
+    });
   };
 
   const handleRepay = (loan: any) => {
@@ -132,7 +138,7 @@ export default function EnhancedLoansPage() {
               <span className="text-sm text-gray-600">Owed to Me</span>
             </div>
             <p className="text-2xl font-bold text-green-600">
-              ${totalOwedToMe.toFixed(2)}
+              {formatCurrency(totalOwedToMe, selectedCurrency)}
             </p>
           </CardContent>
         </Card>
@@ -146,7 +152,7 @@ export default function EnhancedLoansPage() {
               <span className="text-sm text-gray-600">I Owe</span>
             </div>
             <p className="text-2xl font-bold text-red-600">
-              ${totalIOwe.toFixed(2)}
+              {formatCurrency(totalIOwe, selectedCurrency)}
             </p>
           </CardContent>
         </Card>
@@ -164,7 +170,7 @@ export default function EnhancedLoansPage() {
               <span className="text-sm text-gray-600">Net Balance</span>
             </div>
             <p className={`text-2xl font-bold ${netBalance >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>
-              {netBalance >= 0 ? '+' : ''}${netBalance.toFixed(2)}
+              {netBalance >= 0 ? '+' : '-'}{formatCurrency(Math.abs(netBalance), selectedCurrency)}
             </p>
           </CardContent>
         </Card>
