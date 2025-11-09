@@ -104,7 +104,7 @@ def transfer_money():
     
     sender_transaction = Transaction(
         user_id=sender_id,
-        transaction_type='transfer',
+        transaction_type='transfer_sent',
         amount=amount,
         status='completed',
         sender_id=sender_id,
@@ -115,7 +115,7 @@ def transfer_money():
     
     receiver_transaction = Transaction(
         user_id=receiver.id,
-        transaction_type='transfer',
+        transaction_type='transfer_received',
         amount=amount,
         status='completed',
         sender_id=sender_id,

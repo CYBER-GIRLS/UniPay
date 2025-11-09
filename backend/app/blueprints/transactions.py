@@ -51,32 +51,32 @@ def get_transaction(transaction_id):
 def get_transaction_stats():
     user_id = int(get_jwt_identity())
     
-    from sqlalchemy import func, or_
+    from sqlalchemy import func
     from app.extensions import db
+    from app.models import Wallet
     
-    # Calculate total income: topup, income, refund, and received transfers
+    # Calculate total income: topup, income, refund, transfer_received, loan_repayment, savings_withdrawal
     total_income = db.session.query(func.sum(Transaction.amount)).filter(
         Transaction.user_id == user_id,
-        or_(
-            Transaction.transaction_type.in_(['topup', 'income', 'refund']),
-            db.and_(
-                Transaction.transaction_type == 'transfer',
-                Transaction.receiver_id == user_id
-            )
-        )
+        Transaction.transaction_type.in_([
+            'topup', 'income', 'refund', 'transfer_received', 'loan_repayment', 'savings_withdrawal'
+        ])
     ).scalar() or 0
     
-    # Calculate total expenses: payment, purchase, and sent transfers
+    # Calculate total expenses: payment, purchase, transfer_sent, card_payment, loan_given, savings_deposit
     total_expenses = db.session.query(func.sum(Transaction.amount)).filter(
         Transaction.user_id == user_id,
-        or_(
-            Transaction.transaction_type.in_(['payment', 'purchase']),
-            db.and_(
-                Transaction.transaction_type == 'transfer',
-                Transaction.sender_id == user_id
-            )
-        )
+        Transaction.transaction_type.in_([
+            'payment', 'purchase', 'transfer_sent', 'card_payment', 'loan_given', 'savings_deposit'
+        ])
     ).scalar() or 0
+    
+    # Get current wallet balance
+    wallet = Wallet.query.filter_by(user_id=user_id).first()
+    current_balance = float(wallet.balance) if wallet else 0.0
+    
+    # Get transaction count
+    transaction_count = Transaction.query.filter_by(user_id=user_id).count()
     
     recent_transactions = Transaction.query.filter_by(user_id=user_id).order_by(
         Transaction.created_at.desc()
@@ -85,5 +85,7 @@ def get_transaction_stats():
     return jsonify({
         'total_income': float(total_income),
         'total_expenses': float(total_expenses),
+        'current_balance': current_balance,
+        'transaction_count': transaction_count,
         'recent_transactions': [t.to_dict() for t in recent_transactions]
     }), 200
