@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { authAPI } from '@/lib/api';
 import { ChangePinDialog } from '../components/ChangePinDialog';
+import { EditProfileDialog } from '../components/EditProfileDialog';
 import { 
   User, 
   Mail, 
@@ -36,6 +37,7 @@ export default function ProfilePage() {
   const { toast } = useToast();
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [isChangePinDialogOpen, setIsChangePinDialogOpen] = useState(false);
+  const [isEditProfileDialogOpen, setIsEditProfileDialogOpen] = useState(false);
   const [pinStatus, setPinStatus] = useState<{ hasPin: boolean; isDefaultPin: boolean } | null>(null);
   const [isPinStatusLoading, setIsPinStatusLoading] = useState(true);
 
@@ -135,7 +137,7 @@ export default function ProfilePage() {
               
               <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => setIsEditProfileDialogOpen(true)}>
                     <Edit className="h-4 w-4 mr-2" />
                     Edit Profile
                   </Button>
@@ -453,6 +455,11 @@ export default function ProfilePage() {
         open={isChangePinDialogOpen}
         onClose={() => setIsChangePinDialogOpen(false)}
         onSuccess={handlePinChangeSuccess}
+      />
+
+      <EditProfileDialog
+        open={isEditProfileDialogOpen}
+        onClose={() => setIsEditProfileDialogOpen(false)}
       />
     </motion.div>
   );

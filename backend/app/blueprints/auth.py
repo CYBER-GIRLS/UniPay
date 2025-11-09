@@ -104,6 +104,46 @@ def get_current_user():
     
     return jsonify({'user': user.to_dict()}), 200
 
+@auth_bp.route('/profile', methods=['PUT'])
+@jwt_required()
+def update_user_profile():
+    user_id = int(get_jwt_identity())
+    user = User.query.get(user_id)
+    
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    
+    data = request.get_json()
+    
+    if 'email' in data and data['email'] != user.email:
+        existing_user = User.query.filter_by(email=data['email']).first()
+        if existing_user:
+            return jsonify({'error': 'Email already in use'}), 400
+        user.email = data['email']
+    
+    if 'first_name' in data:
+        user.first_name = data['first_name']
+    
+    if 'last_name' in data:
+        user.last_name = data['last_name']
+    
+    if 'phone' in data:
+        user.phone = data['phone']
+    
+    if 'university' in data:
+        user.university = data['university']
+    
+    if 'faculty' in data:
+        user.faculty = data['faculty']
+    
+    db.session.commit()
+    current_app.logger.info(f"Profile updated for user: {user.email}")
+    
+    return jsonify({
+        'message': 'Profile updated successfully',
+        'user': user.to_dict()
+    }), 200
+
 @auth_bp.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
