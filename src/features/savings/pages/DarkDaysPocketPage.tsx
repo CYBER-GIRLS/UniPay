@@ -284,7 +284,9 @@ export default function DarkDaysPocketPage() {
                 enabled: activePocket.auto_save_enabled,
                 percentage: activePocket.auto_save_percentage,
                 frequency: activePocket.auto_save_frequency || 'monthly',
+                goal_amount: activePocket.goal_amount,
               }}
+              currentBalance={activePocket.balance}
               onSave={handleAutoSaveConfig}
             />
           </TabsContent>

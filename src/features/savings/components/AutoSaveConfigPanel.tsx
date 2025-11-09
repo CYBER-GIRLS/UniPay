@@ -32,6 +32,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Zap, Calendar, Info } from 'lucide-react';
 import { useState } from 'react';
+import { useCurrencyStore, formatCurrency, getCurrencySymbol } from '@/stores/currencyStore';
 
 interface AutoSaveConfigPanelProps {
   pocketId: number;
@@ -39,19 +40,43 @@ interface AutoSaveConfigPanelProps {
     enabled: boolean;
     percentage: number;
     frequency: string;
+    goal_amount?: number;
     next_date?: string;
   };
+  currentBalance?: number;
   onSave: (config: any) => void;
 }
 
-export function AutoSaveConfigPanel({ pocketId, currentConfig, onSave }: AutoSaveConfigPanelProps) {
+export function AutoSaveConfigPanel({ pocketId, currentConfig, currentBalance = 0, onSave }: AutoSaveConfigPanelProps) {
+  const { selectedCurrency } = useCurrencyStore();
   const [enabled, setEnabled] = useState(currentConfig?.enabled ?? true);
   const [percentage, setPercentage] = useState([currentConfig?.percentage ?? 20]);
   const [frequency, setFrequency] = useState(currentConfig?.frequency ?? 'monthly');
+  const [goalAmount, setGoalAmount] = useState(String(currentConfig?.goal_amount ?? 5000));
   const [fixedDate, setFixedDate] = useState('');
 
-  const estimatedMonthlyIncome = 2000; // Mock value - should come from user data
+  // Using realistic placeholder income (students typically earn $1500-2500/month)
+  // TODO: Replace with actual user income data from profile/transactions
+  const estimatedMonthlyIncome = 2000;
   const estimatedSavings = (estimatedMonthlyIncome * percentage[0]) / 100;
+  
+  // Calculate time to reach goal using actual pocket balance
+  const calculateTimeToGoal = () => {
+    const goal = Number(goalAmount);
+    const remaining = goal - currentBalance;
+    
+    if (remaining <= 0) return { months: 0, weeks: 0, text: 'Goal already reached!' };
+    if (estimatedSavings <= 0) return { months: 0, weeks: 0, text: 'Set a percentage to estimate' };
+    
+    const monthlyContribution = frequency === 'weekly' 
+      ? estimatedSavings * 4 
+      : estimatedSavings;
+    
+    const months = Math.ceil(remaining / monthlyContribution);
+    const weeks = Math.ceil(remaining / (estimatedSavings * (frequency === 'weekly' ? 1 : 0.25)));
+    
+    return { months, weeks, text: `${months} months (${weeks} weeks)` };
+  };
 
   const getNextTransferDate = () => {
     const today = new Date();
@@ -74,6 +99,7 @@ export function AutoSaveConfigPanel({ pocketId, currentConfig, onSave }: AutoSav
       enabled,
       percentage: percentage[0],
       frequency,
+      goal_amount: Number(goalAmount),
       next_date: fixedDate || null,
     });
   };
@@ -116,6 +142,31 @@ export function AutoSaveConfigPanel({ pocketId, currentConfig, onSave }: AutoSav
 
         {enabled && (
           <>
+            {/* Savings Goal Amount */}
+            <div className="space-y-2">
+              <Label className="text-base font-semibold">Savings Goal Target</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">{getCurrencySymbol(selectedCurrency)}</span>
+                <Input
+                  type="number"
+                  min="100"
+                  step="100"
+                  value={goalAmount}
+                  onChange={(e) => setGoalAmount(e.target.value)}
+                  className="flex-1 text-lg font-semibold"
+                  placeholder="5000"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Set your target emergency fund amount (recommended: 3-6 months of expenses)
+              </p>
+              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-xs text-blue-900">
+                  💡 <strong>Recommended emergency fund:</strong> Financial experts suggest saving 3-6 months of living expenses ({formatCurrency(9000, selectedCurrency)} - {formatCurrency(18000, selectedCurrency)} for average students)
+                </p>
+              </div>
+            </div>
+
             {/* Percentage Slider */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -196,18 +247,36 @@ export function AutoSaveConfigPanel({ pocketId, currentConfig, onSave }: AutoSav
               </div>
             )}
 
-            {/* Next Transfer Preview */}
-            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-semibold text-green-900">Next Auto-Transfer</p>
-                  <p className="text-xs text-green-700 mt-1">{getNextTransferDate()}</p>
+            {/* Next Transfer Preview & Time to Goal */}
+            <div className="space-y-4">
+              <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-green-900">Next Auto-Transfer</p>
+                    <p className="text-xs text-green-700 mt-1">{getNextTransferDate()}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-green-600">
+                      {formatCurrency(estimatedSavings, selectedCurrency)}
+                    </p>
+                    <p className="text-xs text-green-700">Estimated</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-green-600">
-                    ${estimatedSavings.toFixed(2)}
-                  </p>
-                  <p className="text-xs text-green-700">Estimated</p>
+              </div>
+              
+              {/* Time to Goal */}
+              <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                <div className="flex items-start gap-3">
+                  <Calendar className="h-5 w-5 text-blue-600 mt-0.5" />
+                  <div className="flex-1 space-y-2">
+                    <h4 className="font-semibold text-blue-900">Time to Reach Goal</h4>
+                    <div className="space-y-1">
+                      <p className="text-blue-900 font-bold text-xl">{calculateTimeToGoal().text}</p>
+                      <p className="text-xs text-blue-700">
+                        At {percentage[0]}% savings rate ({frequency}), you'll reach {formatCurrency(Number(goalAmount), selectedCurrency)} in approximately {calculateTimeToGoal().months} months
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

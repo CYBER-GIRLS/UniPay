@@ -185,6 +185,17 @@ def update_auto_save_config(pocket_id):
     pocket.auto_save_percentage = Decimal(str(data.get('percentage', pocket.auto_save_percentage)))
     pocket.auto_save_frequency = data.get('frequency', pocket.auto_save_frequency)
     
+    # Handle goal_amount: accept 0 and positive values, validate non-negative
+    if 'goal_amount' in data:
+        goal_value = data['goal_amount']
+        try:
+            goal_decimal = Decimal(str(goal_value))
+            if goal_decimal < 0:
+                return jsonify({'error': 'Goal amount must be non-negative'}), 400
+            pocket.goal_amount = goal_decimal
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Invalid goal amount format'}), 400
+    
     if data.get('next_date'):
         pocket.next_auto_save_date = datetime.fromisoformat(data['next_date']).date()
     

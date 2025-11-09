@@ -9,6 +9,7 @@ class SavingsPocket(db.Model):
     
     name = db.Column(db.String(100), default='DarkDays Pocket')
     balance = db.Column(db.Numeric(10, 2), default=0.00, nullable=False)
+    goal_amount = db.Column(db.Numeric(10, 2), default=5000.00)
     
     auto_save_enabled = db.Column(db.Boolean, default=False)
     auto_save_percentage = db.Column(db.Numeric(5, 2), default=20.00)
@@ -28,6 +29,7 @@ class SavingsPocket(db.Model):
             'user_id': self.user_id,
             'name': self.name,
             'balance': float(self.balance),
+            'goal_amount': float(self.goal_amount) if self.goal_amount is not None else 5000.0,
             'auto_save_enabled': self.auto_save_enabled,
             'auto_save_percentage': float(self.auto_save_percentage),
             'auto_save_frequency': self.auto_save_frequency,
