@@ -33,6 +33,20 @@ class Loan(db.Model):
     def amount_remaining(self):
         return float(self.amount) - float(self.amount_repaid)
     
+    @property
+    def is_overdue(self):
+        if self.is_fully_repaid or self.status == 'repaid':
+            return False
+        if self.due_date and datetime.now().date() > self.due_date:
+            return True
+        return False
+    
+    @property
+    def days_overdue(self):
+        if not self.is_overdue:
+            return 0
+        return (datetime.now().date() - self.due_date).days
+    
     def to_dict(self):
         return {
             'id': self.id,
@@ -47,8 +61,11 @@ class Loan(db.Model):
             'status': self.status,
             'description': self.description,
             'deadline': self.due_date.isoformat() if self.due_date else None,
+            'due_date': self.due_date.isoformat() if self.due_date else None,
             'interest_rate': float(self.interest_rate),
             'is_fully_repaid': self.is_fully_repaid,
+            'is_overdue': self.is_overdue,
+            'days_overdue': self.days_overdue,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'repaid_at': self.repaid_at.isoformat() if self.repaid_at else None
         }

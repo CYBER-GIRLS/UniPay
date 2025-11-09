@@ -113,6 +113,7 @@ export const marketplaceAPI = {
 
 export const loansAPI = {
   getLoans: () => api.get('/loans'),
+  getAvailableUsers: () => api.get('/loans/available-users'),
   createLoan: (data: any) => api.post('/loans', data),
   repayLoan: (loanId: number, amount: number) => api.post(`/loans/${loanId}/repay`, { amount }),
 };

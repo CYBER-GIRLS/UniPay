@@ -7,10 +7,27 @@ from decimal import Decimal, InvalidOperation
 
 loans_bp = Blueprint('loans', __name__)
 
+@loans_bp.route('/available-users', methods=['GET'])
+@jwt_required()
+def get_available_users():
+    user_id = int(get_jwt_identity())
+    
+    # Get all users except current user
+    users = User.query.filter(User.id != user_id).all()
+    
+    return jsonify({
+        'users': [{
+            'id': user.id,
+            'username': user.username,
+            'email': user.email
+        } for user in users]
+    }), 200
+
 @loans_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_loans():
     from sqlalchemy.orm import joinedload
+    from sqlalchemy import func
     user_id = int(get_jwt_identity())
     
     loans_given = Loan.query.options(
@@ -21,9 +38,31 @@ def get_loans():
         joinedload(Loan.lender)
     ).filter_by(borrower_id=user_id).all()
     
+    # Calculate summary statistics
+    owed_to_me = db.session.query(
+        func.sum(Loan.amount - Loan.amount_repaid)
+    ).filter(
+        Loan.lender_id == user_id,
+        Loan.is_fully_repaid == False
+    ).scalar() or 0
+    
+    i_owe = db.session.query(
+        func.sum(Loan.amount - Loan.amount_repaid)
+    ).filter(
+        Loan.borrower_id == user_id,
+        Loan.is_fully_repaid == False
+    ).scalar() or 0
+    
+    net_balance = float(owed_to_me) - float(i_owe)
+    
     return jsonify({
         'loans_given': [loan.to_dict() for loan in loans_given],
-        'loans_taken': [loan.to_dict() for loan in loans_taken]
+        'loans_taken': [loan.to_dict() for loan in loans_taken],
+        'summary': {
+            'owed_to_me': float(owed_to_me),
+            'i_owe': float(i_owe),
+            'net_balance': net_balance
+        }
     }), 200
 
 @loans_bp.route('/', methods=['POST'])
