@@ -22,10 +22,10 @@ const buttonVariants = cva(
         warning: "bg-warning text-warning-foreground shadow-soft hover:shadow-warning hover:opacity-90",
       },
       size: {
-        default: "h-10 sm:h-11 px-4 sm:px-6 py-2 sm:py-2.5",
-        sm: "h-8 sm:h-9 rounded-lg px-3 sm:px-4 text-xs",
-        lg: "h-11 sm:h-12 rounded-xl px-6 sm:px-8 text-sm sm:text-base",
-        icon: "h-10 w-10 sm:h-11 sm:w-11",
+        default: "h-11 sm:h-12 px-4 sm:px-6 py-2 sm:py-2.5",
+        sm: "h-10 sm:h-11 rounded-lg px-3 sm:px-4 text-xs",
+        lg: "h-12 sm:h-14 rounded-xl px-6 sm:px-8 text-sm sm:text-base",
+        icon: "h-11 w-11 sm:h-12 sm:w-12",
       },
     },
     defaultVariants: {

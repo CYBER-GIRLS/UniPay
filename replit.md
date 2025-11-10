@@ -1,7 +1,7 @@
 # UniPay - Smart Student Digital Wallet
 
 ## Overview
-UniPay is a digital wallet application specifically designed for students, integrating financial services with lifestyle features. Its core purpose is to provide secure digital payments, subscription management, student discounts, savings goal tracking, and peer-to-peer lending and marketplace functionalities. UniPay aims to be an essential financial tool for students, offering convenience, security, customized benefits, and fostering financial literacy and independence.
+UniPay is a digital wallet application designed for students, integrating financial services with lifestyle features. Its core purpose is to provide secure digital payments, subscription management, student discounts, savings goal tracking, and peer-to-peer lending and marketplace functionalities. UniPay aims to be an essential financial tool, offering convenience, security, customized benefits, and fostering financial literacy and independence.
 
 ## User Preferences
 No specific user preferences recorded yet. This section will be updated as development progresses.
@@ -11,88 +11,41 @@ No specific user preferences recorded yet. This section will be updated as devel
 UniPay is structured as a single-page application (SPA) with a clear separation between its backend and frontend components.
 
 ### UI/UX Decisions
-The frontend features a modern, Revolut-inspired interface, built with `shadcn/ui` (Radix UI, Tailwind CSS). Key design elements include a fixed top navigation with a wallet icon logo, a fully responsive collapsible left sidebar that works across all devices (mobile, tablet, desktop), a modern color palette with violet/indigo gradients and pastel accents, card-based layouts with shadows and rounded corners, Framer Motion for animations, and a gradient balance card with quick action buttons. `DashboardLayout` is used for authenticated users and `AuthLayout` for unauthenticated users.
+The frontend features a modern, Revolut-inspired interface, built with `shadcn/ui` (Radix UI, Tailwind CSS). Key design elements include a fixed top navigation, a fully responsive collapsible left sidebar, a modern color palette with violet/indigo gradients and pastel accents, card-based layouts, Framer Motion for animations, and a gradient balance card with quick action buttons. `DashboardLayout` is used for authenticated users and `AuthLayout` for unauthenticated users.
 
-**Responsive Collapsible Sidebar:** The left sidebar is always visible and works consistently across all devices with:
-- **Universal Availability:** Always positioned on the left side (no mobile bottom navigation)
-- **Edge-to-Edge Layout:** Sidebar is flush to the left screen edge with no margins; TopNav is flush to the top and right edges
-- **Responsive Widths:** Uses CSS clamp() for fluid sizing across devices:
-  - Expanded: `clamp(12rem, 60vw, 16rem)` - adapts from 12rem (mobile) to 16rem (desktop)
-  - Collapsed: `clamp(3.5rem, 15vw, 5rem)` - adapts from 3.5rem (mobile) to 5rem (desktop)
-- **Touch-Friendly Controls:** 44px minimum touch targets for toggle button (h-11 w-11) and all navigation items (min-h-[44px])
-- **Collapsible Behavior:** Toggle button with arrow icon (ChevronLeft/ChevronRight) works identically on all screen sizes
-- **Responsive Elements:** Icons (h-5 w-5), labels (text-sm), and padding scale appropriately across breakpoints
-- **Smart Display:** Collapsed state shows only icons with tooltips on hover; expanded state shows both icons and labels
-- **Smooth Animations:** Framer Motion animations for width transitions, label reveal, and hover effects
-- **Persistent State:** Collapse/expand preference maintained across navigation using Zustand store
-- **Accessibility:** All navigation sections accessible in both collapsed and expanded states
-- **Full-Viewport Layout:** DashboardLayout uses `h-screen w-screen m-0 p-0` with explicit margin/padding removal on html, body, and #root for a clean edge-to-edge design
-
-**Dialog/Popup Scrolling Pattern:** All dialogs and popups use a standardized scrollable pattern to ensure proper viewport fitting:
-- `DialogContent`: `flex flex-col max-h-[90vh]` - Sets max height at 90% viewport and flex layout
-- `DialogHeader`: `flex-shrink-0` - Fixed header that doesn't scroll
-- Content wrapper: `overflow-y-auto flex-1 pr-2` - Scrollable content area with right padding for scrollbar
-- Applied to: EmergencyUnlockDialog, BudgetCardDetailDialog, PaymentCardDetailDialog, SubscriptionCardDetailDialog
-
-**Dashboard Balance Card (Premium Bank Card Design):** The Available Balance section features a sleek, premium digital bank card design with authentic 7:4 aspect ratio matching real bank cards (8.5cm × 5.4cm):
-- **Real Bank Card Proportions:** Uses `aspect-[7/4]` for exact bank card dimensions, consistent across all screen sizes with `w-full max-w-4xl` centered layout
-- **Raised Appearance:** Soft drop shadow `shadow-[0_10px_40px_rgba(0,0,0,0.15)]` with elevated hover state `shadow-[0_15px_50px_rgba(0,0,0,0.2)]` creates floating effect
-- **Diagonal Gradient:** Background uses `bg-gradient-to-br from-primary via-purple-500/90 to-secondary` with multiple glassmorphic overlays and pastel accent layer (`from-transparent via-purple-300/5 to-indigo-300/10`)
-- **Subtle Decorative Elements:** Dynamic yet minimalist aesthetic with:
-  - Percentage-based circular gradients (40%, 35%, 25% sizes) positioned at top-right, bottom-left, and center for responsive consistency
-  - Enhanced SVG layer with refined 30x30 grid pattern, decorative circles, horizontal lines, diagonal gradient rectangle, triangle polygon
-  - All decorative elements use very low opacity (3-8%) for subtle, realistic appearance
-- **Animated Shimmer Effect:** Moving white light reflection that slides across card surface:
-  - Skewed gradient (`from-transparent via-white/20 to-transparent`) with diagonal motion
-  - 3-second animation, 2-second delay, infinite repeat
-  - Respects `prefers-reduced-motion` - shows static centered highlight when motion reduction is preferred
-  - Creates premium texture and sense of depth
-- **Card Elements:**
-  - EMV chip icon (top-left): `ScanLine` icon with subtle white styling (`bg-white/15 backdrop-blur-sm`, `text-white/80`)
-  - Wallet branding icon (top-right): `Wallet` icon with glassmorphic background (`bg-white/15 backdrop-blur-sm`, `text-white/90`)
-  - Both icons are `aria-hidden="true"` and responsive (`h-5 w-5 → sm:h-6 sm:w-6`)
-- **Balance Typography:** Clean hierarchy with responsive scaling:
-  - Label: `text-xs sm:text-sm uppercase tracking-wide`
-  - Amount: `text-3xl → sm:text-4xl → md:text-5xl → lg:text-6xl font-bold tracking-tight`
-  - Currency: `text-xs sm:text-sm font-medium`
-  - Includes `aria-live="polite"` for balance updates
-- **Action Buttons Inside Card:** Positioned at bottom with glassmorphic styling:
-  - Grid layout: `grid-cols-1 xs:grid-cols-3` with `gap-2` for compact spacing
-  - Button style: `bg-white/20 hover:bg-white/30` with `border border-white/30` and `backdrop-blur-sm`
-  - All three buttons (Top Up, Transfer, Cards) use consistent glassmorphic design
-  - Touch-friendly: All buttons have `min-h-[44px]` touch targets
-  - Compact icon sizing (`h-3.5 w-3.5 → sm:h-4 sm:w-4`) and text (`text-xs → sm:text-sm`) for optimal fit
-- **Responsive Design:** Content uses `p-[clamp(1rem,4vw,2rem)]` with flexbox layout, outer wrapper adds `px-4 sm:px-6 md:px-8` margins, 2xl rounded corners
-- **Animations:** Spring-based hover effects (`whileHover={{ scale: 1.03 }}`) and entrance animations via Framer Motion, all respecting accessibility preferences
+**Key UI/UX Features:**
+*   **Responsive Collapsible Sidebar:** Universally available on the left, edge-to-edge layout, responsive widths using `clamp()`, touch-friendly controls, smooth Framer Motion animations, persistent state via Zustand, and full accessibility.
+*   **Dialog/Popup Scrolling Pattern:** Standardized scrollable pattern for all dialogs to ensure proper viewport fitting (`max-h-[90vh]`, `overflow-y-auto`).
+*   **Dashboard Balance Card:** Premium digital bank card design with authentic 7:4 aspect ratio, raised appearance with soft shadows, diagonal gradient background with glassmorphic overlays, subtle decorative elements, an animated shimmer effect, EMV chip and wallet branding icons, clear balance typography, and glassmorphic action buttons (Top Up, Transfer, Cards) within the card.
+*   **Comprehensive Fluid Design System:** Fully responsive design using `CSS clamp()` for seamless scaling of typography (e.g., `text-h1` to `text-h6` and `text-display`), spacing, and components across all viewport sizes (320px-1440px), eliminating breakpoint-specific overrides and ensuring consistent visual language. All animations respect `prefers-reduced-motion`.
 
 ### Technical Implementations
+*   **Backend:** Flask (Python), SQLAlchemy (PostgreSQL), Flask-JWT-Extended for authentication, Flask-SocketIO for real-time features. Utilizes an Application Factory Pattern and Flask Blueprints for modularity, with security measures like JWT, password hashing, PIN protection, and CORS.
+*   **Frontend:** React 18 and Vite. State management via Zustand (client-side) and TanStack Query (server-side). Axios for HTTP requests with JWT interceptors, and React Router DOM for navigation.
 
-*   **Backend:** Developed using Flask (Python), employing SQLAlchemy for ORM (PostgreSQL), Flask-JWT-Extended for authentication, and Flask-SocketIO for real-time features. It utilizes an Application Factory Pattern and Flask Blueprints for modularity, incorporating security measures like JWT, password hashing, PIN protection, and CORS.
-*   **Frontend:** Built with React 18 and Vite. State management is handled by Zustand (client-side stores: authentication, sidebar state, currency) and TanStack Query (server-side data). Axios manages HTTP requests with JWT interceptors, and React Router DOM handles navigation.
-*   **Feature Specifications:**
-    *   **Authentication:** User registration, login, JWT token management, PIN setup, and visual-only forgot password and social login features. Includes default PIN system with secure change functionality and security warnings for default PIN usage.
-    *   **Wallet:** Balance display, top-up functionality, peer-to-peer transfers, and visual multi-currency support with transfer scheduling.
-    *   **Transactions:** Comprehensive tracking, filtering, and statistical analysis with 15+ transaction types. Supports "expected payments" (CRUD and recurring instances) and includes balance validation, race condition protection, and detailed transaction records with metadata.
-    *   **Virtual Cards:** Creation, management (freeze/unfreeze), and linking to subscriptions. Card payments include freeze/limit checks.
-    *   **Subscriptions:** Management of recurring payments.
-    *   **Savings & Goals:** Dedicated goal tracking system for financial objectives. Users can create savings goals with target amounts, track progress with visual indicators, and make contributions. Features editable target amounts, dynamic progress bars showing completion percentage, and goal completion celebrations.
-    *   **DarkDays Pocket:** Separate dedicated module for secure, PIN-protected savings pockets with auto-save options. Features a consolidated settings interface combining savings configuration and auto-save settings with a single Save button. Includes emergency withdrawal flow with metadata tracking and security verification.
-    *   **Marketplace:** Student-to-student commerce platform supporting listings and escrow services with buyer balance validation and dual transaction recording.
-    *   **P2P Lending:** Request-approval based peer-to-peer lending system with: (1) **Request System** - Borrowers create loan requests (no immediate money transfer), lenders receive requests in "Pending Requests" tab with approve/decline actions. (2) **Approval Workflow** - Lenders approve requests to transfer funds (pending → active), or decline to reject (pending → declined). Money only transfers upon approval, not during request creation. (3) **Categorized Dashboard** - Four tabs: "Pending Requests" (received), "My Requests" (sent), "I Owe" (active borrowing), "Owed to Me" (active lending). (4) **Summary Statistics** - Real-time "Owed to Me" and "I Owe" calculations excluding pending/cancelled/declined loans, with net balance tracking. (5) **Loan Lifecycle** - Complete status tracking: pending → active → repaid, with support for cancelled (lender) and declined (lender) states. (6) **Smart Actions** - Role-based buttons: lenders can approve/decline pending requests, cancel active loans with zero repayments, send reminders; borrowers can repay active loans. (7) **Visual Indicators** - Status badges (pending-blue, active-outline, declined-red, cancelled-gray, overdue-red, repaid-green), circular progress indicators showing repayment percentage or checkmark when fully repaid. (8) **Security** - Balance validation before transfers, row-level locking for race condition protection, dual transaction recording for both parties, status-based permission enforcement. Includes comprehensive error handling and real-time UI synchronization via TanStack Query.
-    *   **ISIC Discounts:** Integration to provide student card-based discounts.
-    *   **Security Settings:** PIN management with default PIN detection and change functionality (password-verified), visual-only features for email verification, two-factor authentication, active sessions management, rate limiting, and session timeout.
-    *   **Notifications:** Comprehensive toast notification system for all features, including error handling for budget card spending. UI dialogs are optimized for various screen sizes with proper scrolling.
+**Core Feature Specifications:**
+*   **Authentication:** User registration, login, JWT token management, PIN setup/change, and visual-only features for forgot password and social login.
+*   **Wallet:** Balance display, top-up, peer-to-peer transfers, and multi-currency support with transfer scheduling.
+*   **Transactions:** Comprehensive tracking, filtering, and statistical analysis for 15+ types, including "expected payments" (CRUD, recurring), balance validation, race condition protection, and detailed records.
+*   **Virtual Cards:** Creation, management (freeze/unfreeze), linking to subscriptions, and payment checks.
+*   **Subscriptions:** Management of recurring payments.
+*   **Savings & Goals:** Dedicated goal tracking with progress indicators, contributions, editable targets, and completion celebrations.
+*   **DarkDays Pocket:** Secure, PIN-protected savings pockets with auto-save options, consolidated settings, and emergency withdrawal flow with security verification.
+*   **Marketplace:** Student-to-student commerce with listings and escrow services, buyer balance validation, and dual transaction recording.
+*   **P2P Lending:** Request-approval system with distinct tabs ("Pending Requests," "My Requests," "I Owe," "Owed to Me"), approval workflow, summary statistics, full loan lifecycle tracking, role-based actions, visual indicators, and robust security including balance validation and race condition protection.
+*   **ISIC Discounts:** Integration for student card-based discounts.
+*   **Security Settings:** PIN management (with default PIN detection and password-verified change), visual-only features for email verification, 2FA, active sessions, rate limiting, and session timeout.
+*   **Notifications:** Comprehensive toast notification system and optimized UI dialogs for various screen sizes.
 
 ### System Design Choices
-
-*   **Database Schema:** Core entities include Users, Wallets, Transactions (with `status='scheduled'` for expected payments), VirtualCards, Subscriptions, SavingsPockets, Goals, Marketplace Listings & Orders, Loans & Repayments, and ISIC-related models.
-*   **API Design:** A RESTful API with logically organized endpoints (e.g., `/api/auth`, `/api/wallet`, `/api/expected-payments`). Proper HTTP status codes are used for error handling.
-*   **Development Workflow:** Supports concurrent backend (Python) and frontend (Node.js) development, with proxying for API requests. Database migrations are managed using Flask-Migrate (Alembic).
+*   **Database Schema:** Core entities include Users, Wallets, Transactions, VirtualCards, Subscriptions, SavingsPockets, Goals, Marketplace (Listings, Orders), Loans, Repayments, and ISIC models.
+*   **API Design:** RESTful API with logically organized endpoints and proper HTTP status codes.
+*   **Development Workflow:** Supports concurrent backend (Python) and frontend (Node.js) development with API proxying. Flask-Migrate (Alembic) for database migrations.
 
 ## External Dependencies
 
-*   **Database:** PostgreSQL (Replit's built-in service)
-*   **Backend Framework:** Flask (Python)
+*   **Database:** PostgreSQL
+*   **Backend Framework:** Flask
 *   **Frontend Framework:** React 18
 *   **Authentication:** Flask-JWT-Extended
 *   **Real-time Communication:** Flask-SocketIO
@@ -106,4 +59,4 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 *   **UI Components:** shadcn/ui (Radix UI + Tailwind CSS)
 *   **Form Management & Validation:** React Hook Form, Zod
 *   **Animations:** Framer Motion
-*   **Date Calculations:** `python-dateutil` (backend)
+*   **Date Calculations:** `python-dateutil`
