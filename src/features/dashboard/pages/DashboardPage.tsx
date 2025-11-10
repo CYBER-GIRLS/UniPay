@@ -71,39 +71,43 @@ export default function DashboardPage() {
         className="w-full max-w-[clamp(20rem,85vw,42rem)] mx-auto px-2 sm:px-0"
       >
         <div 
-          className="relative w-full bg-gradient-to-br from-primary via-purple-500/90 to-secondary rounded-[4%] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.16),0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-300"
+          className="relative w-full bg-gradient-to-br from-primary via-purple-500/90 to-secondary overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.16),0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-300"
           style={{ 
             aspectRatio: '7 / 4',
+            borderRadius: '4%',
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-white/12 via-transparent to-white/8 pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-purple-300/5 to-indigo-300/10 pointer-events-none" />
           
           <div 
-            className="absolute bg-white/8 rounded-full blur-3xl pointer-events-none" 
+            className="absolute bg-white/8 rounded-full pointer-events-none" 
             style={{ 
-              top: '0%', 
-              right: '0%', 
-              width: '40%', 
-              height: '40%' 
+              top: '5%', 
+              right: '5%', 
+              width: '30%', 
+              height: '30%',
+              filter: 'blur(clamp(2rem, 5vw, 3rem))'
             }} 
           />
           <div 
-            className="absolute bg-purple-400/10 rounded-full blur-2xl pointer-events-none" 
+            className="absolute bg-purple-400/10 rounded-full pointer-events-none" 
             style={{ 
-              bottom: '0%', 
-              left: '0%', 
-              width: '35%', 
-              height: '35%' 
+              bottom: '5%', 
+              left: '5%', 
+              width: '28%', 
+              height: '28%',
+              filter: 'blur(clamp(1.5rem, 4vw, 2.5rem))'
             }} 
           />
           <div 
-            className="absolute bg-indigo-300/8 rounded-full blur-xl pointer-events-none" 
+            className="absolute bg-indigo-300/8 rounded-full pointer-events-none" 
             style={{ 
-              top: '33%', 
-              right: '25%', 
-              width: '25%', 
-              height: '25%' 
+              top: '35%', 
+              right: '30%', 
+              width: '20%', 
+              height: '20%',
+              filter: 'blur(clamp(1rem, 3vw, 2rem))'
             }} 
           />
           
@@ -142,73 +146,86 @@ export default function DashboardPage() {
               </linearGradient>
             </defs>
             <rect width="100" height="100" fill="url(#card-grid)" />
-            <circle cx="15" cy="25" r="6" fill="white" opacity="0.04" />
-            <circle cx="85" cy="75" r="8" fill="white" opacity="0.04" />
-            <circle cx="50" cy="50" r="5" fill="white" opacity="0.03" />
-            <line x1="0" y1="30" x2="100" y2="35" stroke="white" strokeWidth="0.2" opacity="0.06"/>
-            <line x1="0" y1="70" x2="100" y2="65" stroke="white" strokeWidth="0.15" opacity="0.05"/>
-            <path d="M 0 60 Q 15 45, 30 60 T 60 60" stroke="white" strokeWidth="0.18" fill="none" opacity="0.06"/>
-            <rect x="70" y="10" width="25" height="15" fill="url(#diag-gradient)" rx="1" />
+            <circle cx="15" cy="25" r="5" fill="white" opacity="0.04" />
+            <circle cx="85" cy="75" r="6" fill="white" opacity="0.04" />
+            <circle cx="50" cy="50" r="4" fill="white" opacity="0.03" />
+            <line x1="5" y1="30" x2="95" y2="35" stroke="white" strokeWidth="0.2" opacity="0.06"/>
+            <line x1="5" y1="70" x2="95" y2="65" stroke="white" strokeWidth="0.15" opacity="0.05"/>
+            <path d="M 5 60 Q 20 45, 35 60 T 65 60" stroke="white" strokeWidth="0.18" fill="none" opacity="0.06"/>
+            <rect x="72" y="12" width="22" height="13" fill="url(#diag-gradient)" rx="1" />
           </svg>
           
           <div 
-            className="absolute flex flex-col relative z-10" 
+            className="absolute flex flex-col z-10" 
             style={{ 
-              inset: '5%',
+              top: '6%',
+              left: '6%',
+              right: '6%',
+              bottom: '6%',
             }}
           >
             <div 
-              className="flex items-start justify-between" 
+              className="flex items-center justify-between flex-shrink-0" 
               style={{ 
-                height: '15%',
-                marginBottom: '2%'
+                height: '14%',
+                marginBottom: '3%',
+                minHeight: 0
               }}
             >
               <div 
-                className="bg-white/15 backdrop-blur-sm rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)] flex items-center justify-center"
+                className="bg-white/15 backdrop-blur-sm rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)] flex items-center justify-center flex-shrink-0"
                 style={{
-                  padding: '3%',
-                  width: 'auto',
-                  aspectRatio: '1'
+                  padding: 'clamp(0.35rem, 2.5%, 0.5rem)',
+                  aspectRatio: '1',
+                  height: '100%',
+                  maxHeight: '100%'
                 }}
                 aria-hidden="true"
               >
-                <ScanLine className="text-white/80" style={{ width: '1.2em', height: '1.2em', fontSize: 'clamp(0.75rem, 2.5vw, 1.25rem)' }} />
+                <ScanLine className="text-white/80" style={{ width: '100%', height: '100%', maxWidth: '1.5rem', maxHeight: '1.5rem' }} />
               </div>
               <div 
-                className="bg-white/15 backdrop-blur-sm rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.1)] flex items-center justify-center"
+                className="bg-white/15 backdrop-blur-sm rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.1)] flex items-center justify-center flex-shrink-0"
                 style={{
-                  padding: '3%',
-                  width: 'auto',
-                  aspectRatio: '1'
+                  padding: 'clamp(0.35rem, 2.5%, 0.5rem)',
+                  aspectRatio: '1',
+                  height: '100%',
+                  maxHeight: '100%'
                 }}
                 aria-hidden="true"
               >
-                <Wallet className="text-white/90" style={{ width: '1.2em', height: '1.2em', fontSize: 'clamp(0.75rem, 2.5vw, 1.25rem)' }} />
+                <Wallet className="text-white/90" style={{ width: '100%', height: '100%', maxWidth: '1.5rem', maxHeight: '1.5rem' }} />
               </div>
             </div>
             
             <div 
-              className="flex flex-col items-center justify-center text-center flex-1"
+              className="flex flex-col items-center justify-center text-center flex-1 overflow-hidden"
               style={{
-                paddingTop: '2%',
-                paddingBottom: '2%'
+                paddingTop: '1%',
+                paddingBottom: '1%',
+                minHeight: 0
               }}
             >
               <p 
-                className="text-white/90 font-medium tracking-wide uppercase"
+                className="text-white/90 font-medium tracking-wide uppercase whitespace-nowrap"
                 style={{ 
-                  fontSize: 'clamp(0.65rem, 1.8vw, 0.875rem)',
-                  marginBottom: '2%'
+                  fontSize: 'clamp(0.625rem, 1.6vw, 0.875rem)',
+                  marginBottom: 'clamp(0.25rem, 1.5%, 0.375rem)',
+                  maxWidth: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
                 }}
               >
                 Available Balance
               </p>
               <h2 
-                className="text-white font-bold tracking-tight leading-none"
+                className="text-white font-bold tracking-tight leading-none whitespace-nowrap"
                 style={{ 
-                  fontSize: 'clamp(1.75rem, 4.5vw, 3rem)',
-                  marginBottom: '1%'
+                  fontSize: 'clamp(1.5rem, 4vw, 2.75rem)',
+                  marginBottom: 'clamp(0.125rem, 0.75%, 0.25rem)',
+                  maxWidth: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
                 }}
                 aria-live="polite"
                 aria-label={`Available balance: ${formatCurrency(walletData?.balance || 0, selectedCurrency)}`}
@@ -216,78 +233,86 @@ export default function DashboardPage() {
                 {formatCurrency(walletData?.balance || 0, selectedCurrency)}
               </h2>
               <p 
-                className="text-white/80 font-medium"
-                style={{ fontSize: 'clamp(0.65rem, 1.8vw, 0.875rem)' }}
+                className="text-white/80 font-medium whitespace-nowrap"
+                style={{ 
+                  fontSize: 'clamp(0.625rem, 1.6vw, 0.875rem)',
+                  maxWidth: '100%',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
+                }}
               >
                 {getCurrencyName(selectedCurrency)}
               </p>
             </div>
             
             <div 
-              className="grid grid-cols-3" 
+              className="grid grid-cols-3 flex-shrink-0" 
               style={{ 
                 gap: '2%',
-                height: '17%',
-                marginTop: 'auto'
+                height: '16%',
+                minHeight: 0
               }}
             >
-              <Link to="/topup" className="w-full h-full">
+              <Link to="/topup" className="w-full h-full min-w-0">
                 <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   className="h-full w-full"
                 >
                   <Button
-                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold"
+                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold overflow-hidden"
                     style={{ 
-                      fontSize: 'clamp(0.625rem, 1.75vw, 0.875rem)',
-                      padding: '0 5%'
+                      fontSize: 'clamp(0.625rem, 1.6vw, 0.875rem)',
+                      padding: '0 clamp(0.25rem, 3%, 0.5rem)',
+                      minWidth: 0
                     }}
                   >
-                    <Plus className="mr-[0.3em]" style={{ width: '1em', height: '1em' }} />
-                    <span className="hidden xs:inline">Top Up</span>
-                    <span className="xs:hidden">Top</span>
+                    <Plus className="mr-[0.3em] flex-shrink-0" style={{ width: '1em', height: '1em' }} />
+                    <span className="hidden xs:inline truncate">Top Up</span>
+                    <span className="xs:hidden truncate">Top</span>
                   </Button>
                 </motion.div>
               </Link>
-              <Link to="/transfers" className="w-full h-full">
+              <Link to="/transfers" className="w-full h-full min-w-0">
                 <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   className="h-full w-full"
                 >
                   <Button
-                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold"
+                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold overflow-hidden"
                     style={{ 
-                      fontSize: 'clamp(0.625rem, 1.75vw, 0.875rem)',
-                      padding: '0 5%'
+                      fontSize: 'clamp(0.625rem, 1.6vw, 0.875rem)',
+                      padding: '0 clamp(0.25rem, 3%, 0.5rem)',
+                      minWidth: 0
                     }}
                   >
-                    <Send className="mr-[0.3em]" style={{ width: '1em', height: '1em' }} />
-                    <span className="hidden xs:inline">Transfer</span>
-                    <span className="xs:hidden">Send</span>
+                    <Send className="mr-[0.3em] flex-shrink-0" style={{ width: '1em', height: '1em' }} />
+                    <span className="hidden xs:inline truncate">Transfer</span>
+                    <span className="xs:hidden truncate">Send</span>
                   </Button>
                 </motion.div>
               </Link>
-              <Link to="/budget-cards" className="w-full h-full">
+              <Link to="/budget-cards" className="w-full h-full min-w-0">
                 <motion.div
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   className="h-full w-full"
                 >
                   <Button
-                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold"
+                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold overflow-hidden"
                     style={{ 
-                      fontSize: 'clamp(0.625rem, 1.75vw, 0.875rem)',
-                      padding: '0 5%'
+                      fontSize: 'clamp(0.625rem, 1.6vw, 0.875rem)',
+                      padding: '0 clamp(0.25rem, 3%, 0.5rem)',
+                      minWidth: 0
                     }}
                   >
-                    <CreditCard className="mr-[0.3em]" style={{ width: '1em', height: '1em' }} />
-                    <span className="hidden xs:inline">Cards</span>
-                    <span className="xs:hidden">Card</span>
+                    <CreditCard className="mr-[0.3em] flex-shrink-0" style={{ width: '1em', height: '1em' }} />
+                    <span className="hidden xs:inline truncate">Cards</span>
+                    <span className="xs:hidden truncate">Card</span>
                   </Button>
                 </motion.div>
               </Link>
