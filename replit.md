@@ -34,20 +34,24 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 - Content wrapper: `overflow-y-auto flex-1 pr-2` - Scrollable content area with right padding for scrollbar
 - Applied to: EmergencyUnlockDialog, BudgetCardDetailDialog, PaymentCardDetailDialog, SubscriptionCardDetailDialog
 
-**Dashboard Balance Card (Modern Bank Card Design):** The Available Balance section features a digital bank card design with authentic card aesthetics:
-- **3:2 Aspect Ratio:** Uses `aspect-[3/2]` for physical card proportions that scale gracefully across all breakpoints
+**Dashboard Balance Card (Modern Bank Card Design):** The Available Balance section features a digital bank card design with authentic card aesthetics and normal, proportional sizing:
+- **Card Structure:** Normal-sized card with natural height based on content, `max-w-4xl` for proportional width, centered layout (`mx-auto`)
 - **Diagonal Gradient:** Background uses `bg-gradient-to-br from-primary via-purple-500/90 to-secondary` with glassmorphic overlay (`from-white/10 via-transparent to-white/5`) for card sheen effect
 - **Card Elements:**
   - EMV chip icon (top-left): `ScanLine` icon with golden gradient (`from-amber-200 via-yellow-100 to-amber-300`)
   - Wallet branding icon (top-right): `Wallet` icon with glassmorphic background (`bg-white/15 backdrop-blur-sm`)
-  - Both icons are `aria-hidden="true"` and responsive (`h-5 w-5 → sm:h-6 sm:w-6 → md:h-7 md:w-7`)
-- **Balance Typography:** Left-aligned with responsive scaling:
+  - Both icons are `aria-hidden="true"` and responsive (`h-5 w-5 → sm:h-6 sm:w-6`)
+- **Balance Typography:** Clean hierarchy with responsive scaling:
   - Label: `text-xs sm:text-sm uppercase tracking-wide`
-  - Amount: `text-3xl → sm:text-4xl → md:text-5xl → lg:text-6xl font-bold tracking-tight`
+  - Amount: `text-4xl → sm:text-5xl → md:text-6xl font-bold tracking-tight`
   - Currency: `text-xs sm:text-sm font-medium`
   - Includes `aria-live="polite"` for balance updates
-- **Action Buttons Below Card:** Responsive grid layout (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`) with gradient-filled buttons for Top Up and Transfer, outline variant for Cards
-- **Responsive Design:** Card centered with `max-w-3xl mx-auto`, responsive padding using `p-[clamp(1rem,4vw,2rem)]`, all buttons have `min-h-[44px]` touch targets
+- **Action Buttons Inside Card:** Positioned at bottom with glassmorphic styling:
+  - Grid layout: `grid-cols-1 xs:grid-cols-3` - stacks on mobile, horizontal on small screens+
+  - Button style: `bg-white/20 hover:bg-white/30` with `border border-white/30` and `backdrop-blur-sm`
+  - All three buttons (Top Up, Transfer, Cards) use consistent glassmorphic design
+  - Touch-friendly: All buttons have `min-h-[44px]` touch targets
+- **Responsive Design:** Responsive padding (`p-6 sm:p-8 md:p-10`), 2xl rounded corners, soft shadow
 - **Animations:** Spring-based hover effects (`whileHover={{ scale: 1.03 }}`) and entrance animations via Framer Motion
 
 ### Technical Implementations
