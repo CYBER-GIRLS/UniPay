@@ -61,21 +61,31 @@
   --gradient-hero: linear-gradient(135deg, hsl(258 70% 85%) 0%, hsl(210 75% 88%) 100%);
   
   /* ============================================
-     TYPOGRAPHY
+     TYPOGRAPHY - Fluid & Responsive
      ============================================ */
   
   --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   --font-family-display: 'Outfit', 'Inter', sans-serif;
   
-  /* Font Sizes - Base (Mobile) */
-  --font-size-xs: 0.75rem;      /* 12px */
-  --font-size-sm: 0.875rem;     /* 14px */
-  --font-size-base: 1rem;       /* 16px */
-  --font-size-lg: 1.125rem;     /* 18px */
-  --font-size-xl: 1.25rem;      /* 20px */
-  --font-size-2xl: 1.5rem;      /* 24px */
-  --font-size-3xl: 1.875rem;    /* 30px */
-  --font-size-4xl: 2.25rem;     /* 36px */
+  /* Fluid Font Sizes - Scale across viewports (320px - 1440px) */
+  --font-size-xs: clamp(0.688rem, 0.65rem + 0.19vw, 0.75rem);          /* 11-12px */
+  --font-size-sm: clamp(0.813rem, 0.76rem + 0.26vw, 0.875rem);         /* 13-14px */
+  --font-size-base: clamp(0.938rem, 0.88rem + 0.29vw, 1rem);           /* 15-16px */
+  --font-size-lg: clamp(1rem, 0.93rem + 0.35vw, 1.125rem);             /* 16-18px */
+  --font-size-xl: clamp(1.125rem, 1.02rem + 0.53vw, 1.375rem);         /* 18-22px */
+  --font-size-2xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.625rem);          /* 20-26px */
+  --font-size-3xl: clamp(1.5rem, 1.24rem + 1.3vw, 2.125rem);           /* 24-34px */
+  --font-size-4xl: clamp(1.875rem, 1.39rem + 2.42vw, 3rem);            /* 30-48px */
+  --font-size-5xl: clamp(2.25rem, 1.55rem + 3.5vw, 3.75rem);           /* 36-60px */
+  --font-size-6xl: clamp(2.625rem, 1.67rem + 4.77vw, 4.5rem);          /* 42-72px */
+  
+  /* Heading Sizes - Semantic Scale */
+  --font-size-h1: var(--font-size-5xl);
+  --font-size-h2: var(--font-size-4xl);
+  --font-size-h3: var(--font-size-3xl);
+  --font-size-h4: var(--font-size-2xl);
+  --font-size-h5: var(--font-size-xl);
+  --font-size-h6: var(--font-size-lg);
   
   /* Font Weights */
   --font-weight-normal: 400;
@@ -89,19 +99,60 @@
   --line-height-relaxed: 1.75;
   
   /* ============================================
-     SPACING SYSTEM
+     SPACING SYSTEM - Fluid & Responsive
      ============================================ */
   
-  --space-1: 0.25rem;   /* 4px */
-  --space-2: 0.5rem;    /* 8px */
-  --space-3: 0.75rem;   /* 12px */
-  --space-4: 1rem;      /* 16px */
-  --space-5: 1.25rem;   /* 20px */
-  --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-10: 2.5rem;   /* 40px */
-  --space-12: 3rem;     /* 48px */
-  --space-16: 4rem;     /* 64px */
+  /* Fixed Small Spaces - No scaling needed */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;  /* 2px */
+  --space-1: 0.25rem;     /* 4px */
+  --space-1-5: 0.375rem;  /* 6px */
+  --space-2: 0.5rem;      /* 8px */
+  --space-2-5: 0.625rem;  /* 10px */
+  
+  /* Fluid Spaces - Scale with viewport */
+  --space-3: clamp(0.625rem, 0.58rem + 0.23vw, 0.75rem);         /* 10-12px */
+  --space-3-5: clamp(0.75rem, 0.68rem + 0.35vw, 0.875rem);       /* 12-14px */
+  --space-4: clamp(0.875rem, 0.78rem + 0.48vw, 1.125rem);        /* 14-18px */
+  --space-5: clamp(1rem, 0.89rem + 0.55vw, 1.25rem);             /* 16-20px */
+  --space-6: clamp(1.25rem, 1.09rem + 0.8vw, 1.625rem);          /* 20-26px */
+  --space-7: clamp(1.375rem, 1.18rem + 0.97vw, 1.75rem);         /* 22-28px */
+  --space-8: clamp(1.5rem, 1.24rem + 1.3vw, 2.125rem);           /* 24-34px */
+  --space-9: clamp(1.75rem, 1.44rem + 1.55vw, 2.375rem);         /* 28-38px */
+  --space-10: clamp(2rem, 1.64rem + 1.8vw, 2.875rem);            /* 32-46px */
+  --space-11: clamp(2.25rem, 1.79rem + 2.3vw, 3.125rem);         /* 36-50px */
+  --space-12: clamp(2.5rem, 2.04rem + 2.3vw, 3.625rem);          /* 40-58px */
+  --space-14: clamp(2.875rem, 2.24rem + 3.17vw, 4.125rem);       /* 46-66px */
+  --space-16: clamp(3rem, 2.34rem + 3.3vw, 4.5rem);              /* 48-72px */
+  --space-20: clamp(3.5rem, 2.64rem + 4.3vw, 5.5rem);            /* 56-88px */
+  --space-24: clamp(4rem, 2.89rem + 5.55vw, 6.5rem);             /* 64-104px */
+  --space-28: clamp(4.5rem, 3.14rem + 6.8vw, 7.5rem);            /* 72-120px */
+  --space-32: clamp(5rem, 3.39rem + 8.05vw, 8.5rem);             /* 80-136px */
+  --space-36: clamp(5.5rem, 3.64rem + 9.3vw, 9.5rem);            /* 88-152px */
+  --space-40: clamp(6rem, 3.89rem + 10.55vw, 10.5rem);           /* 96-168px */
+  --space-44: clamp(6.5rem, 4.14rem + 11.8vw, 11.5rem);          /* 104-184px */
+  --space-48: clamp(7rem, 4.39rem + 13.05vw, 12.5rem);           /* 112-200px */
+  --space-52: clamp(7.5rem, 4.64rem + 14.3vw, 13.5rem);          /* 120-216px */
+  --space-56: clamp(8rem, 4.89rem + 15.55vw, 14.5rem);           /* 128-232px */
+  --space-60: clamp(8.5rem, 5.14rem + 16.8vw, 15.5rem);          /* 136-248px */
+  --space-64: clamp(9rem, 5.39rem + 18.05vw, 16.5rem);           /* 144-264px */
+  --space-72: clamp(10rem, 5.89rem + 20.55vw, 18.5rem);          /* 160-296px */
+  --space-80: clamp(11rem, 6.39rem + 23.05vw, 20.5rem);          /* 176-328px */
+  --space-96: clamp(13rem, 7.39rem + 28.05vw, 24.5rem);          /* 208-392px */
+  
+  /* Extended Spaces - Custom project sizes with fluid scaling */
+  --space-18: clamp(3.25rem, 2.49rem + 3.8vw, 4.875rem);        /* 52-78px */
+  --space-22: clamp(3.75rem, 2.79rem + 4.8vw, 5.875rem);        /* 60-94px */
+  --space-88: clamp(14rem, 7.89rem + 30.55vw, 26rem);           /* 224-416px */
+  --space-100: clamp(16rem, 8.89rem + 35.55vw, 29.5rem);        /* 256-472px */
+  --space-112: clamp(18rem, 9.89rem + 40.55vw, 33rem);          /* 288-528px */
+  --space-128: clamp(21rem, 11.39rem + 48.05vw, 38.5rem);       /* 336-616px */
+  
+  /* Component-Specific Spaces */
+  --space-section: var(--space-12);     /* Section vertical spacing */
+  --space-card: var(--space-6);         /* Card internal padding */
+  --space-card-gap: var(--space-5);     /* Gap between cards */
   
   /* ============================================
      BORDER RADIUS - Soft & Rounded
@@ -201,23 +252,51 @@
 }
 
 /* ============================================
-   RESPONSIVE DESIGN BREAKPOINTS
+   RESPONSIVE DESIGN - Fluid System
    ============================================ */
 
-/* Tablet and Above (md: 768px) */
-@media (min-width: 768px) {
-  :root {
-    --font-size-xl: 1.375rem;     /* 22px */
-    --font-size-2xl: 1.75rem;     /* 28px */
-    --font-size-3xl: 2.25rem;     /* 36px */
-    --font-size-4xl: 3rem;        /* 48px */
-  }
+/* Typography and spacing now use clamp() for fluid scaling
+   No media queries needed - scales smoothly across all viewports */
+
+/* Utility Classes for Responsive Typography */
+.text-display {
+  font-size: var(--font-size-6xl);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
 }
 
-/* Desktop and Above (lg: 1024px) */
-@media (min-width: 1024px) {
-  :root {
-    --font-size-3xl: 2.5rem;      /* 40px */
-    --font-size-4xl: 3.5rem;      /* 56px */
-  }
+.text-h1 {
+  font-size: var(--font-size-h1);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+}
+
+.text-h2 {
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-bold);
+}
+
+.text-h3 {
+  font-size: var(--font-size-h3);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-semibold);
+}
+
+.text-h4 {
+  font-size: var(--font-size-h4);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-semibold);
+}
+
+.text-h5 {
+  font-size: var(--font-size-h5);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-medium);
+}
+
+.text-h6 {
+  font-size: var(--font-size-h6);
+  line-height: var(--line-height-normal);
+  font-weight: var(--font-weight-medium);
 }
