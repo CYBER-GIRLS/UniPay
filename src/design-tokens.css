@@ -67,15 +67,15 @@
   --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   --font-family-display: 'Outfit', 'Inter', sans-serif;
   
-  /* Font Sizes */
+  /* Font Sizes - Base (Mobile) */
   --font-size-xs: 0.75rem;      /* 12px */
   --font-size-sm: 0.875rem;     /* 14px */
   --font-size-base: 1rem;       /* 16px */
   --font-size-lg: 1.125rem;     /* 18px */
-  --font-size-xl: 1.375rem;     /* 22px */
-  --font-size-2xl: 1.75rem;     /* 28px */
-  --font-size-3xl: 2.25rem;     /* 36px */
-  --font-size-4xl: 3rem;        /* 48px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 1.875rem;    /* 30px */
+  --font-size-4xl: 2.25rem;     /* 36px */
   
   /* Font Weights */
   --font-weight-normal: 400;
@@ -198,4 +198,26 @@
 
 .text-balance {
   text-wrap: balance;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   ============================================ */
+
+/* Tablet and Above (md: 768px) */
+@media (min-width: 768px) {
+  :root {
+    --font-size-xl: 1.375rem;     /* 22px */
+    --font-size-2xl: 1.75rem;     /* 28px */
+    --font-size-3xl: 2.25rem;     /* 36px */
+    --font-size-4xl: 3rem;        /* 48px */
+  }
+}
+
+/* Desktop and Above (lg: 1024px) */
+@media (min-width: 1024px) {
+  :root {
+    --font-size-3xl: 2.5rem;      /* 40px */
+    --font-size-4xl: 3.5rem;      /* 56px */
+  }
 }
