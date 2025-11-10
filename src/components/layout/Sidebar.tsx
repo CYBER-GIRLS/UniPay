@@ -107,19 +107,19 @@ export default function Sidebar() {
         </nav>
       </motion.aside>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-1/95 backdrop-blur-md border-t border-border/50 shadow-soft-lg">
-        <div className="grid grid-cols-5 gap-1 p-2.5 overflow-x-auto">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-1/95 backdrop-blur-md border-t border-border/50 shadow-soft-lg safe-area-bottom">
+        <div className="grid grid-cols-5 gap-0.5 xs:gap-1 p-2 xs:p-2.5 overflow-x-auto">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.path || 
                             (item.path !== '/dashboard' && location.pathname.startsWith(item.path));
             
             return (
-              <Link key={item.path} to={item.path}>
+              <Link key={item.path} to={item.path} className="tap-target">
                 <motion.div
                   whileTap={{ scale: 0.92 }}
                   className={cn(
-                    'flex flex-col items-center justify-center py-2.5 px-1 rounded-xl transition-all duration-200',
+                    'flex flex-col items-center justify-center py-2 xs:py-2.5 px-1 rounded-lg xs:rounded-xl transition-all duration-200 min-h-[60px] xs:min-h-[64px]',
                     isActive
                       ? 'bg-gradient-to-br from-primary-light/50 to-secondary-light/50 shadow-soft'
                       : 'hover:bg-surface-2/60'
@@ -127,13 +127,13 @@ export default function Sidebar() {
                 >
                   <Icon
                     className={cn(
-                      'h-5 w-5',
+                      'h-5 w-5 xs:h-5.5 xs:w-5.5',
                       isActive ? 'text-primary' : 'text-muted-foreground'
                     )}
                   />
                   <span
                     className={cn(
-                      'text-[10px] mt-1 font-medium',
+                      'text-[9px] xs:text-[10px] mt-0.5 xs:mt-1 font-medium truncate max-w-[60px] xs:max-w-full',
                       isActive ? 'text-primary' : 'text-muted-foreground'
                     )}
                   >
