@@ -68,18 +68,47 @@ export default function DashboardPage() {
 
       <motion.div
         variants={itemVariants}
-        className="w-[clamp(35vw,90%,75vw)] mx-auto"
+        className="w-full max-w-[clamp(20rem,85vw,42rem)] mx-auto px-2 sm:px-0"
       >
-        <div className="relative w-full aspect-[8/5] bg-gradient-to-br from-primary via-purple-500/90 to-secondary rounded-[4%] overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-shadow duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/12 via-transparent to-white/8" />
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-purple-300/5 to-indigo-300/10" />
+        <div 
+          className="relative w-full bg-gradient-to-br from-primary via-purple-500/90 to-secondary rounded-[4%] overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.16),0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-300"
+          style={{ 
+            aspectRatio: '7 / 4',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-white/12 via-transparent to-white/8 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-purple-300/5 to-indigo-300/10 pointer-events-none" />
           
-          <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-white/8 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-[35%] h-[35%] bg-purple-400/10 rounded-full blur-2xl" />
-          <div className="absolute top-[33%] right-[25%] w-[25%] h-[25%] bg-indigo-300/8 rounded-full blur-xl" />
+          <div 
+            className="absolute bg-white/8 rounded-full blur-3xl pointer-events-none" 
+            style={{ 
+              top: '0%', 
+              right: '0%', 
+              width: '40%', 
+              height: '40%' 
+            }} 
+          />
+          <div 
+            className="absolute bg-purple-400/10 rounded-full blur-2xl pointer-events-none" 
+            style={{ 
+              bottom: '0%', 
+              left: '0%', 
+              width: '35%', 
+              height: '35%' 
+            }} 
+          />
+          <div 
+            className="absolute bg-indigo-300/8 rounded-full blur-xl pointer-events-none" 
+            style={{ 
+              top: '33%', 
+              right: '25%', 
+              width: '25%', 
+              height: '25%' 
+            }} 
+          />
           
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
             animate={shouldReduceMotion ? {} : {
               x: ['-100%', '200%'],
             }}
@@ -95,9 +124,15 @@ export default function DashboardPage() {
             }}
           />
           
-          <svg className="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <svg 
+            className="absolute inset-0 w-full h-full opacity-[0.08] pointer-events-none" 
+            viewBox="0 0 100 100" 
+            preserveAspectRatio="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
             <defs>
-              <pattern id="card-grid" width="3.75" height="6" patternUnits="userSpaceOnUse" patternContentUnits="objectBoundingBox">
+              <pattern id="card-grid" width="3.75" height="6" patternUnits="userSpaceOnUse">
                 <path d="M 1 0 L 0 0 0 1" fill="none" stroke="white" strokeWidth="0.02" opacity="0.4"/>
               </pattern>
               <linearGradient id="diag-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -114,35 +149,67 @@ export default function DashboardPage() {
             <line x1="0" y1="70" x2="100" y2="65" stroke="white" strokeWidth="0.15" opacity="0.05"/>
             <path d="M 0 60 Q 15 45, 30 60 T 60 60" stroke="white" strokeWidth="0.18" fill="none" opacity="0.06"/>
             <rect x="70" y="10" width="25" height="15" fill="url(#diag-gradient)" rx="1" />
-            <polygon points="1.25,2 3.125,4 1.25,6" fill="white" opacity="0.03" />
           </svg>
           
-          <div className="absolute inset-0 p-[5%] flex flex-col relative z-10">
-            <div className="flex items-start justify-between h-[15%]">
+          <div 
+            className="absolute flex flex-col relative z-10" 
+            style={{ 
+              inset: '5%',
+            }}
+          >
+            <div 
+              className="flex items-start justify-between" 
+              style={{ 
+                height: '15%',
+                marginBottom: '2%'
+              }}
+            >
               <div 
-                className="p-[3%] bg-white/15 backdrop-blur-sm rounded-lg shadow-sm"
+                className="bg-white/15 backdrop-blur-sm rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)] flex items-center justify-center"
+                style={{
+                  padding: '3%',
+                  width: 'auto',
+                  aspectRatio: '1'
+                }}
                 aria-hidden="true"
               >
-                <ScanLine className="w-[1.2em] h-[1.2em] text-white/80" style={{ fontSize: 'clamp(0.75rem, 2.5vw, 1.25rem)' }} />
+                <ScanLine className="text-white/80" style={{ width: '1.2em', height: '1.2em', fontSize: 'clamp(0.75rem, 2.5vw, 1.25rem)' }} />
               </div>
               <div 
-                className="p-[3%] bg-white/15 backdrop-blur-sm rounded-full shadow-sm"
+                className="bg-white/15 backdrop-blur-sm rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.1)] flex items-center justify-center"
+                style={{
+                  padding: '3%',
+                  width: 'auto',
+                  aspectRatio: '1'
+                }}
                 aria-hidden="true"
               >
-                <Wallet className="w-[1.2em] h-[1.2em] text-white/90" style={{ fontSize: 'clamp(0.75rem, 2.5vw, 1.25rem)' }} />
+                <Wallet className="text-white/90" style={{ width: '1.2em', height: '1.2em', fontSize: 'clamp(0.75rem, 2.5vw, 1.25rem)' }} />
               </div>
             </div>
             
-            <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <div 
+              className="flex flex-col items-center justify-center text-center flex-1"
+              style={{
+                paddingTop: '2%',
+                paddingBottom: '2%'
+              }}
+            >
               <p 
-                className="text-white/90 font-medium tracking-wide uppercase mb-[2%]"
-                style={{ fontSize: 'clamp(0.65rem, 2vw, 0.875rem)' }}
+                className="text-white/90 font-medium tracking-wide uppercase"
+                style={{ 
+                  fontSize: 'clamp(0.65rem, 1.8vw, 0.875rem)',
+                  marginBottom: '2%'
+                }}
               >
                 Available Balance
               </p>
               <h2 
-                className="text-white font-bold tracking-tight leading-tight mb-[1%]"
-                style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}
+                className="text-white font-bold tracking-tight leading-none"
+                style={{ 
+                  fontSize: 'clamp(1.75rem, 4.5vw, 3rem)',
+                  marginBottom: '1%'
+                }}
                 aria-live="polite"
                 aria-label={`Available balance: ${formatCurrency(walletData?.balance || 0, selectedCurrency)}`}
               >
@@ -150,25 +217,35 @@ export default function DashboardPage() {
               </h2>
               <p 
                 className="text-white/80 font-medium"
-                style={{ fontSize: 'clamp(0.65rem, 2vw, 0.875rem)' }}
+                style={{ fontSize: 'clamp(0.65rem, 1.8vw, 0.875rem)' }}
               >
                 {getCurrencyName(selectedCurrency)}
               </p>
             </div>
             
-            <div className="grid grid-cols-3 gap-[2%] h-[18%]">
+            <div 
+              className="grid grid-cols-3" 
+              style={{ 
+                gap: '2%',
+                height: '17%',
+                marginTop: 'auto'
+              }}
+            >
               <Link to="/topup" className="w-full h-full">
                 <motion.div
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                  className="h-full"
+                  className="h-full w-full"
                 >
                   <Button
-                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 font-semibold px-[5%]"
-                    style={{ fontSize: 'clamp(0.625rem, 1.8vw, 0.875rem)' }}
+                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold"
+                    style={{ 
+                      fontSize: 'clamp(0.625rem, 1.75vw, 0.875rem)',
+                      padding: '0 5%'
+                    }}
                   >
-                    <Plus className="w-[1em] h-[1em] mr-[0.3em]" />
+                    <Plus className="mr-[0.3em]" style={{ width: '1em', height: '1em' }} />
                     <span className="hidden xs:inline">Top Up</span>
                     <span className="xs:hidden">Top</span>
                   </Button>
@@ -179,13 +256,16 @@ export default function DashboardPage() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                  className="h-full"
+                  className="h-full w-full"
                 >
                   <Button
-                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 font-semibold px-[5%]"
-                    style={{ fontSize: 'clamp(0.625rem, 1.8vw, 0.875rem)' }}
+                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold"
+                    style={{ 
+                      fontSize: 'clamp(0.625rem, 1.75vw, 0.875rem)',
+                      padding: '0 5%'
+                    }}
                   >
-                    <Send className="w-[1em] h-[1em] mr-[0.3em]" />
+                    <Send className="mr-[0.3em]" style={{ width: '1em', height: '1em' }} />
                     <span className="hidden xs:inline">Transfer</span>
                     <span className="xs:hidden">Send</span>
                   </Button>
@@ -196,13 +276,16 @@ export default function DashboardPage() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                  className="h-full"
+                  className="h-full w-full"
                 >
                   <Button
-                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 font-semibold px-[5%]"
-                    style={{ fontSize: 'clamp(0.625rem, 1.8vw, 0.875rem)' }}
+                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold"
+                    style={{ 
+                      fontSize: 'clamp(0.625rem, 1.75vw, 0.875rem)',
+                      padding: '0 5%'
+                    }}
                   >
-                    <CreditCard className="w-[1em] h-[1em] mr-[0.3em]" />
+                    <CreditCard className="mr-[0.3em]" style={{ width: '1em', height: '1em' }} />
                     <span className="hidden xs:inline">Cards</span>
                     <span className="xs:hidden">Card</span>
                   </Button>
