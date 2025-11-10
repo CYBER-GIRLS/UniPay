@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { walletAPI, transactionsAPI } from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight, ArrowDownLeft, Plus, Send, CreditCard, TrendingUp, TrendingDown } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft, Plus, Send, CreditCard, TrendingUp, TrendingDown, Wallet, ScanLine } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
@@ -65,74 +65,99 @@ export default function DashboardPage() {
         <CurrencySelector compact />
       </motion.div>
 
-      <MotionCard
-        variants={itemVariants}
-        className="overflow-hidden border-0 shadow-soft-lg"
-      >
-        <CardContent className="p-0">
-          <div className="bg-gradient-to-br from-primary via-primary-hover to-secondary p-6 sm:p-8 md:p-10 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-48 h-48 sm:w-72 sm:h-72 bg-white/10 rounded-full blur-3xl -mr-24 sm:-mr-36 -mt-24 sm:-mt-36" />
-            <div className="absolute bottom-0 left-0 w-32 h-32 sm:w-56 sm:h-56 bg-white/5 rounded-full blur-2xl -ml-16 sm:-ml-28 -mb-16 sm:-mb-28" />
-            
-            <div className="relative z-10">
-              <p className="text-white/90 text-xs sm:text-sm font-medium mb-1">Available Balance</p>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mt-1 sm:mt-2 mb-1 sm:mb-2">
-                {formatCurrency(walletData?.balance || 0, selectedCurrency)}
-              </h2>
-              <p className="text-white/80 text-xs sm:text-sm">
-                {getCurrencyName(selectedCurrency)}
-              </p>
+      <motion.div variants={itemVariants} className="space-y-4">
+        <MotionCard
+          variants={itemVariants}
+          className="overflow-hidden border-0 shadow-soft-lg rounded-2xl max-w-3xl mx-auto"
+        >
+          <CardContent className="p-0">
+            <div className="aspect-[3/2] bg-gradient-to-br from-primary via-purple-500/90 to-secondary p-[clamp(1rem,4vw,2rem)] text-white relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-32 -mt-32" />
               
-              <div className="grid grid-cols-1 xs:grid-cols-3 gap-2 sm:gap-3 md:gap-4 mt-6 sm:mt-8 md:mt-10">
-                <Link to="/topup" className="flex-1">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+              <div className="relative z-10 h-full flex flex-col">
+                <div className="flex items-start justify-between mb-auto">
+                  <div 
+                    className="p-2 sm:p-2.5 bg-gradient-to-br from-amber-200 via-yellow-100 to-amber-300 rounded-md sm:rounded-lg shadow-md flex-shrink-0"
+                    aria-hidden="true"
                   >
-                    <Button
-                      variant="secondary"
-                      className="w-full h-11 sm:h-10 bg-white/20 hover:bg-white/30 text-white border-white/20 backdrop-blur-sm shadow-soft text-sm sm:text-xs md:text-sm"
-                    >
-                      <Plus className="h-4 w-4 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 mr-2 sm:mr-1 md:mr-2" />
-                      <span className="hidden xs:inline">Top Up</span>
-                      <span className="xs:hidden">Top Up</span>
-                    </Button>
-                  </motion.div>
-                </Link>
-                <Link to="/transfers" className="flex-1">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    <ScanLine className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-amber-900/80" />
+                  </div>
+                  <div 
+                    className="p-2 sm:p-2.5 bg-white/15 backdrop-blur-sm rounded-full shadow-md flex-shrink-0"
+                    aria-hidden="true"
                   >
-                    <Button
-                      variant="secondary"
-                      className="w-full h-11 sm:h-10 bg-white/20 hover:bg-white/30 text-white border-white/20 backdrop-blur-sm shadow-soft text-sm sm:text-xs md:text-sm"
-                    >
-                      <Send className="h-4 w-4 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 mr-2 sm:mr-1 md:mr-2" />
-                      <span className="hidden xs:inline">Transfer</span>
-                      <span className="xs:hidden">Transfer</span>
-                    </Button>
-                  </motion.div>
-                </Link>
-                <Link to="/budget-cards" className="flex-1">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white/90" />
+                  </div>
+                </div>
+                
+                <div className="mt-auto">
+                  <p className="text-white/90 text-xs sm:text-sm font-medium mb-1 sm:mb-2 tracking-wide uppercase">Available Balance</p>
+                  <h2 
+                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-1 sm:mb-2 tracking-tight"
+                    aria-live="polite"
+                    aria-label={`Available balance: ${formatCurrency(walletData?.balance || 0, selectedCurrency)}`}
                   >
-                    <Button
-                      variant="secondary"
-                      className="w-full h-11 sm:h-10 bg-white/20 hover:bg-white/30 text-white border-white/20 backdrop-blur-sm shadow-soft text-sm sm:text-xs md:text-sm"
-                    >
-                      <CreditCard className="h-4 w-4 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 mr-2 sm:mr-1 md:mr-2" />
-                      Cards
-                    </Button>
-                  </motion.div>
-                </Link>
+                    {formatCurrency(walletData?.balance || 0, selectedCurrency)}
+                  </h2>
+                  <p className="text-white/80 text-xs sm:text-sm font-medium">
+                    {getCurrencyName(selectedCurrency)}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </MotionCard>
+          </CardContent>
+        </MotionCard>
+
+        <motion.div 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto"
+          variants={itemVariants}
+        >
+          <Link to="/topup" className="w-full">
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <Button
+                className="w-full min-h-[44px] bg-gradient-to-r from-primary to-primary-hover hover:from-primary-hover hover:to-primary text-white shadow-md hover:shadow-lg transition-all duration-200 text-sm sm:text-base font-semibold"
+              >
+                <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                Top Up
+              </Button>
+            </motion.div>
+          </Link>
+          <Link to="/transfers" className="w-full">
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <Button
+                className="w-full min-h-[44px] bg-gradient-to-r from-secondary to-purple-600 hover:from-purple-600 hover:to-secondary text-white shadow-md hover:shadow-lg transition-all duration-200 text-sm sm:text-base font-semibold"
+              >
+                <Send className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                Transfer
+              </Button>
+            </motion.div>
+          </Link>
+          <Link to="/budget-cards" className="w-full sm:col-span-2 lg:col-span-1">
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <Button
+                variant="outline"
+                className="w-full min-h-[44px] border-2 border-primary/30 hover:border-primary hover:bg-primary/10 text-primary hover:text-primary-hover shadow-sm hover:shadow-md transition-all duration-200 text-sm sm:text-base font-semibold"
+              >
+                <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                Cards
+              </Button>
+            </motion.div>
+          </Link>
+        </motion.div>
+      </motion.div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
         <MotionCard
