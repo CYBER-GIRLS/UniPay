@@ -11,15 +11,20 @@ No specific user preferences recorded yet. This section will be updated as devel
 UniPay is structured as a single-page application (SPA) with a clear separation between its backend and frontend components.
 
 ### UI/UX Decisions
-The frontend features a modern, Revolut-inspired interface, built with `shadcn/ui` (Radix UI, Tailwind CSS). Key design elements include a fixed top navigation with a wallet icon logo, a collapsible sidebar with smooth animations (desktop only; mobile uses bottom navigation), a modern color palette with violet/indigo gradients and pastel accents, card-based layouts with shadows and rounded corners, Framer Motion for animations, and a gradient balance card with quick action buttons. `DashboardLayout` is used for authenticated users and `AuthLayout` for unauthenticated users.
+The frontend features a modern, Revolut-inspired interface, built with `shadcn/ui` (Radix UI, Tailwind CSS). Key design elements include a fixed top navigation with a wallet icon logo, a fully responsive collapsible left sidebar that works across all devices (mobile, tablet, desktop), a modern color palette with violet/indigo gradients and pastel accents, card-based layouts with shadows and rounded corners, Framer Motion for animations, and a gradient balance card with quick action buttons. `DashboardLayout` is used for authenticated users and `AuthLayout` for unauthenticated users.
 
-**Collapsible Sidebar:** The desktop sidebar supports collapse/expand functionality with:
-- Toggle button with arrow icon (ChevronLeft/ChevronRight) for collapsing/expanding
-- Collapsed state (5rem width): Shows only icons with tooltips on hover
-- Expanded state (16rem width): Shows both icons and section labels
-- Smooth Framer Motion animations for width transitions and label reveal
-- Persistent state across navigation using Zustand store
-- All navigation sections accessible in both states
+**Responsive Collapsible Sidebar:** The left sidebar is always visible and works consistently across all devices with:
+- **Universal Availability:** Always positioned on the left side (no mobile bottom navigation)
+- **Responsive Widths:** Uses CSS clamp() for fluid sizing across devices:
+  - Expanded: `clamp(12rem, 60vw, 16rem)` - adapts from 12rem (mobile) to 16rem (desktop)
+  - Collapsed: `clamp(3.5rem, 15vw, 5rem)` - adapts from 3.5rem (mobile) to 5rem (desktop)
+- **Touch-Friendly Controls:** 44px minimum touch targets for toggle button (h-11 w-11) and all navigation items (min-h-[44px])
+- **Collapsible Behavior:** Toggle button with arrow icon (ChevronLeft/ChevronRight) works identically on all screen sizes
+- **Responsive Elements:** Icons (h-5 w-5), labels (text-sm), and padding scale appropriately across breakpoints
+- **Smart Display:** Collapsed state shows only icons with tooltips on hover; expanded state shows both icons and labels
+- **Smooth Animations:** Framer Motion animations for width transitions, label reveal, and hover effects
+- **Persistent State:** Collapse/expand preference maintained across navigation using Zustand store
+- **Accessibility:** All navigation sections accessible in both collapsed and expanded states
 
 **Dialog/Popup Scrolling Pattern:** All dialogs and popups use a standardized scrollable pattern to ensure proper viewport fitting:
 - `DialogContent`: `flex flex-col max-h-[90vh]` - Sets max height at 90% viewport and flex layout
