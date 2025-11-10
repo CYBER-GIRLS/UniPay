@@ -68,15 +68,15 @@ export default function DashboardPage() {
 
       <motion.div
         variants={itemVariants}
-        className="max-w-4xl mx-auto"
+        className="w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8"
       >
-        <div className="relative bg-gradient-to-br from-primary via-purple-500/90 to-secondary p-6 sm:p-8 md:p-10 text-white rounded-2xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_15px_40px_rgb(0,0,0,0.18)] transition-shadow duration-300">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/5" />
+        <div className="relative w-full aspect-[7/4] bg-gradient-to-br from-primary via-purple-500/90 to-secondary rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-shadow duration-300">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/12 via-transparent to-white/8" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-purple-300/5 to-indigo-300/10" />
           
-          <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-white/5 rounded-full blur-3xl -mr-32 sm:-mr-48 -mt-32 sm:-mt-48" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-purple-400/10 rounded-full blur-2xl -ml-24 sm:-ml-36 -mb-24 sm:-mb-36" />
-          
-          <div className="absolute top-1/4 right-1/3 w-32 h-32 sm:w-48 sm:h-48 bg-indigo-300/5 rounded-full blur-xl" />
+          <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-white/8 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-[35%] h-[35%] bg-purple-400/10 rounded-full blur-2xl" />
+          <div className="absolute top-1/3 right-1/4 w-[25%] h-[25%] bg-indigo-300/8 rounded-full blur-xl" />
           
           <motion.div
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
@@ -95,38 +95,48 @@ export default function DashboardPage() {
             }}
           />
           
-          <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+          <svg className="absolute inset-0 w-full h-full opacity-[0.08]" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5" opacity="0.3"/>
+              <pattern id="card-grid" width="30" height="30" patternUnits="userSpaceOnUse">
+                <path d="M 30 0 L 0 0 0 30" fill="none" stroke="white" strokeWidth="0.5" opacity="0.4"/>
               </pattern>
+              <linearGradient id="diag-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{ stopColor: 'white', stopOpacity: 0.1 }} />
+                <stop offset="50%" style={{ stopColor: 'white', stopOpacity: 0.05 }} />
+                <stop offset="100%" style={{ stopColor: 'white', stopOpacity: 0.1 }} />
+              </linearGradient>
             </defs>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-            <circle cx="10%" cy="20%" r="60" fill="white" opacity="0.03" />
-            <circle cx="85%" cy="70%" r="80" fill="white" opacity="0.03" />
-            <path d="M 0 50 Q 25 30, 50 50 T 100 50" stroke="white" strokeWidth="1" fill="none" opacity="0.05" />
+            <rect width="100%" height="100%" fill="url(#card-grid)" />
+            <circle cx="15%" cy="25%" r="50" fill="white" opacity="0.04" />
+            <circle cx="85%" cy="75%" r="70" fill="white" opacity="0.04" />
+            <circle cx="50%" cy="50%" r="40" fill="white" opacity="0.03" />
+            <line x1="0" y1="30%" x2="100%" y2="35%" stroke="white" strokeWidth="1.5" opacity="0.06" />
+            <line x1="0" y1="70%" x2="100%" y2="65%" stroke="white" strokeWidth="1" opacity="0.05" />
+            <path d="M 0 60 Q 30 45, 60 60 T 120 60" stroke="white" strokeWidth="1.2" fill="none" opacity="0.06" />
+            <rect x="70%" y="10%" width="25%" height="15%" fill="url(#diag-gradient)" rx="8" />
+            <polygon points="10,10 25,20 10,30" fill="white" opacity="0.03" />
           </svg>
           
-          <div className="relative z-10">
-            <div className="flex items-start justify-between mb-6 sm:mb-8">
+          <div className="absolute inset-0 p-[clamp(1rem,4vw,2rem)] flex flex-col relative z-10">
+            <div className="flex items-start justify-between mb-auto">
               <div 
-                className="p-2 sm:p-2.5 bg-gradient-to-br from-amber-200 via-yellow-100 to-amber-300 rounded-md sm:rounded-lg shadow-md flex-shrink-0"
+                className="p-2 sm:p-2.5 bg-white/15 backdrop-blur-sm rounded-md sm:rounded-lg shadow-sm flex-shrink-0"
                 aria-hidden="true"
               >
-                <ScanLine className="h-5 w-5 sm:h-6 sm:w-6 text-amber-900/80" />
+                <ScanLine className="h-5 w-5 sm:h-6 sm:w-6 text-white/80" />
               </div>
               <div 
-                className="p-2 sm:p-2.5 bg-white/15 backdrop-blur-sm rounded-full shadow-md flex-shrink-0"
+                className="p-2 sm:p-2.5 bg-white/15 backdrop-blur-sm rounded-full shadow-sm flex-shrink-0"
                 aria-hidden="true"
               >
                 <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white/90" />
               </div>
             </div>
             
-            <div className="mb-6 sm:mb-8">
-              <p className="text-white/90 text-xs sm:text-sm font-medium mb-1 tracking-wide uppercase">Available Balance</p>
+            <div className="mb-auto">
+              <p className="text-white/90 text-xs sm:text-sm font-medium mb-0.5 sm:mb-1 tracking-wide uppercase">Available Balance</p>
               <h2 
-                className="text-4xl sm:text-5xl md:text-6xl font-bold mb-1 tracking-tight"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-0.5 sm:mb-1 tracking-tight"
                 aria-live="polite"
                 aria-label={`Available balance: ${formatCurrency(walletData?.balance || 0, selectedCurrency)}`}
               >
@@ -137,7 +147,7 @@ export default function DashboardPage() {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 xs:grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 xs:grid-cols-3 gap-2">
               <Link to="/topup" className="w-full">
                 <motion.div
                   whileHover={{ scale: 1.03 }}
@@ -145,9 +155,9 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full min-h-[44px] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-200 text-sm sm:text-base font-semibold"
+                    className="w-full min-h-[44px] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
                   >
-                    <Plus className="h-4 w-4 mr-1.5 sm:mr-2" />
+                    <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-1.5" />
                     Top Up
                   </Button>
                 </motion.div>
@@ -159,9 +169,9 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full min-h-[44px] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-200 text-sm sm:text-base font-semibold"
+                    className="w-full min-h-[44px] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
                   >
-                    <Send className="h-4 w-4 mr-1.5 sm:mr-2" />
+                    <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-1.5" />
                     Transfer
                   </Button>
                 </motion.div>
@@ -173,9 +183,9 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full min-h-[44px] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-200 text-sm sm:text-base font-semibold"
+                    className="w-full min-h-[44px] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
                   >
-                    <CreditCard className="h-4 w-4 mr-1.5 sm:mr-2" />
+                    <CreditCard className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-1.5" />
                     Cards
                   </Button>
                 </motion.div>
