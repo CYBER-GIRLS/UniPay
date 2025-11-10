@@ -23,7 +23,7 @@ export default function DashboardLayout() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="p-8 pb-24 md:pb-8"
+            className="p-4 pb-24 sm:p-6 sm:pb-24 md:p-8 md:pb-8 lg:p-10 lg:pb-10"
           >
             <Outlet />
           </motion.div>
