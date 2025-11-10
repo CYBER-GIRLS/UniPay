@@ -24,9 +24,14 @@ export default function Sidebar() {
   const location = useLocation();
   const { isCollapsed, toggleSidebar } = useSidebarStore();
 
+  // Responsive sidebar widths: smaller on mobile, standard on desktop
   const sidebarVariants = {
-    expanded: { width: '16rem' },
-    collapsed: { width: '5rem' }
+    expanded: { 
+      width: 'clamp(12rem, 60vw, 16rem)' // Mobile: min 12rem, max 60vw; Desktop: 16rem
+    },
+    collapsed: { 
+      width: 'clamp(3.5rem, 15vw, 5rem)' // Mobile: min 3.5rem, max 15vw; Desktop: 5rem
+    }
   };
 
   return (
@@ -35,25 +40,25 @@ export default function Sidebar() {
       animate={isCollapsed ? 'collapsed' : 'expanded'}
       variants={sidebarVariants}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="flex flex-col border-r border-border/50 bg-surface-1/80 backdrop-blur-sm relative shadow-soft"
+      className="flex flex-col border-r border-border/50 bg-surface-1/80 backdrop-blur-sm relative shadow-soft z-40"
     >
-        <div className="flex items-center justify-end p-4 border-b border-border/50">
+        <div className="flex items-center justify-end p-2.5 xs:p-3 sm:p-4 border-b border-border/50">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleSidebar}
-            className="h-9 w-9 rounded-xl hover:bg-primary-light/30 transition-all duration-200"
+            className="h-8 w-8 xs:h-9 xs:w-9 rounded-lg xs:rounded-xl hover:bg-primary-light/30 transition-all duration-200 tap-target"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? (
-              <ChevronRight className="h-4 w-4 text-primary" />
+              <ChevronRight className="h-3.5 w-3.5 xs:h-4 xs:w-4 text-primary" />
             ) : (
-              <ChevronLeft className="h-4 w-4 text-primary" />
+              <ChevronLeft className="h-3.5 w-3.5 xs:h-4 xs:w-4 text-primary" />
             )}
           </Button>
         </div>
 
-        <nav className="flex-1 space-y-1.5 p-4 overflow-hidden">
+        <nav className="flex-1 space-y-1 xs:space-y-1.5 p-2 xs:p-3 sm:p-4 overflow-y-auto overflow-x-hidden">
           <TooltipProvider delayDuration={0}>
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -66,14 +71,14 @@ export default function Sidebar() {
                     whileHover={{ x: isCollapsed ? 0 : 4, scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200',
+                      'flex items-center gap-2 xs:gap-2.5 sm:gap-3 px-2 xs:px-3 sm:px-4 py-2.5 xs:py-3 sm:py-3.5 rounded-lg xs:rounded-xl transition-all duration-200 tap-target',
                       isCollapsed ? 'justify-center' : '',
                       isActive
                         ? 'bg-gradient-to-r from-primary-light/40 to-secondary-light/40 text-primary shadow-soft backdrop-blur-sm font-semibold'
                         : 'text-muted-foreground hover:bg-surface-2/60 hover:text-foreground'
                     )}
                   >
-                    <Icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'text-primary')} />
+                    <Icon className={cn('h-4 w-4 xs:h-4.5 xs:w-4.5 sm:h-5 sm:w-5 flex-shrink-0', isActive && 'text-primary')} />
                     <AnimatePresence mode="wait">
                       {!isCollapsed && (
                         <motion.span
@@ -81,7 +86,7 @@ export default function Sidebar() {
                           animate={{ opacity: 1, width: 'auto' }}
                           exit={{ opacity: 0, width: 0 }}
                           transition={{ duration: 0.2 }}
-                          className="whitespace-nowrap overflow-hidden"
+                          className="whitespace-nowrap overflow-hidden text-xs xs:text-sm"
                         >
                           {item.label}
                         </motion.span>
