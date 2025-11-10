@@ -40,7 +40,7 @@ export default function Sidebar() {
       animate={isCollapsed ? 'collapsed' : 'expanded'}
       variants={sidebarVariants}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="flex flex-col border-r border-border/50 bg-surface-1/80 backdrop-blur-sm relative shadow-soft z-40"
+      className="flex flex-col m-0 p-0 border-r border-border/50 bg-surface-1/80 backdrop-blur-sm relative shadow-soft z-40"
     >
         <div className="flex items-center justify-end p-2.5 xs:p-3 sm:p-4 border-b border-border/50">
           <Button
