@@ -180,55 +180,38 @@ export default function TransactionsPage() {
         </div>
 
         <div className="lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-6">
-          <div className="space-y-4">
-            <Card className="border-0 shadow-lg">
-              <CardHeader className="border-b bg-gradient-to-r from-violet-50 to-indigo-50">
-                <div className="flex items-center justify-between">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handlePreviousMonth}
-                    className="hover:bg-white/50"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </Button>
-                  <CardTitle className="text-lg font-semibold text-gray-900">
-                    {currentMonthName}
-                  </CardTitle>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleNextMonth}
-                    className="hover:bg-white/50"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="p-4">
-                <CalendarGrid
-                  currentDate={currentDate}
-                  transactionsByDate={transactionsByDate}
-                  onDayClick={handleDayClick}
-                />
-              </CardContent>
-            </Card>
-
-            <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-visible">
-              <CardContent className="p-0">
-                {transactions.length > 0 ? (
-                  <CollapsibleTransactionList transactions={transactions} />
-                ) : (
-                  <div className="p-6 text-center py-12">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                      <Receipt className="h-8 w-8 text-gray-400" />
-                    </div>
-                    <p className="text-gray-500">No transactions yet</p>
-                  </div>
-                )}
-              </CardContent>
-            </MotionCard>
-          </div>
+          <Card className="border-0 shadow-lg">
+            <CardHeader className="border-b bg-gradient-to-r from-violet-50 to-indigo-50">
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handlePreviousMonth}
+                  className="hover:bg-white/50"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <CardTitle className="text-lg font-semibold text-gray-900">
+                  {currentMonthName}
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleNextMonth}
+                  className="hover:bg-white/50"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4">
+              <CalendarGrid
+                currentDate={currentDate}
+                transactionsByDate={transactionsByDate}
+                onDayClick={handleDayClick}
+              />
+            </CardContent>
+          </Card>
 
           <div className="hidden lg:flex lg:flex-col lg:justify-center lg:space-y-4 h-full">
             <MotionCard variants={itemVariants} className="border-0 shadow-sm">
@@ -280,6 +263,21 @@ export default function TransactionsPage() {
             </MotionCard>
           </div>
         </div>
+
+        <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-visible">
+          <CardContent className="p-0">
+            {transactions.length > 0 ? (
+              <CollapsibleTransactionList transactions={transactions} />
+            ) : (
+              <div className="p-6 text-center py-12">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                  <Receipt className="h-8 w-8 text-gray-400" />
+                </div>
+                <p className="text-gray-500">No transactions yet</p>
+              </div>
+            )}
+          </CardContent>
+        </MotionCard>
       </motion.div>
 
       {selectedDate && (
