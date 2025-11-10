@@ -30,14 +30,13 @@ export default function Sidebar() {
   };
 
   return (
-    <>
-      <motion.aside
-        initial={false}
-        animate={isCollapsed ? 'collapsed' : 'expanded'}
-        variants={sidebarVariants}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="hidden md:flex md:flex-col border-r border-border/50 bg-surface-1/80 backdrop-blur-sm relative shadow-soft"
-      >
+    <motion.aside
+      initial={false}
+      animate={isCollapsed ? 'collapsed' : 'expanded'}
+      variants={sidebarVariants}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className="flex flex-col border-r border-border/50 bg-surface-1/80 backdrop-blur-sm relative shadow-soft"
+    >
         <div className="flex items-center justify-end p-4 border-b border-border/50">
           <Button
             variant="ghost"
@@ -106,45 +105,5 @@ export default function Sidebar() {
           </TooltipProvider>
         </nav>
       </motion.aside>
-
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-1/95 backdrop-blur-md border-t border-border/50 shadow-soft-lg safe-area-bottom">
-        <div className="grid grid-cols-5 gap-0.5 xs:gap-1 p-2 xs:p-2.5 overflow-x-auto">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.path || 
-                            (item.path !== '/dashboard' && location.pathname.startsWith(item.path));
-            
-            return (
-              <Link key={item.path} to={item.path} className="tap-target">
-                <motion.div
-                  whileTap={{ scale: 0.92 }}
-                  className={cn(
-                    'flex flex-col items-center justify-center py-2 xs:py-2.5 px-1 rounded-lg xs:rounded-xl transition-all duration-200 min-h-[60px] xs:min-h-[64px]',
-                    isActive
-                      ? 'bg-gradient-to-br from-primary-light/50 to-secondary-light/50 shadow-soft'
-                      : 'hover:bg-surface-2/60'
-                  )}
-                >
-                  <Icon
-                    className={cn(
-                      'h-5 w-5 xs:h-5.5 xs:w-5.5',
-                      isActive ? 'text-primary' : 'text-muted-foreground'
-                    )}
-                  />
-                  <span
-                    className={cn(
-                      'text-[9px] xs:text-[10px] mt-0.5 xs:mt-1 font-medium truncate max-w-[60px] xs:max-w-full',
-                      isActive ? 'text-primary' : 'text-muted-foreground'
-                    )}
-                  >
-                    {item.label}
-                  </span>
-                </motion.div>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
-    </>
   );
 }
