@@ -34,9 +34,19 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 - Content wrapper: `overflow-y-auto flex-1 pr-2` - Scrollable content area with right padding for scrollbar
 - Applied to: EmergencyUnlockDialog, BudgetCardDetailDialog, PaymentCardDetailDialog, SubscriptionCardDetailDialog
 
-**Dashboard Balance Card (Modern Bank Card Design):** The Available Balance section features a digital bank card design with authentic card aesthetics and normal, proportional sizing:
-- **Card Structure:** Normal-sized card with natural height based on content, `max-w-4xl` for proportional width, centered layout (`mx-auto`)
-- **Diagonal Gradient:** Background uses `bg-gradient-to-br from-primary via-purple-500/90 to-secondary` with glassmorphic overlay (`from-white/10 via-transparent to-white/5`) for card sheen effect
+**Dashboard Balance Card (Premium Bank Card Design):** The Available Balance section features a sleek, premium digital bank card design without borders, resembling an actual bank card with dynamic visual effects:
+- **True Card Appearance:** No white border/frame - direct rendering as standalone card with natural height, `max-w-4xl` width, centered layout
+- **Premium Shadows:** Soft drop shadow `shadow-[0_8px_30px_rgb(0,0,0,0.12)]` with elevated hover state `shadow-[0_15px_40px_rgb(0,0,0,0.18)]` for depth
+- **Diagonal Gradient:** Background uses `bg-gradient-to-br from-primary via-purple-500/90 to-secondary` with multiple glassmorphic overlays for illuminated feel
+- **Geometric Overlays:** Subtle dynamic aesthetic with:
+  - Multiple circular gradients (top-right, bottom-left, center) at varying opacities for depth
+  - SVG layer with grid pattern, decorative circles, and curved wave path (all at 3-10% opacity)
+  - Creates minimalist yet sophisticated appearance
+- **Animated Shimmer Effect:** Moving white light reflection that slides across card surface:
+  - Skewed gradient (`from-transparent via-white/20 to-transparent`) with diagonal motion
+  - 3-second animation, 2-second delay, infinite repeat
+  - Respects `prefers-reduced-motion` - shows static centered highlight when motion reduction is preferred
+  - Creates premium texture and sense of depth
 - **Card Elements:**
   - EMV chip icon (top-left): `ScanLine` icon with golden gradient (`from-amber-200 via-yellow-100 to-amber-300`)
   - Wallet branding icon (top-right): `Wallet` icon with glassmorphic background (`bg-white/15 backdrop-blur-sm`)
@@ -51,8 +61,8 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
   - Button style: `bg-white/20 hover:bg-white/30` with `border border-white/30` and `backdrop-blur-sm`
   - All three buttons (Top Up, Transfer, Cards) use consistent glassmorphic design
   - Touch-friendly: All buttons have `min-h-[44px]` touch targets
-- **Responsive Design:** Responsive padding (`p-6 sm:p-8 md:p-10`), 2xl rounded corners, soft shadow
-- **Animations:** Spring-based hover effects (`whileHover={{ scale: 1.03 }}`) and entrance animations via Framer Motion
+- **Responsive Design:** Responsive padding (`p-6 sm:p-8 md:p-10`), 2xl rounded corners, geometric shapes scale with screen size
+- **Animations:** Spring-based hover effects (`whileHover={{ scale: 1.03 }}`) and entrance animations via Framer Motion, all respecting accessibility preferences
 
 ### Technical Implementations
 
