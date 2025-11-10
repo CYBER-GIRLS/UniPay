@@ -68,15 +68,15 @@ export default function DashboardPage() {
 
       <motion.div
         variants={itemVariants}
-        className="w-full max-w-md mx-auto"
+        className="w-[clamp(35vw,90%,75vw)] mx-auto"
       >
-        <div className="relative w-full aspect-[8/5] bg-gradient-to-br from-primary via-purple-500/90 to-secondary rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-shadow duration-300">
+        <div className="relative w-full aspect-[8/5] bg-gradient-to-br from-primary via-purple-500/90 to-secondary rounded-[4%] overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-shadow duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-white/12 via-transparent to-white/8" />
           <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-purple-300/5 to-indigo-300/10" />
           
           <div className="absolute top-0 right-0 w-[40%] h-[40%] bg-white/8 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-[35%] h-[35%] bg-purple-400/10 rounded-full blur-2xl" />
-          <div className="absolute top-1/3 right-1/4 w-[25%] h-[25%] bg-indigo-300/8 rounded-full blur-xl" />
+          <div className="absolute top-[33%] right-[25%] w-[25%] h-[25%] bg-indigo-300/8 rounded-full blur-xl" />
           
           <motion.div
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
@@ -95,10 +95,10 @@ export default function DashboardPage() {
             }}
           />
           
-          <svg className="absolute inset-0 w-full h-full opacity-[0.08]" xmlns="http://www.w3.org/2000/svg">
+          <svg className="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
-              <pattern id="card-grid" width="30" height="30" patternUnits="userSpaceOnUse">
-                <path d="M 30 0 L 0 0 0 30" fill="none" stroke="white" strokeWidth="0.5" opacity="0.4"/>
+              <pattern id="card-grid" width="3.75" height="6" patternUnits="userSpaceOnUse" patternContentUnits="objectBoundingBox">
+                <path d="M 1 0 L 0 0 0 1" fill="none" stroke="white" strokeWidth="0.02" opacity="0.4"/>
               </pattern>
               <linearGradient id="diag-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" style={{ stopColor: 'white', stopOpacity: 0.1 }} />
@@ -106,90 +106,103 @@ export default function DashboardPage() {
                 <stop offset="100%" style={{ stopColor: 'white', stopOpacity: 0.1 }} />
               </linearGradient>
             </defs>
-            <rect width="100%" height="100%" fill="url(#card-grid)" />
-            <circle cx="15%" cy="25%" r="50" fill="white" opacity="0.04" />
-            <circle cx="85%" cy="75%" r="70" fill="white" opacity="0.04" />
-            <circle cx="50%" cy="50%" r="40" fill="white" opacity="0.03" />
-            <line x1="0" y1="30%" x2="100%" y2="35%" stroke="white" strokeWidth="1.5" opacity="0.06" />
-            <line x1="0" y1="70%" x2="100%" y2="65%" stroke="white" strokeWidth="1" opacity="0.05" />
-            <path d="M 0 60 Q 30 45, 60 60 T 120 60" stroke="white" strokeWidth="1.2" fill="none" opacity="0.06" />
-            <rect x="70%" y="10%" width="25%" height="15%" fill="url(#diag-gradient)" rx="8" />
-            <polygon points="10,10 25,20 10,30" fill="white" opacity="0.03" />
+            <rect width="100" height="100" fill="url(#card-grid)" />
+            <circle cx="15" cy="25" r="6" fill="white" opacity="0.04" />
+            <circle cx="85" cy="75" r="8" fill="white" opacity="0.04" />
+            <circle cx="50" cy="50" r="5" fill="white" opacity="0.03" />
+            <line x1="0" y1="30" x2="100" y2="35" stroke="white" strokeWidth="0.2" opacity="0.06"/>
+            <line x1="0" y1="70" x2="100" y2="65" stroke="white" strokeWidth="0.15" opacity="0.05"/>
+            <path d="M 0 60 Q 15 45, 30 60 T 60 60" stroke="white" strokeWidth="0.18" fill="none" opacity="0.06"/>
+            <rect x="70" y="10" width="25" height="15" fill="url(#diag-gradient)" rx="1" />
+            <polygon points="1.25,2 3.125,4 1.25,6" fill="white" opacity="0.03" />
           </svg>
           
-          <div className="absolute inset-0 p-4 sm:p-5 md:p-6 flex flex-col relative z-10">
-            <div className="flex items-start justify-between mb-3 sm:mb-4">
+          <div className="absolute inset-0 p-[5%] flex flex-col relative z-10">
+            <div className="flex items-start justify-between h-[15%]">
               <div 
-                className="p-1.5 sm:p-2 bg-white/15 backdrop-blur-sm rounded-lg shadow-sm"
+                className="p-[3%] bg-white/15 backdrop-blur-sm rounded-lg shadow-sm"
                 aria-hidden="true"
               >
-                <ScanLine className="h-4 w-4 sm:h-5 sm:w-5 text-white/80" />
+                <ScanLine className="w-[1.2em] h-[1.2em] text-white/80" style={{ fontSize: 'clamp(0.75rem, 2.5vw, 1.25rem)' }} />
               </div>
               <div 
-                className="p-1.5 sm:p-2 bg-white/15 backdrop-blur-sm rounded-full shadow-sm"
+                className="p-[3%] bg-white/15 backdrop-blur-sm rounded-full shadow-sm"
                 aria-hidden="true"
               >
-                <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-white/90" />
+                <Wallet className="w-[1.2em] h-[1.2em] text-white/90" style={{ fontSize: 'clamp(0.75rem, 2.5vw, 1.25rem)' }} />
               </div>
             </div>
             
-            <div className="flex-1 flex flex-col items-center justify-center text-center min-h-0">
-              <p className="text-white/90 text-xs sm:text-sm font-medium mb-1.5 sm:mb-2 tracking-wide uppercase">
+            <div className="flex-1 flex flex-col items-center justify-center text-center">
+              <p 
+                className="text-white/90 font-medium tracking-wide uppercase mb-[2%]"
+                style={{ fontSize: 'clamp(0.65rem, 2vw, 0.875rem)' }}
+              >
                 Available Balance
               </p>
               <h2 
-                className="text-white text-3xl sm:text-4xl md:text-5xl font-bold mb-1 tracking-tight leading-tight"
+                className="text-white font-bold tracking-tight leading-tight mb-[1%]"
+                style={{ fontSize: 'clamp(1.75rem, 5vw, 3rem)' }}
                 aria-live="polite"
                 aria-label={`Available balance: ${formatCurrency(walletData?.balance || 0, selectedCurrency)}`}
               >
                 {formatCurrency(walletData?.balance || 0, selectedCurrency)}
               </h2>
-              <p className="text-white/80 text-xs sm:text-sm font-medium">
+              <p 
+                className="text-white/80 font-medium"
+                style={{ fontSize: 'clamp(0.65rem, 2vw, 0.875rem)' }}
+              >
                 {getCurrencyName(selectedCurrency)}
               </p>
             </div>
             
-            <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mt-3 sm:mt-4">
-              <Link to="/topup" className="w-full">
+            <div className="grid grid-cols-3 gap-[2%] h-[18%]">
+              <Link to="/topup" className="w-full h-full">
                 <motion.div
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="h-full"
                 >
                   <Button
-                    className="w-full h-9 sm:h-10 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
+                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 font-semibold px-[5%]"
+                    style={{ fontSize: 'clamp(0.625rem, 1.8vw, 0.875rem)' }}
                   >
-                    <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
+                    <Plus className="w-[1em] h-[1em] mr-[0.3em]" />
                     <span className="hidden xs:inline">Top Up</span>
                     <span className="xs:hidden">Top</span>
                   </Button>
                 </motion.div>
               </Link>
-              <Link to="/transfers" className="w-full">
+              <Link to="/transfers" className="w-full h-full">
                 <motion.div
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="h-full"
                 >
                   <Button
-                    className="w-full h-9 sm:h-10 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
+                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 font-semibold px-[5%]"
+                    style={{ fontSize: 'clamp(0.625rem, 1.8vw, 0.875rem)' }}
                   >
-                    <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
+                    <Send className="w-[1em] h-[1em] mr-[0.3em]" />
                     <span className="hidden xs:inline">Transfer</span>
                     <span className="xs:hidden">Send</span>
                   </Button>
                 </motion.div>
               </Link>
-              <Link to="/budget-cards" className="w-full">
+              <Link to="/budget-cards" className="w-full h-full">
                 <motion.div
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className="h-full"
                 >
                   <Button
-                    className="w-full h-9 sm:h-10 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
+                    className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 font-semibold px-[5%]"
+                    style={{ fontSize: 'clamp(0.625rem, 1.8vw, 0.875rem)' }}
                   >
-                    <CreditCard className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
+                    <CreditCard className="w-[1em] h-[1em] mr-[0.3em]" />
                     <span className="hidden xs:inline">Cards</span>
                     <span className="xs:hidden">Card</span>
                   </Button>
