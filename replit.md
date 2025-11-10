@@ -34,6 +34,22 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 - Content wrapper: `overflow-y-auto flex-1 pr-2` - Scrollable content area with right padding for scrollbar
 - Applied to: EmergencyUnlockDialog, BudgetCardDetailDialog, PaymentCardDetailDialog, SubscriptionCardDetailDialog
 
+**Dashboard Balance Card (Modern Bank Card Design):** The Available Balance section features a digital bank card design with authentic card aesthetics:
+- **3:2 Aspect Ratio:** Uses `aspect-[3/2]` for physical card proportions that scale gracefully across all breakpoints
+- **Diagonal Gradient:** Background uses `bg-gradient-to-br from-primary via-purple-500/90 to-secondary` with glassmorphic overlay (`from-white/10 via-transparent to-white/5`) for card sheen effect
+- **Card Elements:**
+  - EMV chip icon (top-left): `ScanLine` icon with golden gradient (`from-amber-200 via-yellow-100 to-amber-300`)
+  - Wallet branding icon (top-right): `Wallet` icon with glassmorphic background (`bg-white/15 backdrop-blur-sm`)
+  - Both icons are `aria-hidden="true"` and responsive (`h-5 w-5 → sm:h-6 sm:w-6 → md:h-7 md:w-7`)
+- **Balance Typography:** Left-aligned with responsive scaling:
+  - Label: `text-xs sm:text-sm uppercase tracking-wide`
+  - Amount: `text-3xl → sm:text-4xl → md:text-5xl → lg:text-6xl font-bold tracking-tight`
+  - Currency: `text-xs sm:text-sm font-medium`
+  - Includes `aria-live="polite"` for balance updates
+- **Action Buttons Below Card:** Responsive grid layout (`grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`) with gradient-filled buttons for Top Up and Transfer, outline variant for Cards
+- **Responsive Design:** Card centered with `max-w-3xl mx-auto`, responsive padding using `p-[clamp(1rem,4vw,2rem)]`, all buttons have `min-h-[44px]` touch targets
+- **Animations:** Spring-based hover effects (`whileHover={{ scale: 1.03 }}`) and entrance animations via Framer Motion
+
 ### Technical Implementations
 
 *   **Backend:** Developed using Flask (Python), employing SQLAlchemy for ORM (PostgreSQL), Flask-JWT-Extended for authentication, and Flask-SocketIO for real-time features. It utilizes an Application Factory Pattern and Flask Blueprints for modularity, incorporating security measures like JWT, password hashing, PIN protection, and CORS.
