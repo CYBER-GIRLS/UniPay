@@ -107,7 +107,7 @@ export default function TransactionsPage() {
         <p className="text-gray-600">Track your transactions and upcoming payments</p>
       </motion.div>
 
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="grid md:grid-cols-3 gap-4 lg:hidden">
         <MotionCard variants={itemVariants} className="border-0 shadow-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -157,63 +157,137 @@ export default function TransactionsPage() {
         </MotionCard>
       </div>
 
-      <motion.div
-        variants={itemVariants}
-        className="space-y-4"
-      >
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <CalendarIcon className="h-6 w-6 text-violet-600" />
-              <h2 className="text-xl font-bold text-gray-900">Finance Timeline</h2>
+      <div className="lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-6 space-y-4 lg:space-y-0">
+        <motion.div
+          variants={itemVariants}
+          className="space-y-4"
+        >
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <CalendarIcon className="h-6 w-6 text-violet-600" />
+                <h2 className="text-xl font-bold text-gray-900">Finance Timeline</h2>
+              </div>
+              <Button
+                onClick={() => setShowExpectedPaymentModal(true)}
+                size="sm"
+                className="bg-violet-600 hover:bg-violet-700"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Expected Payment
+              </Button>
             </div>
-            <Button
-              onClick={() => setShowExpectedPaymentModal(true)}
-              size="sm"
-              className="bg-violet-600 hover:bg-violet-700"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Expected Payment
-            </Button>
+            <CompactColorLegend />
           </div>
-          <CompactColorLegend />
-        </div>
 
-        <Card className="border-0 shadow-lg">
-          <CardHeader className="border-b bg-gradient-to-r from-violet-50 to-indigo-50">
-            <div className="flex items-center justify-between">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handlePreviousMonth}
-                className="hover:bg-white/50"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </Button>
-              <CardTitle className="text-lg font-semibold text-gray-900">
-                {currentMonthName}
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleNextMonth}
-                className="hover:bg-white/50"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="p-4">
-            <CalendarGrid
-              currentDate={currentDate}
-              transactionsByDate={transactionsByDate}
-              onDayClick={handleDayClick}
-            />
-          </CardContent>
-        </Card>
-      </motion.div>
+          <Card className="border-0 shadow-lg lg:h-[640px] lg:flex lg:flex-col">
+            <CardHeader className="border-b bg-gradient-to-r from-violet-50 to-indigo-50 lg:flex-shrink-0">
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handlePreviousMonth}
+                  className="hover:bg-white/50"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <CardTitle className="text-lg font-semibold text-gray-900">
+                  {currentMonthName}
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleNextMonth}
+                  className="hover:bg-white/50"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 lg:flex-1 lg:overflow-auto">
+              <CalendarGrid
+                currentDate={currentDate}
+                transactionsByDate={transactionsByDate}
+                onDayClick={handleDayClick}
+              />
+            </CardContent>
+          </Card>
+        </motion.div>
 
-      <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-visible">
+        <motion.div
+          variants={itemVariants}
+          className="hidden lg:flex lg:flex-col lg:space-y-4 lg:h-[640px]"
+        >
+          <div className="flex flex-col space-y-4">
+            <MotionCard variants={itemVariants} className="border-0 shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Income</p>
+                    <p className="text-2xl font-bold text-green-600">
+                      {formatCurrency(stats.total_income, selectedCurrency)}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
+                    <ArrowDownLeft className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  </div>
+                </div>
+              </CardContent>
+            </MotionCard>
+
+            <MotionCard variants={itemVariants} className="border-0 shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Total Expenses</p>
+                    <p className="text-2xl font-bold text-red-600">
+                      {formatCurrency(stats.total_expenses, selectedCurrency)}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-red-100 dark:bg-red-900 rounded-lg">
+                    <ArrowUpRight className="h-6 w-6 text-red-600 dark:text-red-400" />
+                  </div>
+                </div>
+              </CardContent>
+            </MotionCard>
+
+            <MotionCard variants={itemVariants} className="border-0 shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Transactions</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      {stats.transaction_count}
+                    </p>
+                  </div>
+                  <div className="p-3 bg-violet-100 dark:bg-violet-900 rounded-lg">
+                    <Receipt className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+                  </div>
+                </div>
+              </CardContent>
+            </MotionCard>
+          </div>
+
+          <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-hidden flex-1">
+            <CardContent className="p-0 h-full flex flex-col">
+              <div className="h-full overflow-auto">
+                {transactions.length > 0 ? (
+                  <CollapsibleTransactionList transactions={transactions} />
+                ) : (
+                  <div className="p-6 text-center py-12">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                      <Receipt className="h-8 w-8 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500">No transactions yet</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </MotionCard>
+        </motion.div>
+      </div>
+
+      <MotionCard variants={itemVariants} className="border-0 shadow-sm overflow-visible lg:hidden">
         <CardContent className="p-0">
           {transactions.length > 0 ? (
             <CollapsibleTransactionList transactions={transactions} />
