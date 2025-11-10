@@ -153,59 +153,70 @@ export default function SavingsPage() {
           </div>
 
           {goalsData && goalsData.length > 0 ? (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
               {goalsData.map((goal: any) => (
-                <Card key={goal.id} className="border-0 shadow-sm">
-                  <CardContent className="p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 bg-green-100 rounded-lg">
-                        <Target className="h-5 w-5 text-green-600" />
+                <motion.div
+                  key={goal.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="h-full"
+                >
+                  <Card className="border-0 shadow-md hover:shadow-lg transition-shadow duration-200 h-full flex flex-col">
+                    <CardContent className="p-4 sm:p-5 flex flex-col h-full">
+                      <div className="flex items-start gap-3 mb-4">
+                        <div className="p-2.5 sm:p-3 bg-green-100 rounded-lg sm:rounded-xl flex-shrink-0">
+                          <Target className="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-gray-900 text-base sm:text-lg truncate">{goal.title}</p>
+                          <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
+                            {formatCurrency(goal.current_amount, selectedCurrency)} of {formatCurrency(goal.target_amount, selectedCurrency)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900">{goal.title}</p>
-                        <p className="text-sm text-gray-600">{formatCurrency(goal.current_amount, selectedCurrency)} of {formatCurrency(goal.target_amount, selectedCurrency)}</p>
+                      <div className="space-y-3 mt-auto">
+                        <div className="w-full bg-gray-200 rounded-full h-2.5 sm:h-3">
+                          <div
+                            className="bg-gradient-to-r from-green-600 to-emerald-600 h-2.5 sm:h-3 rounded-full transition-all duration-300"
+                            style={{ width: `${Math.min((goal.current_amount / goal.target_amount) * 100, 100)}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between items-center gap-2">
+                          <p className="text-xs sm:text-sm font-medium text-gray-600">
+                            {((goal.current_amount / goal.target_amount) * 100).toFixed(0)}% complete
+                          </p>
+                          {!goal.is_completed && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedGoal(goal);
+                                setContributionDialogOpen(true);
+                              }}
+                              className="text-xs sm:text-sm min-h-[44px] px-3 sm:px-4"
+                            >
+                              Contribute
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-gradient-to-r from-green-600 to-emerald-600 h-2 rounded-full transition-all"
-                          style={{ width: `${Math.min((goal.current_amount / goal.target_amount) * 100, 100)}%` }}
-                        />
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <p className="text-xs text-gray-600">
-                          {((goal.current_amount / goal.target_amount) * 100).toFixed(0)}% complete
-                        </p>
-                        {!goal.is_completed && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setSelectedGoal(goal);
-                              setContributionDialogOpen(true);
-                            }}
-                          >
-                            Contribute
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               ))}
             </div>
           ) : (
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-8 text-center">
-                <Target className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600 mb-4">No goals yet</p>
+            <Card className="border-0 shadow-md">
+              <CardContent className="p-6 sm:p-8 md:p-10 text-center">
+                <Target className="h-12 w-12 sm:h-14 sm:w-14 text-gray-400 mx-auto mb-3 sm:mb-4" />
+                <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-5">No goals yet</p>
                 <Button
                   size="sm"
                   onClick={() => setGoalDialogOpen(true)}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600"
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 min-h-[40px] sm:min-h-[44px] px-4 sm:px-5"
                 >
-                  <Plus className="h-4 w-4 mr-1" />
+                  <Plus className="h-4 w-4 sm:h-4.5 sm:w-4.5 mr-1.5 sm:mr-2" />
                   Create Goal
                 </Button>
               </CardContent>
