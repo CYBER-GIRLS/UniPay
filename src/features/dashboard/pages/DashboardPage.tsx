@@ -117,37 +117,37 @@ export default function DashboardPage() {
             <polygon points="10,10 25,20 10,30" fill="white" opacity="0.03" />
           </svg>
           
-          <div className="absolute inset-0 p-[clamp(1rem,4vw,2rem)] flex flex-col relative z-10">
-            <div className="flex items-start justify-between mb-auto">
+          <div className="absolute inset-0 p-[clamp(0.875rem,3.5vw,1.5rem)] flex flex-col justify-between relative z-10">
+            <div className="flex items-start justify-between">
               <div 
-                className="p-2 sm:p-2.5 bg-white/15 backdrop-blur-sm rounded-md sm:rounded-lg shadow-sm flex-shrink-0"
+                className="p-1.5 sm:p-2 bg-white/15 backdrop-blur-sm rounded-md sm:rounded-lg shadow-sm flex-shrink-0"
                 aria-hidden="true"
               >
-                <ScanLine className="h-5 w-5 sm:h-6 sm:w-6 text-white/80" />
+                <ScanLine className="h-4 w-4 sm:h-5 sm:w-5 text-white/80" />
               </div>
               <div 
-                className="p-2 sm:p-2.5 bg-white/15 backdrop-blur-sm rounded-full shadow-sm flex-shrink-0"
+                className="p-1.5 sm:p-2 bg-white/15 backdrop-blur-sm rounded-full shadow-sm flex-shrink-0"
                 aria-hidden="true"
               >
-                <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white/90" />
+                <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-white/90" />
               </div>
             </div>
             
-            <div className="mb-auto">
-              <p className="text-white/90 text-xs sm:text-sm font-medium mb-0.5 sm:mb-1 tracking-wide uppercase">Available Balance</p>
+            <div className="text-center flex flex-col items-center justify-center flex-1 py-2">
+              <p className="text-white/90 text-[clamp(0.65rem,2vw,0.875rem)] font-medium mb-1 tracking-wide uppercase">Available Balance</p>
               <h2 
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-0.5 sm:mb-1 tracking-tight"
+                className="text-white text-[clamp(1.5rem,5.5vw,3.5rem)] font-bold mb-1 tracking-tight leading-tight"
                 aria-live="polite"
                 aria-label={`Available balance: ${formatCurrency(walletData?.balance || 0, selectedCurrency)}`}
               >
                 {formatCurrency(walletData?.balance || 0, selectedCurrency)}
               </h2>
-              <p className="text-white/80 text-xs sm:text-sm font-medium">
+              <p className="text-white/80 text-[clamp(0.65rem,2vw,0.875rem)] font-medium">
                 {getCurrencyName(selectedCurrency)}
               </p>
             </div>
             
-            <div className="grid grid-cols-1 xs:grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-[clamp(0.375rem,1.5vw,0.5rem)]">
               <Link to="/topup" className="w-full">
                 <motion.div
                   whileHover={{ scale: 1.03 }}
@@ -155,10 +155,11 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full min-h-[44px] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
+                    className="w-full h-[clamp(2.5rem,5vw,3rem)] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-[clamp(0.65rem,1.8vw,0.875rem)] font-semibold px-2 sm:px-3"
                   >
-                    <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-1.5" />
-                    Top Up
+                    <Plus className="h-[clamp(0.75rem,2vw,1rem)] w-[clamp(0.75rem,2vw,1rem)] mr-1" />
+                    <span className="hidden xs:inline">Top Up</span>
+                    <span className="xs:hidden">Top</span>
                   </Button>
                 </motion.div>
               </Link>
@@ -169,10 +170,11 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full min-h-[44px] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
+                    className="w-full h-[clamp(2.5rem,5vw,3rem)] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-[clamp(0.65rem,1.8vw,0.875rem)] font-semibold px-2 sm:px-3"
                   >
-                    <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-1.5" />
-                    Transfer
+                    <Send className="h-[clamp(0.75rem,2vw,1rem)] w-[clamp(0.75rem,2vw,1rem)] mr-1" />
+                    <span className="hidden xs:inline">Transfer</span>
+                    <span className="xs:hidden">Send</span>
                   </Button>
                 </motion.div>
               </Link>
@@ -183,10 +185,11 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full min-h-[44px] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
+                    className="w-full h-[clamp(2.5rem,5vw,3rem)] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-[clamp(0.65rem,1.8vw,0.875rem)] font-semibold px-2 sm:px-3"
                   >
-                    <CreditCard className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1 sm:mr-1.5" />
-                    Cards
+                    <CreditCard className="h-[clamp(0.75rem,2vw,1rem)] w-[clamp(0.75rem,2vw,1rem)] mr-1" />
+                    <span className="hidden xs:inline">Cards</span>
+                    <span className="xs:hidden">Card</span>
                   </Button>
                 </motion.div>
               </Link>
