@@ -68,7 +68,7 @@ export default function DashboardPage() {
 
       <motion.div
         variants={itemVariants}
-        className="w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8"
+        className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-8"
       >
         <div className="relative w-full aspect-[7/4] bg-gradient-to-br from-primary via-purple-500/90 to-secondary rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-shadow duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-white/12 via-transparent to-white/8" />
@@ -117,39 +117,39 @@ export default function DashboardPage() {
             <polygon points="10,10 25,20 10,30" fill="white" opacity="0.03" />
           </svg>
           
-          <div className="absolute inset-0 p-[clamp(1rem,3vw,1.75rem)] flex flex-col relative z-10">
-            <div className="flex items-start justify-between mb-4">
+          <div className="absolute inset-0 p-[clamp(1.25rem,4vw,2rem)] flex flex-col relative z-10">
+            <div className="flex items-start justify-between">
               <div 
-                className="p-[clamp(0.5rem,1.2vw,0.75rem)] bg-white/15 backdrop-blur-sm rounded-lg shadow-sm flex-shrink-0"
+                className="p-2 bg-white/15 backdrop-blur-sm rounded-lg shadow-sm"
                 aria-hidden="true"
               >
-                <ScanLine className="h-[clamp(1rem,2.5vw,1.5rem)] w-[clamp(1rem,2.5vw,1.5rem)] text-white/80" />
+                <ScanLine className="h-5 w-5 sm:h-6 sm:w-6 text-white/80" />
               </div>
               <div 
-                className="p-[clamp(0.5rem,1.2vw,0.75rem)] bg-white/15 backdrop-blur-sm rounded-full shadow-sm flex-shrink-0"
+                className="p-2 bg-white/15 backdrop-blur-sm rounded-full shadow-sm"
                 aria-hidden="true"
               >
-                <Wallet className="h-[clamp(1rem,2.5vw,1.5rem)] w-[clamp(1rem,2.5vw,1.5rem)] text-white/90" />
+                <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white/90" />
               </div>
             </div>
             
-            <div className="flex-1 flex flex-col items-center justify-center text-center px-2">
-              <p className="text-white/90 text-[clamp(0.7rem,1.8vw,0.875rem)] font-medium mb-[clamp(0.5rem,1.5vw,0.75rem)] tracking-wide uppercase">
+            <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
+              <p className="text-white/90 text-xs sm:text-sm font-medium mb-2 tracking-wide uppercase">
                 Available Balance
               </p>
               <h2 
-                className="text-white text-[clamp(2rem,6vw,4rem)] font-bold mb-[clamp(0.25rem,1vw,0.5rem)] tracking-tight leading-none"
+                className="text-white text-[clamp(2rem,7vw,3.5rem)] font-bold mb-1 tracking-tight leading-tight"
                 aria-live="polite"
                 aria-label={`Available balance: ${formatCurrency(walletData?.balance || 0, selectedCurrency)}`}
               >
                 {formatCurrency(walletData?.balance || 0, selectedCurrency)}
               </h2>
-              <p className="text-white/80 text-[clamp(0.7rem,1.8vw,0.875rem)] font-medium">
+              <p className="text-white/80 text-xs sm:text-sm font-medium">
                 {getCurrencyName(selectedCurrency)}
               </p>
             </div>
             
-            <div className="grid grid-cols-3 gap-[clamp(0.5rem,1.5vw,0.75rem)] mt-4">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               <Link to="/topup" className="w-full">
                 <motion.div
                   whileHover={{ scale: 1.03 }}
@@ -157,10 +157,11 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full h-[clamp(2.75rem,6vw,3.25rem)] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-[clamp(0.7rem,1.8vw,0.875rem)] font-semibold px-[clamp(0.5rem,1.5vw,1rem)]"
+                    className="w-full h-10 sm:h-11 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold px-2 sm:px-4"
                   >
-                    <Plus className="h-[clamp(0.875rem,2.2vw,1.125rem)] w-[clamp(0.875rem,2.2vw,1.125rem)] mr-[clamp(0.25rem,0.8vw,0.5rem)]" />
-                    <span>Top Up</span>
+                    <Plus className="h-4 w-4 mr-1 sm:mr-1.5" />
+                    <span className="hidden xs:inline">Top Up</span>
+                    <span className="xs:hidden">Top</span>
                   </Button>
                 </motion.div>
               </Link>
@@ -171,10 +172,11 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full h-[clamp(2.75rem,6vw,3.25rem)] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-[clamp(0.7rem,1.8vw,0.875rem)] font-semibold px-[clamp(0.5rem,1.5vw,1rem)]"
+                    className="w-full h-10 sm:h-11 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold px-2 sm:px-4"
                   >
-                    <Send className="h-[clamp(0.875rem,2.2vw,1.125rem)] w-[clamp(0.875rem,2.2vw,1.125rem)] mr-[clamp(0.25rem,0.8vw,0.5rem)]" />
-                    <span>Transfer</span>
+                    <Send className="h-4 w-4 mr-1 sm:mr-1.5" />
+                    <span className="hidden xs:inline">Transfer</span>
+                    <span className="xs:hidden">Send</span>
                   </Button>
                 </motion.div>
               </Link>
@@ -185,10 +187,11 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full h-[clamp(2.75rem,6vw,3.25rem)] bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-[clamp(0.7rem,1.8vw,0.875rem)] font-semibold px-[clamp(0.5rem,1.5vw,1rem)]"
+                    className="w-full h-10 sm:h-11 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold px-2 sm:px-4"
                   >
-                    <CreditCard className="h-[clamp(0.875rem,2.2vw,1.125rem)] w-[clamp(0.875rem,2.2vw,1.125rem)] mr-[clamp(0.25rem,0.8vw,0.5rem)]" />
-                    <span>Cards</span>
+                    <CreditCard className="h-4 w-4 mr-1 sm:mr-1.5" />
+                    <span className="hidden xs:inline">Cards</span>
+                    <span className="xs:hidden">Card</span>
                   </Button>
                 </motion.div>
               </Link>
