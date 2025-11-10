@@ -47,13 +47,13 @@ export default function Sidebar() {
             variant="ghost"
             size="icon"
             onClick={toggleSidebar}
-            className="h-8 w-8 xs:h-9 xs:w-9 rounded-lg xs:rounded-xl hover:bg-primary-light/30 transition-all duration-200 tap-target"
+            className="h-11 w-11 rounded-xl hover:bg-primary-light/30 transition-all duration-200"
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? (
-              <ChevronRight className="h-3.5 w-3.5 xs:h-4 xs:w-4 text-primary" />
+              <ChevronRight className="h-4 w-4 text-primary" />
             ) : (
-              <ChevronLeft className="h-3.5 w-3.5 xs:h-4 xs:w-4 text-primary" />
+              <ChevronLeft className="h-4 w-4 text-primary" />
             )}
           </Button>
         </div>
@@ -71,14 +71,14 @@ export default function Sidebar() {
                     whileHover={{ x: isCollapsed ? 0 : 4, scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className={cn(
-                      'flex items-center gap-2 xs:gap-2.5 sm:gap-3 px-2 xs:px-3 sm:px-4 py-2.5 xs:py-3 sm:py-3.5 rounded-lg xs:rounded-xl transition-all duration-200 tap-target',
+                      'flex items-center min-h-[44px] gap-2.5 sm:gap-3 px-3 sm:px-4 py-3 sm:py-3.5 rounded-lg sm:rounded-xl transition-all duration-200',
                       isCollapsed ? 'justify-center' : '',
                       isActive
                         ? 'bg-gradient-to-r from-primary-light/40 to-secondary-light/40 text-primary shadow-soft backdrop-blur-sm font-semibold'
                         : 'text-muted-foreground hover:bg-surface-2/60 hover:text-foreground'
                     )}
                   >
-                    <Icon className={cn('h-4 w-4 xs:h-4.5 xs:w-4.5 sm:h-5 sm:w-5 flex-shrink-0', isActive && 'text-primary')} />
+                    <Icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'text-primary')} />
                     <AnimatePresence mode="wait">
                       {!isCollapsed && (
                         <motion.span
@@ -86,7 +86,7 @@ export default function Sidebar() {
                           animate={{ opacity: 1, width: 'auto' }}
                           exit={{ opacity: 0, width: 0 }}
                           transition={{ duration: 0.2 }}
-                          className="whitespace-nowrap overflow-hidden text-xs xs:text-sm"
+                          className="whitespace-nowrap overflow-hidden text-sm"
                         >
                           {item.label}
                         </motion.span>
