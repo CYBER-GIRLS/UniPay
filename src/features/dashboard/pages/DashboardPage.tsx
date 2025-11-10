@@ -390,14 +390,14 @@ export default function DashboardPage() {
                           ? 'bg-success-light'
                           : transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id
                           ? 'bg-success-light'
-                          : 'bg-surface-2'
+                          : 'bg-danger-light'
                       }`}
                     >
                       {transaction.transaction_type === 'topup' || 
                        (transaction.transaction_type === 'transfer' && transaction.receiver_id === walletData?.user_id) ? (
                         <ArrowDownLeft className="h-4 w-4 sm:h-5 sm:w-5 text-success-hover" />
                       ) : (
-                        <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                        <ArrowUpRight className="h-4 w-4 sm:h-5 sm:w-5 text-danger-hover" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
