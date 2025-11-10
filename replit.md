@@ -34,34 +34,35 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 - Content wrapper: `overflow-y-auto flex-1 pr-2` - Scrollable content area with right padding for scrollbar
 - Applied to: EmergencyUnlockDialog, BudgetCardDetailDialog, PaymentCardDetailDialog, SubscriptionCardDetailDialog
 
-**Dashboard Balance Card (Premium Bank Card Design):** The Available Balance section features a sleek, premium digital bank card design without borders, resembling an actual bank card with dynamic visual effects:
-- **True Card Appearance:** No white border/frame - direct rendering as standalone card with natural height, `max-w-4xl` width, centered layout
-- **Premium Shadows:** Soft drop shadow `shadow-[0_8px_30px_rgb(0,0,0,0.12)]` with elevated hover state `shadow-[0_15px_40px_rgb(0,0,0,0.18)]` for depth
-- **Diagonal Gradient:** Background uses `bg-gradient-to-br from-primary via-purple-500/90 to-secondary` with multiple glassmorphic overlays for illuminated feel
-- **Geometric Overlays:** Subtle dynamic aesthetic with:
-  - Multiple circular gradients (top-right, bottom-left, center) at varying opacities for depth
-  - SVG layer with grid pattern, decorative circles, and curved wave path (all at 3-10% opacity)
-  - Creates minimalist yet sophisticated appearance
+**Dashboard Balance Card (Premium Bank Card Design):** The Available Balance section features a sleek, premium digital bank card design with authentic 7:4 aspect ratio matching real bank cards (8.5cm × 5.4cm):
+- **Real Bank Card Proportions:** Uses `aspect-[7/4]` for exact bank card dimensions, consistent across all screen sizes with `w-full max-w-4xl` centered layout
+- **Raised Appearance:** Soft drop shadow `shadow-[0_10px_40px_rgba(0,0,0,0.15)]` with elevated hover state `shadow-[0_15px_50px_rgba(0,0,0,0.2)]` creates floating effect
+- **Diagonal Gradient:** Background uses `bg-gradient-to-br from-primary via-purple-500/90 to-secondary` with multiple glassmorphic overlays and pastel accent layer (`from-transparent via-purple-300/5 to-indigo-300/10`)
+- **Subtle Decorative Elements:** Dynamic yet minimalist aesthetic with:
+  - Percentage-based circular gradients (40%, 35%, 25% sizes) positioned at top-right, bottom-left, and center for responsive consistency
+  - Enhanced SVG layer with refined 30x30 grid pattern, decorative circles, horizontal lines, diagonal gradient rectangle, triangle polygon
+  - All decorative elements use very low opacity (3-8%) for subtle, realistic appearance
 - **Animated Shimmer Effect:** Moving white light reflection that slides across card surface:
   - Skewed gradient (`from-transparent via-white/20 to-transparent`) with diagonal motion
   - 3-second animation, 2-second delay, infinite repeat
   - Respects `prefers-reduced-motion` - shows static centered highlight when motion reduction is preferred
   - Creates premium texture and sense of depth
 - **Card Elements:**
-  - EMV chip icon (top-left): `ScanLine` icon with golden gradient (`from-amber-200 via-yellow-100 to-amber-300`)
-  - Wallet branding icon (top-right): `Wallet` icon with glassmorphic background (`bg-white/15 backdrop-blur-sm`)
+  - EMV chip icon (top-left): `ScanLine` icon with subtle white styling (`bg-white/15 backdrop-blur-sm`, `text-white/80`)
+  - Wallet branding icon (top-right): `Wallet` icon with glassmorphic background (`bg-white/15 backdrop-blur-sm`, `text-white/90`)
   - Both icons are `aria-hidden="true"` and responsive (`h-5 w-5 → sm:h-6 sm:w-6`)
 - **Balance Typography:** Clean hierarchy with responsive scaling:
   - Label: `text-xs sm:text-sm uppercase tracking-wide`
-  - Amount: `text-4xl → sm:text-5xl → md:text-6xl font-bold tracking-tight`
+  - Amount: `text-3xl → sm:text-4xl → md:text-5xl → lg:text-6xl font-bold tracking-tight`
   - Currency: `text-xs sm:text-sm font-medium`
   - Includes `aria-live="polite"` for balance updates
 - **Action Buttons Inside Card:** Positioned at bottom with glassmorphic styling:
-  - Grid layout: `grid-cols-1 xs:grid-cols-3` - stacks on mobile, horizontal on small screens+
+  - Grid layout: `grid-cols-1 xs:grid-cols-3` with `gap-2` for compact spacing
   - Button style: `bg-white/20 hover:bg-white/30` with `border border-white/30` and `backdrop-blur-sm`
   - All three buttons (Top Up, Transfer, Cards) use consistent glassmorphic design
   - Touch-friendly: All buttons have `min-h-[44px]` touch targets
-- **Responsive Design:** Responsive padding (`p-6 sm:p-8 md:p-10`), 2xl rounded corners, geometric shapes scale with screen size
+  - Compact icon sizing (`h-3.5 w-3.5 → sm:h-4 sm:w-4`) and text (`text-xs → sm:text-sm`) for optimal fit
+- **Responsive Design:** Content uses `p-[clamp(1rem,4vw,2rem)]` with flexbox layout, outer wrapper adds `px-4 sm:px-6 md:px-8` margins, 2xl rounded corners
 - **Animations:** Spring-based hover effects (`whileHover={{ scale: 1.03 }}`) and entrance animations via Framer Motion, all respecting accessibility preferences
 
 ### Technical Implementations
