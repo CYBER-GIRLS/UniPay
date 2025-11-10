@@ -26,8 +26,8 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 
 **Core Feature Specifications:**
 *   **Authentication:** User registration, login, JWT token management, PIN setup/change, and visual-only features for forgot password and social login.
-*   **Wallet:** Balance display, top-up, peer-to-peer transfers, and multi-currency support with transfer scheduling.
-*   **Transactions:** Comprehensive tracking, filtering, and statistical analysis for 15+ types, including "expected payments" (CRUD, recurring), balance validation, race condition protection, and detailed records.
+*   **Wallet:** Balance display, top-up with immediate transaction recording and UI updates across all views (Dashboard Recent Transactions, Activity/Transactions page), peer-to-peer transfers, and multi-currency support with transfer scheduling.
+*   **Transactions:** Comprehensive tracking, filtering, and statistical analysis for 15+ types, including "expected payments" (CRUD, recurring), balance validation, race condition protection, detailed records, and automatic query invalidation ensuring immediate visibility of new transactions across Dashboard Recent Transactions and Activity sections after wallet operations (top-up, transfer, etc.).
 *   **Virtual Cards:** Creation, management (freeze/unfreeze), linking to subscriptions, and payment checks.
 *   **Subscriptions:** Management of recurring payments.
 *   **Savings & Goals:** Dedicated goal tracking with progress indicators, contributions, editable targets, and completion celebrations.

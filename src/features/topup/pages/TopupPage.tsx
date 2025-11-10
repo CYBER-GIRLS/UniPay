@@ -31,6 +31,8 @@ export default function TopupPage() {
       walletAPI.topup(amount, method),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['wallet'] });
+      queryClient.invalidateQueries({ queryKey: ['all-transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['transaction-stats'] });
       toast.success(`Successfully added ${formatCurrency(variables.amount, selectedCurrency)} to your wallet!`);
       setAmount('');
     },
