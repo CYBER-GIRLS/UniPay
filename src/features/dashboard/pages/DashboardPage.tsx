@@ -68,7 +68,7 @@ export default function DashboardPage() {
 
       <motion.div
         variants={itemVariants}
-        className="w-full max-w-[clamp(20rem,85vw,42rem)] mx-auto px-2 sm:px-0"
+        className="w-full max-w-[clamp(20rem,90vw,52rem)] mx-auto px-2 sm:px-0"
       >
         <div 
           className="relative w-full bg-gradient-to-br from-primary via-purple-500/90 to-secondary overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.16),0_4px_12px_rgba(0,0,0,0.12)] transition-all duration-300"
@@ -175,26 +175,26 @@ export default function DashboardPage() {
               <div 
                 className="bg-white/15 backdrop-blur-sm rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.1)] flex items-center justify-center flex-shrink-0"
                 style={{
-                  padding: 'clamp(0.35rem, 2.5%, 0.5rem)',
+                  padding: 'clamp(0.35rem, 2.5%, 0.6rem)',
                   aspectRatio: '1',
                   height: '100%',
                   maxHeight: '100%'
                 }}
                 aria-hidden="true"
               >
-                <ScanLine className="text-white/80" style={{ width: '100%', height: '100%', maxWidth: '1.5rem', maxHeight: '1.5rem' }} />
+                <ScanLine className="text-white/80" style={{ width: '100%', height: '100%', maxWidth: '2rem', maxHeight: '2rem' }} />
               </div>
               <div 
                 className="bg-white/15 backdrop-blur-sm rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.1)] flex items-center justify-center flex-shrink-0"
                 style={{
-                  padding: 'clamp(0.35rem, 2.5%, 0.5rem)',
+                  padding: 'clamp(0.35rem, 2.5%, 0.6rem)',
                   aspectRatio: '1',
                   height: '100%',
                   maxHeight: '100%'
                 }}
                 aria-hidden="true"
               >
-                <Wallet className="text-white/90" style={{ width: '100%', height: '100%', maxWidth: '1.5rem', maxHeight: '1.5rem' }} />
+                <Wallet className="text-white/90" style={{ width: '100%', height: '100%', maxWidth: '2rem', maxHeight: '2rem' }} />
               </div>
             </div>
             
@@ -209,8 +209,8 @@ export default function DashboardPage() {
               <p 
                 className="text-white/90 font-medium tracking-wide uppercase whitespace-nowrap"
                 style={{ 
-                  fontSize: 'clamp(0.625rem, 1.6vw, 0.875rem)',
-                  marginBottom: 'clamp(0.25rem, 1.5%, 0.375rem)',
+                  fontSize: 'clamp(0.625rem, 1.8vw, 1.125rem)',
+                  marginBottom: 'clamp(0.25rem, 1.5%, 0.5rem)',
                   maxWidth: '100%',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis'
@@ -221,8 +221,8 @@ export default function DashboardPage() {
               <h2 
                 className="text-white font-bold tracking-tight leading-none whitespace-nowrap"
                 style={{ 
-                  fontSize: 'clamp(1.5rem, 4vw, 2.75rem)',
-                  marginBottom: 'clamp(0.125rem, 0.75%, 0.25rem)',
+                  fontSize: 'clamp(1.5rem, 5vw, 4rem)',
+                  marginBottom: 'clamp(0.125rem, 1%, 0.375rem)',
                   maxWidth: '100%',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis'
@@ -235,7 +235,7 @@ export default function DashboardPage() {
               <p 
                 className="text-white/80 font-medium whitespace-nowrap"
                 style={{ 
-                  fontSize: 'clamp(0.625rem, 1.6vw, 0.875rem)',
+                  fontSize: 'clamp(0.625rem, 1.8vw, 1.125rem)',
                   maxWidth: '100%',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis'
@@ -263,8 +263,8 @@ export default function DashboardPage() {
                   <Button
                     className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold overflow-hidden"
                     style={{ 
-                      fontSize: 'clamp(0.625rem, 1.6vw, 0.875rem)',
-                      padding: '0 clamp(0.25rem, 3%, 0.5rem)',
+                      fontSize: 'clamp(0.625rem, 1.75vw, 1rem)',
+                      padding: '0 clamp(0.25rem, 3%, 0.625rem)',
                       minWidth: 0
                     }}
                   >
@@ -284,8 +284,8 @@ export default function DashboardPage() {
                   <Button
                     className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold overflow-hidden"
                     style={{ 
-                      fontSize: 'clamp(0.625rem, 1.6vw, 0.875rem)',
-                      padding: '0 clamp(0.25rem, 3%, 0.5rem)',
+                      fontSize: 'clamp(0.625rem, 1.75vw, 1rem)',
+                      padding: '0 clamp(0.25rem, 3%, 0.625rem)',
                       minWidth: 0
                     }}
                   >
@@ -305,8 +305,8 @@ export default function DashboardPage() {
                   <Button
                     className="w-full h-full bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 font-semibold overflow-hidden"
                     style={{ 
-                      fontSize: 'clamp(0.625rem, 1.6vw, 0.875rem)',
-                      padding: '0 clamp(0.25rem, 3%, 0.5rem)',
+                      fontSize: 'clamp(0.625rem, 1.75vw, 1rem)',
+                      padding: '0 clamp(0.25rem, 3%, 0.625rem)',
                       minWidth: 0
                     }}
                   >
