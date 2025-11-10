@@ -15,6 +15,7 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 
 **Responsive Collapsible Sidebar:** The left sidebar is always visible and works consistently across all devices with:
 - **Universal Availability:** Always positioned on the left side (no mobile bottom navigation)
+- **Edge-to-Edge Layout:** Sidebar is flush to the left screen edge with no margins; TopNav is flush to the top and right edges
 - **Responsive Widths:** Uses CSS clamp() for fluid sizing across devices:
   - Expanded: `clamp(12rem, 60vw, 16rem)` - adapts from 12rem (mobile) to 16rem (desktop)
   - Collapsed: `clamp(3.5rem, 15vw, 5rem)` - adapts from 3.5rem (mobile) to 5rem (desktop)
@@ -25,6 +26,7 @@ The frontend features a modern, Revolut-inspired interface, built with `shadcn/u
 - **Smooth Animations:** Framer Motion animations for width transitions, label reveal, and hover effects
 - **Persistent State:** Collapse/expand preference maintained across navigation using Zustand store
 - **Accessibility:** All navigation sections accessible in both collapsed and expanded states
+- **Full-Viewport Layout:** DashboardLayout uses `h-screen w-screen m-0 p-0` with explicit margin/padding removal on html, body, and #root for a clean edge-to-edge design
 
 **Dialog/Popup Scrolling Pattern:** All dialogs and popups use a standardized scrollable pattern to ensure proper viewport fitting:
 - `DialogContent`: `flex flex-col max-h-[90vh]` - Sets max height at 90% viewport and flex layout
