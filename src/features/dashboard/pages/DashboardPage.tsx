@@ -68,9 +68,9 @@ export default function DashboardPage() {
 
       <motion.div
         variants={itemVariants}
-        className="w-full max-w-3xl mx-auto px-4 sm:px-6 md:px-8"
+        className="w-full max-w-md mx-auto"
       >
-        <div className="relative w-full aspect-[7/4] bg-gradient-to-br from-primary via-purple-500/90 to-secondary rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-shadow duration-300">
+        <div className="relative w-full aspect-[8/5] bg-gradient-to-br from-primary via-purple-500/90 to-secondary rounded-2xl overflow-hidden shadow-[0_10px_40px_rgba(0,0,0,0.15)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.2)] transition-shadow duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-white/12 via-transparent to-white/8" />
           <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-purple-300/5 to-indigo-300/10" />
           
@@ -117,28 +117,28 @@ export default function DashboardPage() {
             <polygon points="10,10 25,20 10,30" fill="white" opacity="0.03" />
           </svg>
           
-          <div className="absolute inset-0 p-[clamp(1.25rem,4vw,2rem)] flex flex-col relative z-10">
-            <div className="flex items-start justify-between">
+          <div className="absolute inset-0 p-4 sm:p-5 md:p-6 flex flex-col relative z-10">
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
               <div 
-                className="p-2 bg-white/15 backdrop-blur-sm rounded-lg shadow-sm"
+                className="p-1.5 sm:p-2 bg-white/15 backdrop-blur-sm rounded-lg shadow-sm"
                 aria-hidden="true"
               >
-                <ScanLine className="h-5 w-5 sm:h-6 sm:w-6 text-white/80" />
+                <ScanLine className="h-4 w-4 sm:h-5 sm:w-5 text-white/80" />
               </div>
               <div 
-                className="p-2 bg-white/15 backdrop-blur-sm rounded-full shadow-sm"
+                className="p-1.5 sm:p-2 bg-white/15 backdrop-blur-sm rounded-full shadow-sm"
                 aria-hidden="true"
               >
-                <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white/90" />
+                <Wallet className="h-4 w-4 sm:h-5 sm:w-5 text-white/90" />
               </div>
             </div>
             
-            <div className="flex-1 flex flex-col items-center justify-center text-center py-6">
-              <p className="text-white/90 text-xs sm:text-sm font-medium mb-2 tracking-wide uppercase">
+            <div className="flex-1 flex flex-col items-center justify-center text-center min-h-0">
+              <p className="text-white/90 text-xs sm:text-sm font-medium mb-1.5 sm:mb-2 tracking-wide uppercase">
                 Available Balance
               </p>
               <h2 
-                className="text-white text-[clamp(2rem,7vw,3.5rem)] font-bold mb-1 tracking-tight leading-tight"
+                className="text-white text-3xl sm:text-4xl md:text-5xl font-bold mb-1 tracking-tight leading-tight"
                 aria-live="polite"
                 aria-label={`Available balance: ${formatCurrency(walletData?.balance || 0, selectedCurrency)}`}
               >
@@ -149,7 +149,7 @@ export default function DashboardPage() {
               </p>
             </div>
             
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-2.5 mt-3 sm:mt-4">
               <Link to="/topup" className="w-full">
                 <motion.div
                   whileHover={{ scale: 1.03 }}
@@ -157,9 +157,9 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full h-10 sm:h-11 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold px-2 sm:px-4"
+                    className="w-full h-9 sm:h-10 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
                   >
-                    <Plus className="h-4 w-4 mr-1 sm:mr-1.5" />
+                    <Plus className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
                     <span className="hidden xs:inline">Top Up</span>
                     <span className="xs:hidden">Top</span>
                   </Button>
@@ -172,9 +172,9 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full h-10 sm:h-11 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold px-2 sm:px-4"
+                    className="w-full h-9 sm:h-10 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
                   >
-                    <Send className="h-4 w-4 mr-1 sm:mr-1.5" />
+                    <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
                     <span className="hidden xs:inline">Transfer</span>
                     <span className="xs:hidden">Send</span>
                   </Button>
@@ -187,9 +187,9 @@ export default function DashboardPage() {
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
                   <Button
-                    className="w-full h-10 sm:h-11 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold px-2 sm:px-4"
+                    className="w-full h-9 sm:h-10 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200 text-xs sm:text-sm font-semibold"
                   >
-                    <CreditCard className="h-4 w-4 mr-1 sm:mr-1.5" />
+                    <CreditCard className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1" />
                     <span className="hidden xs:inline">Cards</span>
                     <span className="xs:hidden">Card</span>
                   </Button>
